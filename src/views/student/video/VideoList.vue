@@ -177,16 +177,21 @@ onMounted(async () => {
 .video-cover {
   position: relative;
   height: 130px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  background: #f0f2f5;
+  background: var(--gray-100);
+  transition: box-shadow var(--duration-base) var(--ease-out-expo);
+}
+
+.video-card:hover .video-cover {
+  box-shadow: var(--shadow-md);
 }
 
 .video-cover img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s;
+  transition: transform var(--duration-base) var(--ease-out-expo);
 }
 
 .video-card:hover .video-cover img {
@@ -198,18 +203,19 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #c0c4cc;
+  color: var(--gray-400);
 }
 
 .duration {
   position: absolute;
   right: 6px;
   bottom: 6px;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(18, 25, 38, 0.72);
   color: #fff;
   font-size: 12px;
   border-radius: 4px;
   padding: 1px 6px;
+  font-variant-numeric: tabular-nums;
 }
 
 .video-title {
@@ -225,7 +231,7 @@ onMounted(async () => {
 .video-meta {
   display: flex;
   justify-content: space-between;
-  color: #909399;
+  color: var(--gray-500);
   font-size: 12px;
   margin-top: 4px;
 }

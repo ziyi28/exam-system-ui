@@ -14,7 +14,9 @@
     <el-row :gutter="16" class="quick-row">
       <el-col v-for="entry in quickEntries" :key="entry.title" :xs="12" :sm="6">
         <el-card shadow="hover" class="quick-card" @click="router.push(entry.path)">
-          <el-icon :size="30" :color="entry.color"><component :is="entry.icon" /></el-icon>
+          <div class="quick-icon" :class="`quick-icon--${entry.theme}`">
+            <el-icon :size="24"><component :is="entry.icon" /></el-icon>
+          </div>
           <div class="quick-title">{{ entry.title }}</div>
           <div class="quick-desc">{{ entry.desc }}</div>
         </el-card>
@@ -86,10 +88,10 @@ const videos = ref<Video[]>([])
 const activeNotice = ref<Notice | null>(null)
 
 const quickEntries = [
-  { title: '在线考试', desc: '进入已发布的考试', path: '/student/exams', icon: 'EditPen', color: '#409eff' },
-  { title: '我的成绩', desc: '查看考试记录与评语', path: '/student/records', icon: 'Medal', color: '#67c23a' },
-  { title: '排行榜', desc: '看看谁是学霸', path: '/student/ranking', icon: 'TrendCharts', color: '#e6a23c' },
-  { title: '视频学习', desc: '在线课程随时学', path: '/student/videos', icon: 'VideoPlay', color: '#f56c6c' },
+  { title: '在线考试', desc: '进入已发布的考试', path: '/student/exams', icon: 'EditPen', theme: 'brand' },
+  { title: '我的成绩', desc: '查看考试记录与评语', path: '/student/records', icon: 'Medal', theme: 'success' },
+  { title: '排行榜', desc: '看看谁是学霸', path: '/student/ranking', icon: 'TrendCharts', theme: 'warning' },
+  { title: '视频学习', desc: '在线课程随时学', path: '/student/videos', icon: 'VideoPlay', theme: 'danger' },
 ]
 
 onMounted(async () => {
@@ -102,9 +104,10 @@ onMounted(async () => {
 
 <style scoped>
 .banner-carousel {
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   overflow: hidden;
   margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
 }
 
 .banner-img {
@@ -120,22 +123,55 @@ onMounted(async () => {
 .quick-card {
   text-align: center;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition:
+    transform var(--duration-base) var(--ease-out-expo),
+    box-shadow var(--duration-base) var(--ease-out-expo);
 }
 
 .quick-card:hover {
   transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.quick-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-icon--brand {
+  background: var(--brand-bg);
+  color: var(--brand-600);
+}
+
+.quick-icon--success {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.quick-icon--warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.quick-icon--danger {
+  background: var(--danger-bg);
+  color: var(--danger);
 }
 
 .quick-title {
   font-size: 16px;
   font-weight: 600;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .quick-desc {
   font-size: 12px;
-  color: #909399;
+  color: var(--gray-500);
   margin-top: 4px;
 }
 
@@ -151,20 +187,21 @@ onMounted(async () => {
   align-items: center;
   gap: 8px;
   padding: 10px 0;
-  border-bottom: 1px dashed #ebeef5;
+  border-bottom: 1px dashed var(--gray-100);
   cursor: pointer;
 }
 
 .notice-item:hover .notice-title {
-  color: #409eff;
+  color: var(--brand-600);
 }
 
 .notice-title {
   flex: 1;
+  transition: color var(--duration-fast) var(--ease-out-expo);
 }
 
 .notice-time {
-  color: #c0c4cc;
+  color: var(--gray-400);
   font-size: 12px;
 }
 
@@ -180,16 +217,16 @@ onMounted(async () => {
 
 .video-cover {
   height: 100px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   overflow: hidden;
-  background: #f0f2f5;
+  background: var(--gray-100);
 }
 
 .video-cover img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s;
+  transition: transform var(--duration-base) var(--ease-out-expo);
 }
 
 .video-card:hover .video-cover img {
@@ -201,7 +238,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #c0c4cc;
+  color: var(--gray-400);
 }
 
 .video-title {
@@ -211,7 +248,7 @@ onMounted(async () => {
 
 .video-meta {
   font-size: 12px;
-  color: #909399;
+  color: var(--gray-500);
   margin-top: 2px;
 }
 </style>

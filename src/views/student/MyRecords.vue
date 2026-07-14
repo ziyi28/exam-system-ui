@@ -79,6 +79,6 @@ onMounted(async () => {
 }
 
 .score-good {
-  color: #67c23a;
+  color: var(--success);
 }
 </style>

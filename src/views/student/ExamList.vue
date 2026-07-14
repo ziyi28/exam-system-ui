@@ -11,7 +11,9 @@
       <el-col v-for="paper in papers" :key="paper.id" :xs="24" :sm="12" :md="8">
         <el-card shadow="hover" class="exam-card">
           <div class="exam-head">
-            <el-icon :size="34" color="#409eff"><Notebook /></el-icon>
+            <div class="exam-icon">
+              <el-icon :size="22"><Notebook /></el-icon>
+            </div>
             <div class="exam-name">{{ paper.name }}</div>
           </div>
           <p class="exam-desc">{{ paper.description || '暂无描述' }}</p>
@@ -86,12 +88,31 @@ onMounted(loadData)
 
 .exam-card {
   margin-bottom: 16px;
+  transition:
+    transform var(--duration-base) var(--ease-out-expo),
+    box-shadow var(--duration-base) var(--ease-out-expo);
+}
+
+.exam-card:hover {
+  transform: translateY(-2px);
 }
 
 .exam-head {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.exam-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--brand-bg);
+  color: var(--brand-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .exam-name {
@@ -101,7 +122,7 @@ onMounted(loadData)
 }
 
 .exam-desc {
-  color: #909399;
+  color: var(--gray-500);
   font-size: 13px;
   height: 38px;
   overflow: hidden;
@@ -113,7 +134,7 @@ onMounted(loadData)
 .exam-meta {
   display: flex;
   gap: 16px;
-  color: #606266;
+  color: var(--gray-600);
   font-size: 13px;
   margin-bottom: 12px;
 }

@@ -88,18 +88,26 @@ onMounted(async () => {
 .podium-card {
   text-align: center;
   padding: 8px 0;
+  transition:
+    transform var(--duration-base) var(--ease-out-expo),
+    box-shadow var(--duration-base) var(--ease-out-expo);
 }
 
+.podium-card:hover {
+  transform: translateY(-2px);
+}
+
+/* 低饱和金 / 银 / 铜 */
 .rank-1 {
-  border-top: 4px solid #f7ba2a;
+  border-top: 4px solid #d4a72c;
 }
 
 .rank-2 {
-  border-top: 4px solid #c0c4cc;
+  border-top: 4px solid var(--gray-400);
 }
 
 .rank-3 {
-  border-top: 4px solid #e6a23c;
+  border-top: 4px solid #b3773f;
 }
 
 .medal {
@@ -115,18 +123,20 @@ onMounted(async () => {
 .podium-score {
   font-size: 26px;
   font-weight: 800;
-  color: #409eff;
+  color: var(--brand-600);
   margin: 4px 0;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }
 
 .podium-score .total {
   font-size: 14px;
-  color: #909399;
+  color: var(--gray-500);
   font-weight: 400;
 }
 
 .podium-paper {
-  color: #909399;
+  color: var(--gray-500);
   font-size: 13px;
 }
 </style>
