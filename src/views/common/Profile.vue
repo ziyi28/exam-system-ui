@@ -104,9 +104,10 @@ async function handleSubmit() {
 }
 
 .avatar {
-  background: #409eff;
+  background: var(--brand-600);
   color: #fff;
   font-size: 24px;
+  font-weight: 500;
 }
 
 .name {

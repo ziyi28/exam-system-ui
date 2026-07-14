@@ -53,7 +53,7 @@
       <div v-if="item.question?.choices?.length" class="choices">
         <div v-for="(c, ci) in item.question.choices" :key="ci" class="choice" :class="{ correct: c.isCorrect }">
           {{ letter(ci) }}. {{ c.content }}
-          <el-icon v-if="c.isCorrect" color="#67c23a"><Check /></el-icon>
+          <el-icon v-if="c.isCorrect" class="check-icon"><Check /></el-icon>
         </div>
       </div>
       <div class="answer-compare">
@@ -150,8 +150,9 @@ onMounted(loadData)
 }
 
 .score {
-  color: #f56c6c;
+  color: var(--danger);
   font-size: 18px;
+  font-variant-numeric: tabular-nums;
 }
 
 .question-card {
@@ -166,7 +167,7 @@ onMounted(loadData)
 }
 
 .index {
-  color: #909399;
+  color: var(--gray-500);
 }
 
 .title-text {
@@ -178,11 +179,16 @@ onMounted(loadData)
   display: flex;
   flex-direction: column;
   gap: 6px;
-  color: #606266;
+  color: var(--gray-600);
 }
 
 .choice.correct {
-  color: #67c23a;
+  color: var(--success);
+}
+
+.check-icon {
+  color: var(--success);
+  vertical-align: -2px;
 }
 
 .answer-compare {

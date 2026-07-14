@@ -1,10 +1,15 @@
 <template>
-  <el-card shadow="never">
-    <div class="filter-bar">
-      <el-text>共 {{ notices.length }} 条公告</el-text>
-      <div style="flex: 1" />
+  <div class="page-header">
+    <div>
+      <h2 class="page-header__title">公告管理</h2>
+      <p class="page-header__desc">共 {{ notices.length }} 条公告，紧急公告会在学生端置顶提示</p>
+    </div>
+    <div class="page-header__actions">
       <el-button type="primary" :icon="Plus" @click="openDialog()">发布公告</el-button>
     </div>
+  </div>
+
+  <el-card shadow="never">
 
     <el-table v-loading="loading" :data="notices" stripe>
       <el-table-column prop="id" label="ID" width="70" />

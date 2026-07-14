@@ -1,4 +1,14 @@
 <template>
+  <div class="page-header">
+    <div>
+      <h2 class="page-header__title">视频管理</h2>
+      <p class="page-header__desc">上传课程视频，审核用户投稿</p>
+    </div>
+    <div class="page-header__actions">
+      <el-button type="primary" :icon="Upload" @click="uploadVisible = true">上传视频</el-button>
+    </div>
+  </div>
+
   <el-card shadow="never">
     <div class="filter-bar">
       <el-select v-model="query.status" placeholder="全部状态" clearable style="width: 130px">
@@ -13,8 +23,6 @@
       </el-select>
       <el-input v-model="query.keyword" placeholder="标题关键词" clearable style="width: 180px" @keyup.enter="handleSearch" />
       <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
-      <div style="flex: 1" />
-      <el-button type="primary" :icon="Upload" @click="uploadVisible = true">上传视频</el-button>
     </div>
 
     <el-table v-loading="loading" :data="records" stripe>
@@ -202,7 +210,7 @@ onMounted(async () => {
 
 <style scoped>
 .no-cover {
-  color: #c0c4cc;
+  color: var(--gray-400);
   font-size: 12px;
 }
 </style>

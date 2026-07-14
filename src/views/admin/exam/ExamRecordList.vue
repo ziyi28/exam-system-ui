@@ -1,4 +1,11 @@
 <template>
+  <div class="page-header">
+    <div>
+      <h2 class="page-header__title">考试记录</h2>
+      <p class="page-header__desc">查看考试记录与 AI 批阅详情，可删除异常记录</p>
+    </div>
+  </div>
+
   <el-card shadow="never">
     <el-tabs v-model="activeTab">
       <!-- 考试记录 -->
