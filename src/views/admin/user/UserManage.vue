@@ -1,4 +1,14 @@
 <template>
+  <div class="page-header">
+    <div>
+      <h2 class="page-header__title">用户管理</h2>
+      <p class="page-header__desc">管理账号、角色与启用状态</p>
+    </div>
+    <div class="page-header__actions">
+      <el-button type="primary" :icon="Plus" @click="openDialog()">新增用户</el-button>
+    </div>
+  </div>
+
   <el-card shadow="never">
     <div class="filter-bar">
       <el-input v-model="query.username" placeholder="用户名" clearable style="width: 150px" @keyup.enter="handleSearch" />
@@ -14,8 +24,6 @@
       </el-select>
       <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
       <el-button :icon="Refresh" @click="handleReset">重置</el-button>
-      <div style="flex: 1" />
-      <el-button type="primary" :icon="Plus" @click="openDialog()">新增用户</el-button>
     </div>
 
     <el-table v-loading="loading" :data="records" stripe>

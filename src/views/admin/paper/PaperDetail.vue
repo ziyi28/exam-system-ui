@@ -29,7 +29,7 @@
       <div v-if="q.choices?.length" class="choices">
         <div v-for="(c, ci) in q.choices" :key="ci" class="choice" :class="{ correct: c.isCorrect }">
           {{ letter(ci) }}. {{ c.content }}
-          <el-icon v-if="c.isCorrect" color="#67c23a"><Check /></el-icon>
+          <el-icon v-if="c.isCorrect" class="check-icon"><Check /></el-icon>
         </div>
       </div>
       <div class="answer-line">
@@ -83,7 +83,7 @@ onMounted(async () => {
 }
 
 .index {
-  color: #909399;
+  color: var(--gray-500);
 }
 
 .title-text {
@@ -95,12 +95,17 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  color: #606266;
+  color: var(--gray-600);
 }
 
 .choice.correct {
-  color: #67c23a;
+  color: var(--success);
   font-weight: 600;
+}
+
+.check-icon {
+  color: var(--success);
+  vertical-align: -2px;
 }
 
 .answer-line {
@@ -109,7 +114,7 @@ onMounted(async () => {
 
 .analysis {
   margin: 8px 0 0 24px;
-  color: #909399;
+  color: var(--gray-500);
   font-size: 13px;
 }
 </style>

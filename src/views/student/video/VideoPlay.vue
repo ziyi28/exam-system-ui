@@ -138,8 +138,8 @@ onBeforeUnmount(() => {
 .player {
   width: 100%;
   max-height: 480px;
-  background: #000;
-  border-radius: 8px 8px 0 0;
+  background: var(--gray-900);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   display: block;
 }
 
@@ -155,12 +155,12 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 16px;
-  color: #909399;
+  color: var(--gray-500);
   font-size: 13px;
 }
 
 .description {
-  color: #606266;
+  color: var(--gray-600);
   line-height: 1.7;
   white-space: pre-wrap;
   margin: 0 0 10px;
@@ -176,9 +176,9 @@ onBeforeUnmount(() => {
 .rec-cover {
   width: 110px;
   height: 64px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  background: #f0f2f5;
+  background: var(--gray-100);
   flex-shrink: 0;
 }
 
@@ -193,7 +193,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #c0c4cc;
+  color: var(--gray-400);
 }
 
 .rec-title {
@@ -202,15 +202,16 @@ onBeforeUnmount(() => {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  transition: color var(--duration-fast) var(--ease-out-expo);
 }
 
 .rec-item:hover .rec-title {
-  color: #409eff;
+  color: var(--brand-600);
 }
 
 .rec-meta {
   font-size: 12px;
-  color: #c0c4cc;
+  color: var(--gray-400);
   margin-top: 4px;
 }
 </style>

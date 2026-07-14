@@ -55,7 +55,7 @@
         <div v-if="item.question?.choices?.length" class="choices">
           <div v-for="(c, ci) in item.question.choices" :key="ci" class="choice" :class="{ correct: c.isCorrect }">
             {{ letter(ci) }}. {{ c.content }}
-            <el-icon v-if="c.isCorrect" color="#67c23a"><Check /></el-icon>
+            <el-icon v-if="c.isCorrect" class="check-icon"><Check /></el-icon>
           </div>
         </div>
         <div class="answer-compare">
@@ -162,7 +162,7 @@ onMounted(async () => {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  border: 6px solid #f56c6c;
+  border: 6px solid var(--danger);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -171,17 +171,19 @@ onMounted(async () => {
 }
 
 .score-circle.pass {
-  border-color: #67c23a;
+  border-color: var(--success);
 }
 
 .score-num {
   font-size: 34px;
   font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }
 
 .score-total {
   font-size: 13px;
-  color: #909399;
+  color: var(--gray-500);
 }
 
 .result-info {
@@ -196,7 +198,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 16px;
-  color: #606266;
+  color: var(--gray-600);
   font-size: 14px;
   margin-bottom: 10px;
 }
@@ -208,29 +210,31 @@ onMounted(async () => {
 
 .stat {
   padding: 2px 10px;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   font-size: 13px;
+  font-weight: 500;
 }
 
 .stat.correct {
-  background: #f0f9eb;
-  color: #67c23a;
+  background: var(--success-bg);
+  color: var(--success);
 }
 
 .stat.partial {
-  background: #fdf6ec;
-  color: #e6a23c;
+  background: var(--warning-bg);
+  color: var(--warning);
 }
 
 .stat.wrong {
-  background: #fef0f0;
-  color: #f56c6c;
+  background: var(--danger-bg);
+  color: var(--danger);
 }
 
 .ai-summary {
   margin-top: 16px;
-  background: linear-gradient(135deg, #f0f7ff, #f5f0ff);
-  border-radius: 10px;
+  background: var(--brand-50);
+  border-left: 3px solid var(--brand-600);
+  border-radius: var(--radius-md);
   padding: 16px 20px;
 }
 
@@ -239,14 +243,14 @@ onMounted(async () => {
   align-items: center;
   gap: 6px;
   font-weight: 700;
-  color: #6e40c9;
+  color: var(--brand-700);
   margin-bottom: 8px;
 }
 
 .ai-summary p {
   margin: 0;
   line-height: 1.8;
-  color: #303133;
+  color: var(--gray-800);
 }
 
 .section-title {
@@ -265,7 +269,7 @@ onMounted(async () => {
 }
 
 .q-index {
-  color: #909399;
+  color: var(--gray-500);
 }
 
 .title-text {
@@ -277,11 +281,16 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  color: #606266;
+  color: var(--gray-600);
 }
 
 .choice.correct {
-  color: #67c23a;
+  color: var(--success);
+}
+
+.check-icon {
+  color: var(--success);
+  vertical-align: -2px;
 }
 
 .answer-compare {
@@ -293,7 +302,7 @@ onMounted(async () => {
 
 .analysis {
   margin: 8px 0 0 24px;
-  color: #909399;
+  color: var(--gray-500);
   font-size: 13px;
 }
 

@@ -4,7 +4,7 @@
     <el-row :gutter="16">
       <el-col v-for="card in statCards" :key="card.label" :xs="12" :sm="8" :md="4">
         <el-card shadow="hover" class="stat-card">
-          <div class="stat-icon" :style="{ background: card.color + '1a', color: card.color }">
+          <div class="stat-icon" :class="`stat-icon--${card.theme}`">
             <el-icon :size="24"><component :is="card.icon" /></el-icon>
           </div>
           <div class="stat-info">
@@ -55,6 +55,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as echarts from 'echarts'
 import { getOverview } from '@/api/stats'
 import { getRanking } from '@/api/examRecord'
+import { chartColors } from '@/utils/chartTheme'
 import type { ExamRanking, Stats } from '@/types'
 
 const stats = ref<Stats | null>(null)
@@ -63,39 +64,42 @@ const barChartRef = ref<HTMLDivElement>()
 let barChart: echarts.ECharts | null = null
 
 const statCards = computed(() => [
-  { label: '题目总数', value: stats.value?.questionCount ?? '-', icon: 'Document', color: '#409eff' },
-  { label: '试卷总数', value: stats.value?.paperCount ?? '-', icon: 'Notebook', color: '#67c23a' },
-  { label: '分类总数', value: stats.value?.categoryCount ?? '-', icon: 'FolderOpened', color: '#e6a23c' },
-  { label: '用户总数', value: stats.value?.userCount ?? '-', icon: 'User', color: '#f56c6c' },
-  { label: '考试场次', value: stats.value?.examCount ?? '-', icon: 'List', color: '#909399' },
-  { label: '今日考试', value: stats.value?.todayExamCount ?? '-', icon: 'Calendar', color: '#6e40c9' },
+  { label: '题目总数', value: stats.value?.questionCount ?? '-', icon: 'Document', theme: 'brand' },
+  { label: '试卷总数', value: stats.value?.paperCount ?? '-', icon: 'Notebook', theme: 'success' },
+  { label: '分类总数', value: stats.value?.categoryCount ?? '-', icon: 'FolderOpened', theme: 'warning' },
+  { label: '用户总数', value: stats.value?.userCount ?? '-', icon: 'User', theme: 'danger' },
+  { label: '考试场次', value: stats.value?.examCount ?? '-', icon: 'List', theme: 'info' },
+  { label: '今日考试', value: stats.value?.todayExamCount ?? '-', icon: 'Calendar', theme: 'brand-dark' },
 ])
 
 function renderBarChart() {
   if (!barChartRef.value || !stats.value) return
   barChart = echarts.init(barChartRef.value)
   const s = stats.value
+  // 同一度量的柱状图用单色（多色是分类色误用），色值经 chartTheme 读取 tokens
+  const c = chartColors()
   barChart.setOption({
     tooltip: { trigger: 'axis' },
     grid: { left: 40, right: 20, top: 30, bottom: 30 },
     xAxis: {
       type: 'category',
       data: ['题目', '试卷', '分类', '用户', '考试场次', '今日考试'],
+      axisLabel: { color: c.axisLabel },
+      axisLine: { lineStyle: { color: c.axisLine } },
     },
-    yAxis: { type: 'value', minInterval: 1 },
+    yAxis: {
+      type: 'value',
+      minInterval: 1,
+      axisLabel: { color: c.axisLabel },
+      splitLine: { lineStyle: { color: c.splitLine } },
+    },
     series: [
       {
         type: 'bar',
         barWidth: 36,
-        itemStyle: { borderRadius: [6, 6, 0, 0] },
-        data: [
-          { value: s.questionCount, itemStyle: { color: '#409eff' } },
-          { value: s.paperCount, itemStyle: { color: '#67c23a' } },
-          { value: s.categoryCount, itemStyle: { color: '#e6a23c' } },
-          { value: s.userCount, itemStyle: { color: '#f56c6c' } },
-          { value: s.examCount, itemStyle: { color: '#909399' } },
-          { value: s.todayExamCount, itemStyle: { color: '#6e40c9' } },
-        ],
+        itemStyle: { borderRadius: [6, 6, 0, 0], color: c.primary },
+        emphasis: { itemStyle: { color: c.primaryDark } },
+        data: [s.questionCount, s.paperCount, s.categoryCount, s.userCount, s.examCount, s.todayExamCount],
       },
     ],
   })
@@ -130,22 +134,54 @@ onBeforeUnmount(() => {
 .stat-icon {
   width: 48px;
   height: 48px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
+.stat-icon--brand {
+  background: var(--brand-bg);
+  color: var(--brand-600);
+}
+
+.stat-icon--success {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.stat-icon--warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.stat-icon--danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.stat-icon--info {
+  background: var(--gray-100);
+  color: var(--gray-500);
+}
+
+.stat-icon--brand-dark {
+  background: var(--brand-100);
+  color: var(--brand-700);
+}
+
 .stat-value {
   font-size: 22px;
   font-weight: 700;
   line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }
 
 .stat-label {
   font-size: 13px;
-  color: #909399;
+  color: var(--gray-500);
 }
 
 .chart-row {
@@ -157,7 +193,7 @@ onBeforeUnmount(() => {
 }
 
 .rank-num {
-  color: #909399;
+  color: var(--gray-500);
   padding-left: 8px;
 }
 </style>

@@ -1,10 +1,15 @@
 <template>
-  <el-card shadow="never">
-    <div class="filter-bar">
-      <el-text>共 {{ banners.length }} 张轮播图</el-text>
-      <div style="flex: 1" />
+  <div class="page-header">
+    <div>
+      <h2 class="page-header__title">轮播图管理</h2>
+      <p class="page-header__desc">共 {{ banners.length }} 张轮播图，展示在学生端首页顶部</p>
+    </div>
+    <div class="page-header__actions">
       <el-button type="primary" :icon="Plus" @click="openDialog()">添加轮播图</el-button>
     </div>
+  </div>
+
+  <el-card shadow="never">
 
     <el-table v-loading="loading" :data="banners" stripe>
       <el-table-column prop="id" label="ID" width="70" />
@@ -160,26 +165,29 @@ onMounted(loadData)
 .upload-preview {
   width: 240px;
   height: 120px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
 }
 
 .upload-placeholder {
   width: 240px;
   height: 120px;
-  border: 1px dashed #dcdfe6;
-  border-radius: 8px;
+  border: 1px dashed var(--gray-300);
+  border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  color: #909399;
+  color: var(--gray-500);
   cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-expo),
+    color var(--duration-fast) var(--ease-out-expo);
 }
 
 .upload-placeholder:hover {
-  border-color: #409eff;
-  color: #409eff;
+  border-color: var(--brand-600);
+  color: var(--brand-600);
 }
 </style>

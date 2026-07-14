@@ -1,5 +1,16 @@
 <template>
   <div>
+    <div class="page-header">
+      <div>
+        <h2 class="page-header__title">试卷管理</h2>
+        <p class="page-header__desc">组卷、发布与停用，支持 AI 按规则智能组卷</p>
+      </div>
+      <div class="page-header__actions">
+        <el-button :icon="MagicStick" @click="aiDialogVisible = true">AI 智能组卷</el-button>
+        <el-button type="primary" :icon="Plus" @click="router.push('/admin/papers/edit')">手动组卷</el-button>
+      </div>
+    </div>
+
     <el-card shadow="never">
       <div class="filter-bar">
         <el-input v-model="query.name" placeholder="试卷名称" clearable style="width: 200px" @keyup.enter="loadData" />
@@ -9,9 +20,6 @@
           <el-option label="已停用" value="STOPPED" />
         </el-select>
         <el-button type="primary" :icon="Search" @click="loadData">查询</el-button>
-        <div style="flex: 1" />
-        <el-button type="success" :icon="MagicStick" @click="aiDialogVisible = true">AI 智能组卷</el-button>
-        <el-button type="primary" :icon="Plus" @click="router.push('/admin/papers/edit')">手动组卷</el-button>
       </div>
 
       <el-table v-loading="loading" :data="papers" stripe>
@@ -169,7 +177,7 @@ onMounted(async () => {
 }
 
 .rule-label {
-  color: #909399;
+  color: var(--gray-500);
   white-space: nowrap;
 }
 </style>

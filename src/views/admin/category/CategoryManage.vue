@@ -1,10 +1,15 @@
 <template>
-  <el-card shadow="never">
-    <div class="filter-bar">
-      <el-text>共 {{ flatCount }} 个分类</el-text>
-      <div style="flex: 1" />
+  <div class="page-header">
+    <div>
+      <h2 class="page-header__title">分类管理</h2>
+      <p class="page-header__desc">共 {{ flatCount }} 个分类，支持多级嵌套</p>
+    </div>
+    <div class="page-header__actions">
       <el-button type="primary" :icon="Plus" @click="openDialog()">新增分类</el-button>
     </div>
+  </div>
+
+  <el-card shadow="never">
 
     <el-table v-loading="loading" :data="tree" row-key="id" default-expand-all>
       <el-table-column prop="name" label="分类名称" min-width="220" />

@@ -1,0 +1,105 @@
+/**
+ * Element Plus 组件级全局精修
+ *
+ * 只放跨页面复用的组件质感调整；单页特有样式留在各自的 <style scoped>。
+ * 全部通过 EP 官方 CSS 变量或顶层组件类实现，不做深层结构穿透。
+ */
+
+/* ---------- 卡片：细边框 + 极浅阴影，header 更有分量 ---------- */
+.el-card {
+  --el-card-border-radius: var(--radius-lg);
+  --el-card-border-color: var(--gray-200);
+  --el-card-padding: var(--space-5);
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow var(--duration-base) var(--ease-out-expo);
+}
+
+.el-card__header {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-800);
+  padding: var(--space-4) var(--space-5);
+}
+
+/* ---------- 表格：灰底表头、hover 品牌淡染、数字对齐 ---------- */
+.el-table {
+  --el-table-header-bg-color: var(--gray-50);
+  --el-table-header-text-color: var(--gray-600);
+  --el-table-row-hover-bg-color: color-mix(in srgb, var(--brand-600) 4%, white);
+  --el-table-border-color: var(--gray-100);
+  font-variant-numeric: tabular-nums;
+}
+
+.el-table th.el-table__cell {
+  font-weight: 600;
+}
+
+/* ---------- 对话框：大圆角 + header 分隔线 ---------- */
+.el-dialog {
+  --el-dialog-border-radius: var(--radius-lg);
+  --el-dialog-padding-primary: var(--space-5);
+}
+
+.el-dialog__header {
+  border-bottom: 1px solid var(--gray-100);
+  margin-right: 0;
+  padding-bottom: var(--space-4);
+}
+
+.el-dialog__title {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.el-dialog__footer {
+  padding-top: var(--space-4);
+}
+
+/* ---------- 按钮：字重 + 按压反馈 ---------- */
+.el-button {
+  font-weight: 500;
+  transition:
+    background-color var(--duration-fast) var(--ease-out-expo),
+    border-color var(--duration-fast) var(--ease-out-expo),
+    color var(--duration-fast) var(--ease-out-expo),
+    transform var(--duration-fast) var(--ease-out-expo);
+}
+
+.el-button:not(.is-disabled):not(.is-link):not(.is-text):active {
+  transform: translateY(1px);
+}
+
+/* ---------- 标签 ---------- */
+.el-tag {
+  --el-tag-border-radius: var(--radius-sm);
+  font-weight: 500;
+}
+
+/* ---------- 分页 ---------- */
+.el-pagination {
+  --el-pagination-button-bg-color: transparent;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 输入框 / 选择器：focus 更清晰 ---------- */
+.el-input__wrapper,
+.el-textarea__inner,
+.el-select__wrapper {
+  transition: box-shadow var(--duration-fast) var(--ease-out-expo);
+}
+
+/* ---------- 消息 / 通知圆角 ---------- */
+.el-message {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+/* ---------- 下拉菜单 ---------- */
+.el-dropdown-menu {
+  border-radius: var(--radius-md);
+}
+
+/* ---------- 空状态文字 ---------- */
+.el-empty__description p {
+  color: var(--gray-400);
+}

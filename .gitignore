@@ -22,3 +22,29 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# 环境变量（防止后端 API、密钥泄露）
+.env
+.env.local
+.env.*.local
+
+# Vite / TypeScript 缓存
+.vite
+*.tsbuildinfo
+
+# 测试覆盖率
+coverage/
+*.lcov
+
+# 其他包管理器锁文件（项目使用 npm）
+yarn.lock
+pnpm-lock.yaml
+
+# 系统临时文件
+Thumbs.db
+*.swp
+*.bak
+*.tmp
+
+# VS Code 个人调试配置（保留团队共享的 settings.json）
+.vscode/launch.json

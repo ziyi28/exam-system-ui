@@ -17,7 +17,7 @@
             accept=".xls,.xlsx"
             :on-change="handleFileChange"
           >
-            <el-icon :size="48" color="#c0c4cc"><UploadFilled /></el-icon>
+            <el-icon :size="48" class="upload-icon"><UploadFilled /></el-icon>
             <div class="el-upload__text">拖拽 Excel 文件到此处，或 <em>点击选择文件</em></div>
             <template #tip>
               <div class="el-upload__tip">支持 .xls / .xlsx，上传后先预览再确认导入</div>
@@ -98,7 +98,7 @@
               <div v-if="q.choices?.length" class="preview-choices">
                 <div v-for="(c, ci) in q.choices" :key="ci" :class="{ correct: c.isCorrect }">
                   {{ letter(ci) }}. {{ c.content }}
-                  <el-icon v-if="c.isCorrect" color="#67c23a"><Check /></el-icon>
+                  <el-icon v-if="c.isCorrect" class="check-icon"><Check /></el-icon>
                 </div>
               </div>
               <div v-if="q.answer?.answer" class="preview-answer">答案：{{ q.answer.answer }}</div>
@@ -203,9 +203,18 @@ onMounted(async () => {
 }
 
 .preview-item {
-  border: 1px solid #e4e7ed;
-  border-radius: 8px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
   padding: 12px;
+}
+
+.upload-icon {
+  color: var(--gray-400);
+}
+
+.check-icon {
+  color: var(--success);
+  vertical-align: -2px;
 }
 
 .preview-title {
@@ -222,7 +231,7 @@ onMounted(async () => {
 .preview-choices {
   margin-top: 8px;
   padding-left: 8px;
-  color: #606266;
+  color: var(--gray-600);
   font-size: 13px;
   display: flex;
   flex-direction: column;
@@ -230,13 +239,13 @@ onMounted(async () => {
 }
 
 .preview-choices .correct {
-  color: #67c23a;
+  color: var(--success);
   font-weight: 600;
 }
 
 .preview-answer {
   margin-top: 8px;
   font-size: 13px;
-  color: #e6a23c;
+  color: var(--warning);
 }
 </style>

@@ -1,5 +1,16 @@
 <template>
   <div>
+    <div class="page-header">
+      <div>
+        <h2 class="page-header__title">题库管理</h2>
+        <p class="page-header__desc">维护题目、题型与难度，支持批量导入与 AI 出题</p>
+      </div>
+      <div class="page-header__actions">
+        <el-button :icon="MagicStick" @click="router.push('/admin/questions/import')">批量导入 / AI出题</el-button>
+        <el-button type="primary" :icon="Plus" @click="openDialog()">新增题目</el-button>
+      </div>
+    </div>
+
     <el-card shadow="never">
       <!-- 筛选区 -->
       <div class="filter-bar">
@@ -19,9 +30,6 @@
         <el-input v-model="query.keyword" placeholder="题目关键词" clearable style="width: 200px" @keyup.enter="handleSearch" />
         <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
         <el-button :icon="Refresh" @click="handleReset">重置</el-button>
-        <div style="flex: 1" />
-        <el-button type="success" :icon="MagicStick" @click="router.push('/admin/questions/import')">批量导入 / AI出题</el-button>
-        <el-button type="primary" :icon="Plus" @click="openDialog()">新增题目</el-button>
       </div>
 
       <!-- 表格 -->

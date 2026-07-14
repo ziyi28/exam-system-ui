@@ -11,9 +11,6 @@
         :collapse="collapsed"
         :collapse-transition="false"
         router
-        background-color="#001529"
-        text-color="rgba(255,255,255,0.68)"
-        active-text-color="#fff"
         class="sidebar-menu"
       >
         <el-menu-item v-for="item in menuItems" :key="item.path" :index="item.path">
@@ -114,9 +111,12 @@ async function handleCommand(command: string) {
 }
 
 .sidebar {
-  background-color: #001529;
-  transition: width 0.2s;
+  background: #fff;
+  border-right: 1px solid var(--gray-100);
+  transition: width var(--duration-base) var(--ease-out-expo);
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .logo {
@@ -125,19 +125,43 @@ async function handleCommand(command: string) {
   justify-content: center;
   gap: 8px;
   height: 56px;
-  color: #fff;
+  color: var(--brand-600);
   cursor: pointer;
   font-weight: 600;
   font-size: 16px;
   white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.logo-text {
+  color: var(--gray-900);
+  letter-spacing: -0.01em;
 }
 
 .sidebar-menu {
   border-right: none;
+  padding: 4px 8px;
+  --el-menu-item-height: 44px;
+}
+
+.sidebar-menu :deep(.el-menu-item) {
+  border-radius: var(--radius-md);
+  margin-bottom: 2px;
+  color: var(--gray-600);
+  transition:
+    background-color var(--duration-fast) var(--ease-out-expo),
+    color var(--duration-fast) var(--ease-out-expo);
+}
+
+.sidebar-menu :deep(.el-menu-item:hover) {
+  background-color: var(--gray-50);
+  color: var(--gray-800);
 }
 
 .sidebar-menu :deep(.el-menu-item.is-active) {
-  background-color: #409eff;
+  background-color: var(--brand-50);
+  color: var(--brand-600);
+  font-weight: 600;
 }
 
 .header {
@@ -145,7 +169,7 @@ async function handleCommand(command: string) {
   align-items: center;
   justify-content: space-between;
   background: #fff;
-  border-bottom: 1px solid #e4e7ed;
+  border-bottom: 1px solid var(--gray-100);
   height: 56px;
 }
 
@@ -157,7 +181,12 @@ async function handleCommand(command: string) {
 
 .collapse-btn {
   cursor: pointer;
-  color: #606266;
+  color: var(--gray-500);
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.collapse-btn:hover {
+  color: var(--brand-600);
 }
 
 .header-right {
@@ -171,17 +200,18 @@ async function handleCommand(command: string) {
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  color: #303133;
+  color: var(--gray-800);
 }
 
 .avatar {
-  background: #409eff;
+  background: var(--brand-600);
   color: #fff;
+  font-weight: 500;
 }
 
 .main {
-  background: #f5f7fa;
-  padding: 16px;
+  background: var(--gray-50);
+  padding: 20px;
   overflow-y: auto;
 }
 </style>

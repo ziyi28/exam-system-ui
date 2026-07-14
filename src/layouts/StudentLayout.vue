@@ -4,7 +4,7 @@
     <header class="topbar">
       <div class="topbar-inner">
         <div class="brand" @click="router.push('/student/home')">
-          <el-icon :size="26" color="#409eff"><Reading /></el-icon>
+          <el-icon :size="26" class="brand-icon"><Reading /></el-icon>
           <span class="brand-text">智能考试系统</span>
         </div>
         <nav class="nav">
@@ -87,15 +87,17 @@ async function handleCommand(command: string) {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  background: #f5f7fa;
+  background: var(--gray-50);
 }
 
 .topbar {
-  background: #fff;
-  border-bottom: 1px solid #e4e7ed;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--gray-100);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: var(--z-sticky);
 }
 
 .topbar-inner {
@@ -115,32 +117,39 @@ async function handleCommand(command: string) {
   cursor: pointer;
   font-size: 18px;
   font-weight: 700;
-  color: #303133;
+  color: var(--gray-900);
+  letter-spacing: -0.01em;
   white-space: nowrap;
+}
+
+.brand-icon {
+  color: var(--brand-600);
 }
 
 .nav {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   flex: 1;
 }
 
 .nav-item {
   padding: 8px 16px;
-  border-radius: 6px;
-  color: #606266;
+  border-radius: 20px;
+  color: var(--gray-600);
   font-size: 15px;
-  transition: all 0.2s;
+  transition:
+    background-color var(--duration-fast) var(--ease-out-expo),
+    color var(--duration-fast) var(--ease-out-expo);
 }
 
 .nav-item:hover {
-  color: #409eff;
-  background: #ecf5ff;
+  color: var(--brand-600);
+  background: var(--brand-50);
 }
 
 .nav-item.active {
-  color: #409eff;
-  background: #ecf5ff;
+  color: var(--brand-600);
+  background: var(--brand-50);
   font-weight: 600;
 }
 
@@ -158,8 +167,9 @@ async function handleCommand(command: string) {
 }
 
 .avatar {
-  background: #409eff;
+  background: var(--brand-600);
   color: #fff;
+  font-weight: 500;
 }
 
 .content {
@@ -167,13 +177,13 @@ async function handleCommand(command: string) {
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
-  padding: 20px 16px;
+  padding: 20px 16px 28px;
 }
 
 .footer {
   text-align: center;
-  color: #909399;
+  color: var(--gray-400);
   font-size: 13px;
-  padding: 20px 0;
+  padding: 20px 0 24px;
 }
 </style>
