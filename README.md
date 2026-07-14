@@ -8,15 +8,13 @@
 
 ## 系统截图
 
-> 下方截图仅供本地预览，图片文件未推送到 GitHub（已在 `.gitignore` 中忽略）。
-
 | 登录 | 智能出题 |
 | --- | --- |
-| ![登录](./登录.png) | ![智能出题](./智能出题.png) |
+| ![登录](./docs/screenshots/login.png) | ![智能出题](./docs/screenshots/ai-question.png) |
 
 | 管理端 | 学生端 |
 | --- | --- |
-| ![管理端](./管理端.png) | ![学生端](./学生端.png) |
+| ![管理端](./docs/screenshots/admin.png) | ![学生端](./docs/screenshots/student.png) |
 
 ---
 
