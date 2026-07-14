@@ -48,6 +48,3 @@ Thumbs.db
 
 # VS Code 个人调试配置（保留团队共享的 settings.json）
 .vscode/launch.json
-
-# 项目根目录的系统截图（仅本地 README 预览使用，不推送到 GitHub）
-/*.png
