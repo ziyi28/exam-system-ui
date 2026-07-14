@@ -152,37 +152,70 @@ async function handleRegister() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #1f6feb 0%, #6e40c9 100%);
+  background-color: var(--gray-50);
+  /* 极淡圆点纹理，打破纯平背景 */
+  background-image: radial-gradient(var(--gray-300) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 .login-panel {
   display: flex;
   width: 860px;
   min-height: 480px;
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-lg);
 }
 
 .brand-side {
+  position: relative;
   flex: 1;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(8px);
+  /* 同色相 subtle 渐变：brand-800 → brand-700，禁跨色相 */
+  background: linear-gradient(160deg, var(--brand-800) 0%, var(--brand-700) 100%);
   color: #fff;
   padding: 48px 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow: hidden;
+}
+
+/* 低透明度同心圆装饰 */
+.brand-side::before {
+  content: '';
+  position: absolute;
+  right: -120px;
+  top: -120px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+}
+
+.brand-side::after {
+  content: '';
+  position: absolute;
+  right: -60px;
+  top: -60px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  pointer-events: none;
 }
 
 .brand-side h1 {
   margin: 16px 0 8px;
   font-size: 28px;
+  color: #fff;
+  letter-spacing: -0.02em;
 }
 
 .brand-side p {
   margin: 0 0 32px;
-  opacity: 0.85;
+  opacity: 0.78;
 }
 
 .feature-list {
@@ -199,7 +232,7 @@ async function handleRegister() {
   align-items: center;
   gap: 10px;
   font-size: 14px;
-  opacity: 0.9;
+  opacity: 0.88;
 }
 
 .form-side {
