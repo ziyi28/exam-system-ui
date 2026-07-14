@@ -6,6 +6,18 @@
 
 ---
 
+## 系统截图
+
+| 登录 | 智能出题 |
+| --- | --- |
+| ![登录](./docs/screenshots/login.png) | ![智能出题](./docs/screenshots/ai-question.png) |
+
+| 管理端 | 学生端 |
+| --- | --- |
+| ![管理端](./docs/screenshots/admin.png) | ![学生端](./docs/screenshots/student.png) |
+
+---
+
 ## 技术栈
 
 | 类别 | 技术 | 版本 |
