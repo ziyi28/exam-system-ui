@@ -30,6 +30,10 @@ export function deleteQuestion(id: number) {
   return del(`/api/questions/${id}`)
 }
 
-export function getPopularQuestions(limit = 10) {
-  return get<Question[]>('/api/questions/popular', { limit })
+export function getPopularQuestions(size = 10) {
+  return get<Question[]>('/api/questions/popular', { size })
+}
+
+export function refreshPopularQuestions() {
+  return post<number>('/api/questions/popular/refresh')
 }
