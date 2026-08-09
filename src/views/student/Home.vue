@@ -74,25 +74,30 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { getActiveBanners } from '@/api/banner'
 import { getActiveNotices } from '@/api/notice'
 import { getPopularVideos } from '@/api/video'
+import { useUserStore } from '@/stores/user'
 import type { Banner, Notice, Video } from '@/types'
 
 const router = useRouter()
+const userStore = useUserStore()
 const banners = ref<Banner[]>([])
 const notices = ref<Notice[]>([])
 const videos = ref<Video[]>([])
 const activeNotice = ref<Notice | null>(null)
 
-const quickEntries = [
+const quickEntries = computed(() => [
   { title: '在线考试', desc: '进入已发布的考试', path: '/student/exams', icon: 'EditPen', theme: 'brand' },
   { title: '我的成绩', desc: '查看考试记录与评语', path: '/student/records', icon: 'Medal', theme: 'success' },
+  ...(userStore.role === 'STUDENT'
+    ? [{ title: '学习资料库', desc: '阅读资料并向 AI 提问', path: '/student/knowledge', icon: 'Collection', theme: 'brand' }]
+    : []),
   { title: '排行榜', desc: '看看谁是学霸', path: '/student/ranking', icon: 'TrendCharts', theme: 'warning' },
   { title: '视频学习', desc: '在线课程随时学', path: '/student/videos', icon: 'VideoPlay', theme: 'danger' },
-]
+])
 
 onMounted(async () => {
   // 三块内容互不阻塞

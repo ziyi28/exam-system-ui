@@ -54,6 +54,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'exam/:recordId', name: 'ExamTaking', component: () => import('@/views/student/ExamTaking.vue'), meta: { title: '答题中' } },
       { path: 'result/:recordId', name: 'ExamResult', component: () => import('@/views/student/ExamResult.vue'), meta: { title: '考试结果' } },
       { path: 'records', name: 'MyRecords', component: () => import('@/views/student/MyRecords.vue'), meta: { title: '我的成绩' } },
+      { path: 'knowledge', name: 'StudentKnowledgeLibrary', component: () => import('@/views/student/KnowledgeLibrary.vue'), meta: { title: '学习资料库', roles: ['STUDENT'] } },
       { path: 'ranking', name: 'StudentRanking', component: () => import('@/views/student/Ranking.vue'), meta: { title: '排行榜' } },
       { path: 'videos', name: 'StudentVideoList', component: () => import('@/views/student/video/VideoList.vue'), meta: { title: '视频学习' } },
       { path: 'videos/:id', name: 'VideoPlay', component: () => import('@/views/student/video/VideoPlay.vue'), meta: { title: '视频播放' } },

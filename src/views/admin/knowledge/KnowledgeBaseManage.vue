@@ -38,9 +38,14 @@
             >
               <div class="knowledge-base-title-row">
                 <span class="knowledge-base-name">{{ item.name }}</span>
-                <el-tag :type="knowledgeBaseStatusTag(item.status)" size="small" effect="plain">
-                  {{ knowledgeBaseStatusText(item.status) }}
-                </el-tag>
+                <div class="knowledge-base-tags">
+                  <el-tag :type="item.published ? 'success' : 'info'" size="small" effect="plain">
+                    {{ item.published ? '已发布' : '未发布' }}
+                  </el-tag>
+                  <el-tag :type="knowledgeBaseStatusTag(item.status)" size="small" effect="plain">
+                    {{ knowledgeBaseStatusText(item.status) }}
+                  </el-tag>
+                </div>
               </div>
               <p class="knowledge-base-description">{{ item.description || '暂无描述' }}</p>
               <div class="knowledge-base-meta">
@@ -67,6 +72,14 @@
                     <el-icon class="spin-icon"><Loading /></el-icon>
                     索引处理中
                   </el-tag>
+                  <el-button
+                    :type="selectedKnowledgeBase.published ? 'warning' : 'success'"
+                    plain
+                    :loading="publicationUpdatingId === selectedKnowledgeBase.id"
+                    @click="handlePublicationChange(selectedKnowledgeBase)"
+                  >
+                    {{ selectedKnowledgeBase.published ? '下架' : '发布' }}
+                  </el-button>
                   <el-button :icon="Refresh" :loading="documentLoading" @click="loadDocuments()">刷新状态</el-button>
                   <el-button type="primary" :icon="Upload" @click="openUploadDialog">上传文档</el-button>
                 </div>
@@ -118,8 +131,16 @@
               <el-table-column label="更新时间" width="170">
                 <template #default="{ row }">{{ formatDateTime(row.updatedAt || row.createdAt) }}</template>
               </el-table-column>
-              <el-table-column label="操作" width="130" fixed="right">
+              <el-table-column label="操作" width="180" fixed="right">
                 <template #default="{ row }">
+                  <el-button
+                    v-if="isDocumentReady(row)"
+                    link
+                    type="primary"
+                    @click="openDocumentPreview(row)"
+                  >
+                    预览
+                  </el-button>
                   <el-button
                     v-if="isDocumentFailed(row)"
                     link
@@ -298,6 +319,14 @@
         </el-button>
       </template>
     </el-dialog>
+
+    <DocumentPreviewDrawer
+      v-model="previewVisible"
+      :title="previewDocument ? `预览 · ${previewDocument.fileName}` : '文档预览'"
+      :loading="previewLoading"
+      :preview="documentPreview"
+      @page-change="loadDocumentPreview"
+    />
   </div>
 </template>
 
@@ -312,6 +341,7 @@ import {
   type UploadInstance,
 } from 'element-plus'
 import { Files, Loading, Plus, Refresh, Search, Upload, UploadFilled } from '@element-plus/icons-vue'
+import DocumentPreviewDrawer from '@/components/knowledge/DocumentPreviewDrawer.vue'
 import {
   answerWithRag,
   createKnowledgeBase,
@@ -319,10 +349,18 @@ import {
   deleteKnowledgeDocument,
   listKnowledgeBases,
   listKnowledgeDocuments,
+  previewKnowledgeDocument,
   retryKnowledgeDocument,
+  updateKnowledgeBasePublication,
   uploadKnowledgeDocument,
 } from '@/api/knowledge'
-import type { KnowledgeBase, KnowledgeDocument, RagAnswer, RagCitation } from '@/types'
+import type {
+  KnowledgeBase,
+  KnowledgeDocument,
+  KnowledgeDocumentPreview,
+  RagAnswer,
+  RagCitation,
+} from '@/types'
 
 type TagType = 'primary' | 'success' | 'warning' | 'danger' | 'info'
 
@@ -342,6 +380,7 @@ const documentLoading = ref(false)
 const documents = ref<KnowledgeDocument[]>([])
 const retryingDocumentId = ref<number>()
 const deletingDocumentId = ref<number>()
+const publicationUpdatingId = ref<number>()
 const hasActiveDocuments = computed(() => documents.value.some(isDocumentActive))
 const pollingExhausted = ref(false)
 let documentPollTimer: number | undefined
@@ -508,8 +547,33 @@ function selectKnowledgeBase(item: KnowledgeBase) {
   if (selectedKnowledgeBaseId.value === item.id) return
   selectedKnowledgeBaseId.value = item.id
   documents.value = []
+  previewVisible.value = false
   stopDocumentPolling(true)
   loadDocuments().catch(() => {})
+}
+
+async function handlePublicationChange(item: KnowledgeBase) {
+  const published = !item.published
+  const action = published ? '发布' : '下架'
+  await ElMessageBox.confirm(
+    published
+      ? `发布「${item.name}」后，学生可浏览其中已就绪的文档并基于资料提问。确定发布吗？`
+      : `下架「${item.name}」后，学生将无法继续浏览或基于该知识库提问。确定下架吗？`,
+    `${action}知识库`,
+    { type: 'warning', confirmButtonText: action },
+  )
+  publicationUpdatingId.value = item.id
+  try {
+    const updated = await updateKnowledgeBasePublication(item.id, published)
+    knowledgeBases.value = knowledgeBases.value.map((knowledgeBase) =>
+      knowledgeBase.id === item.id
+        ? { ...knowledgeBase, ...updated, published: updated?.published ?? published }
+        : knowledgeBase,
+    )
+    ElMessage.success(`知识库已${action}`)
+  } finally {
+    publicationUpdatingId.value = undefined
+  }
 }
 
 const createDialogVisible = ref(false)
@@ -591,26 +655,35 @@ async function handleUploadDocument() {
     ElMessage.warning('请选择要上传的文档')
     return
   }
+  const wasPublished = Boolean(selectedKnowledgeBase.value?.published)
   uploadingDocument.value = true
   uploadProgress.value = 0
   try {
     await uploadKnowledgeDocument(knowledgeBaseId, file, (percent) => {
       uploadProgress.value = percent
     })
-    ElMessage.success('文档上传成功，后台正在建立索引')
     uploadDialogVisible.value = false
     await loadKnowledgeBaseData(knowledgeBaseId)
+    const automaticallyUnpublished = wasPublished && !selectedKnowledgeBase.value?.published
+    ElMessage.success(automaticallyUnpublished
+      ? '文档已提交，知识库因内容变化自动下架；请在索引完成并预览后重新发布'
+      : '文档上传成功，后台正在建立索引')
   } finally {
     uploadingDocument.value = false
   }
 }
 
 async function handleRetryDocument(document: KnowledgeDocument) {
+  const knowledgeBaseId = selectedKnowledgeBaseId.value
+  const wasPublished = Boolean(selectedKnowledgeBase.value?.published)
   retryingDocumentId.value = document.id
   try {
     await retryKnowledgeDocument(document.id)
-    ElMessage.success('已重新提交索引任务')
-    await loadDocuments()
+    await loadKnowledgeBaseData(knowledgeBaseId)
+    const automaticallyUnpublished = wasPublished && !selectedKnowledgeBase.value?.published
+    ElMessage.success(automaticallyUnpublished
+      ? '已重新提交索引，知识库因内容变化自动下架；请预览后重新发布'
+      : '已重新提交索引任务')
   } finally {
     retryingDocumentId.value = undefined
   }
@@ -622,13 +695,53 @@ async function handleDeleteDocument(document: KnowledgeDocument) {
     confirmButtonText: '删除',
     confirmButtonClass: 'el-button--danger',
   })
+  const knowledgeBaseId = selectedKnowledgeBaseId.value
+  const wasPublished = Boolean(selectedKnowledgeBase.value?.published)
   deletingDocumentId.value = document.id
   try {
     await deleteKnowledgeDocument(document.id)
-    ElMessage.success('文档已删除')
-    await loadKnowledgeBaseData(selectedKnowledgeBaseId.value)
+    if (previewDocument.value?.id === document.id) previewVisible.value = false
+    await loadKnowledgeBaseData(knowledgeBaseId)
+    const automaticallyUnpublished = wasPublished && !selectedKnowledgeBase.value?.published
+    ElMessage.success(automaticallyUnpublished
+      ? '文档已删除，知识库已自动下架；请确认剩余内容后重新发布'
+      : '文档已删除')
   } finally {
     deletingDocumentId.value = undefined
+  }
+}
+
+const previewVisible = ref(false)
+const previewLoading = ref(false)
+const previewDocument = ref<KnowledgeDocument | null>(null)
+const documentPreview = ref<KnowledgeDocumentPreview | null>(null)
+const PREVIEW_PAGE_SIZE = 20
+let previewRequestSequence = 0
+
+function openDocumentPreview(document: KnowledgeDocument) {
+  previewDocument.value = document
+  documentPreview.value = null
+  previewVisible.value = true
+  loadDocumentPreview(1).catch(() => {})
+}
+
+async function loadDocumentPreview(page: number) {
+  const knowledgeBaseId = selectedKnowledgeBaseId.value
+  const document = previewDocument.value
+  if (!knowledgeBaseId || !document) return
+  const requestSequence = ++previewRequestSequence
+  previewLoading.value = true
+  try {
+    const preview = await previewKnowledgeDocument(knowledgeBaseId, document.id, page, PREVIEW_PAGE_SIZE)
+    if (
+      requestSequence === previewRequestSequence
+      && selectedKnowledgeBaseId.value === knowledgeBaseId
+      && previewDocument.value?.id === document.id
+    ) {
+      documentPreview.value = { ...preview, chunks: preview.chunks ?? [] }
+    }
+  } finally {
+    if (requestSequence === previewRequestSequence) previewLoading.value = false
   }
 }
 
@@ -725,6 +838,7 @@ onBeforeUnmount(() => {
 .card-header,
 .card-actions,
 .knowledge-base-title-row,
+.knowledge-base-tags,
 .knowledge-base-meta,
 .rag-actions,
 .rag-answer-header,
@@ -745,6 +859,7 @@ onBeforeUnmount(() => {
 
 .card-actions,
 .knowledge-base-title-row,
+.knowledge-base-tags,
 .knowledge-base-meta,
 .citation-tags,
 .rag-result-meta {
@@ -797,6 +912,10 @@ onBeforeUnmount(() => {
 
 .knowledge-base-title-row {
   justify-content: space-between;
+}
+
+.knowledge-base-tags {
+  flex-shrink: 0;
 }
 
 .knowledge-base-name {

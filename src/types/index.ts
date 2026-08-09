@@ -263,6 +263,8 @@ export interface KnowledgeBase {
   ownerId?: number
   ownerName?: string
   status?: string
+  published: boolean
+  publishedAt?: string
   documentCount?: number
   createdAt?: string
   updatedAt?: string
@@ -271,6 +273,15 @@ export interface KnowledgeBase {
 export interface KnowledgeBaseCreateForm {
   name: string
   description?: string
+}
+
+/** 学生端已发布知识库的最小只读视图。 */
+export interface StudentKnowledgeBase {
+  id: number
+  name: string
+  description?: string
+  publishedAt?: string
+  documentCount?: number
 }
 
 export interface KnowledgeDocument {
@@ -288,6 +299,26 @@ export interface KnowledgeDocument {
   jobId?: string
   createdAt?: string
   updatedAt?: string
+}
+
+export interface KnowledgeDocumentPreviewChunk {
+  chunkId: string | number
+  chunkIndex: number
+  text: string
+  pageStart?: number
+  pageEnd?: number
+  sectionPath?: string
+}
+
+export interface KnowledgeDocumentPreview {
+  documentId: number
+  fileName: string
+  chunkCount: number
+  /** 1-based 页码 */
+  page: number
+  pageSize: number
+  total: number
+  chunks: KnowledgeDocumentPreviewChunk[]
 }
 
 export interface RagCitation {
