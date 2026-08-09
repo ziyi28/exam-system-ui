@@ -254,6 +254,97 @@ export interface Video {
   createdAt?: string
 }
 
+// ==================== AI 知识库 / RAG ====================
+
+export interface KnowledgeBase {
+  id: number
+  name: string
+  description?: string
+  ownerId?: number
+  ownerName?: string
+  status?: string
+  published: boolean
+  publishedAt?: string
+  documentCount?: number
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface KnowledgeBaseCreateForm {
+  name: string
+  description?: string
+}
+
+/** 学生端已发布知识库的最小只读视图。 */
+export interface StudentKnowledgeBase {
+  id: number
+  name: string
+  description?: string
+  publishedAt?: string
+  documentCount?: number
+}
+
+export interface KnowledgeDocument {
+  id: number
+  knowledgeBaseId: number
+  fileName: string
+  mimeType?: string
+  sizeBytes?: number
+  sha256?: string
+  /** 后端索引任务状态，例如 PENDING / PROCESSING / READY / FAILED */
+  status: string
+  progress?: number
+  chunkCount?: number
+  errorMessage?: string
+  jobId?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface KnowledgeDocumentPreviewChunk {
+  chunkId: string | number
+  chunkIndex: number
+  text: string
+  pageStart?: number
+  pageEnd?: number
+  sectionPath?: string
+}
+
+export interface KnowledgeDocumentPreview {
+  documentId: number
+  fileName: string
+  chunkCount: number
+  /** 1-based 页码 */
+  page: number
+  pageSize: number
+  total: number
+  chunks: KnowledgeDocumentPreviewChunk[]
+}
+
+export interface RagCitation {
+  documentId: number
+  documentName: string
+  chunkId?: string | number
+  quote: string
+  pageStart?: number
+  pageEnd?: number
+  sectionPath?: string
+  score?: number
+}
+
+export interface RagAnswerForm {
+  knowledgeBaseIds: number[]
+  question: string
+}
+
+export interface RagAnswer {
+  answer: string
+  evidenceStatus: string
+  citations: RagCitation[]
+  model?: string
+  latencyMs?: number
+}
+
 // ==================== 统计 ====================
 
 export interface Stats {

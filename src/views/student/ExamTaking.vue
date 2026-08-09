@@ -197,11 +197,12 @@ async function handleSubmit(auto: boolean) {
     )
   }
   submitting.value = true
-  const loadingMsg = ElMessage({ message: 'AI 正在批阅试卷，请稍候…', type: 'info', duration: 0 })
+  // 交卷后 AI 批阅改为后台异步执行，这里只需等待保存答案，结果页会自动轮询批阅进度
+  const loadingMsg = ElMessage({ message: '正在提交答案…', type: 'info', duration: 0 })
   try {
     const answerList = questions.value.map((q) => ({ questionId: q.id!, userAnswer: answers[q.id!] ?? '' }))
     await submitAnswers(recordId, answerList)
-    ElMessage.success('交卷成功')
+    ElMessage.success('交卷成功，AI 正在批阅中')
     router.replace(`/student/result/${recordId}`)
   } finally {
     loadingMsg.close()

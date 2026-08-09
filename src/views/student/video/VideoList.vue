@@ -43,7 +43,15 @@
     </div>
 
     <!-- 投稿对话框 -->
-    <el-dialog v-model="submitVisible" title="视频投稿（需管理员审核）" width="540px" destroy-on-close>
+    <el-dialog
+      v-model="submitVisible"
+      title="视频投稿（需管理员审核）"
+      width="540px"
+      destroy-on-close
+      :close-on-click-modal="!submitting"
+      :close-on-press-escape="!submitting"
+      :show-close="!submitting"
+    >
       <el-form :model="submitForm" label-width="90px">
         <el-form-item label="标题" required>
           <el-input v-model="submitForm.title" placeholder="视频标题" />
@@ -70,8 +78,14 @@
           </el-upload>
         </el-form-item>
       </el-form>
+      <div v-if="submitting" class="upload-progress">
+        <el-progress :percentage="uploadPercent" :stroke-width="16" text-inside />
+        <p class="upload-tip">
+          {{ uploadPercent >= 100 ? '已接收，服务器正在转存到云存储，请耐心等待，勿关闭页面…' : '正在上传到服务器…' }}
+        </p>
+      </div>
       <template #footer>
-        <el-button @click="submitVisible = false">取消</el-button>
+        <el-button :disabled="submitting" @click="submitVisible = false">取消</el-button>
         <el-button type="primary" :loading="submitting" @click="handleSubmitVideo">提交投稿</el-button>
       </template>
     </el-dialog>
@@ -114,6 +128,7 @@ function handleSearch() {
 // ---- 投稿 ----
 const submitVisible = ref(false)
 const submitting = ref(false)
+const uploadPercent = ref(0)
 const videoFile = ref<File | null>(null)
 const coverFile = ref<File | null>(null)
 const submitForm = reactive({ title: '', description: '', categoryId: undefined as number | undefined, tags: '' })
@@ -124,16 +139,20 @@ async function handleSubmitVideo() {
     return
   }
   submitting.value = true
+  uploadPercent.value = 0
   try {
-    await submitVideo({
-      title: submitForm.title,
-      description: submitForm.description,
-      categoryId: submitForm.categoryId,
-      tags: submitForm.tags,
-      duration: 0,
-      videoFile: videoFile.value,
-      coverFile: coverFile.value ?? undefined,
-    })
+    await submitVideo(
+      {
+        title: submitForm.title,
+        description: submitForm.description,
+        categoryId: submitForm.categoryId,
+        tags: submitForm.tags,
+        duration: 0,
+        videoFile: videoFile.value,
+        coverFile: coverFile.value ?? undefined,
+      },
+      (p) => (uploadPercent.value = p),
+    )
     ElMessage.success('投稿成功，请等待管理员审核')
     submitVisible.value = false
     videoFile.value = null
@@ -151,6 +170,16 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.upload-progress {
+  margin-top: 8px;
+}
+
+.upload-tip {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--gray-500);
+}
+
 .page-title {
   display: flex;
   align-items: center;

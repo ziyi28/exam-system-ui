@@ -9,7 +9,7 @@
         </div>
         <nav class="nav">
           <router-link
-            v-for="item in navItems"
+            v-for="item in visibleNavItems"
             :key="item.path"
             :to="item.path"
             class="nav-item"
@@ -63,9 +63,17 @@ const navItems = [
   { path: '/student/home', title: '首页' },
   { path: '/student/exams', title: '在线考试' },
   { path: '/student/records', title: '我的成绩' },
+  { path: '/student/knowledge', title: '学习资料库' },
   { path: '/student/ranking', title: '排行榜' },
   { path: '/student/videos', title: '视频学习' },
 ]
+
+/** 作答页不暴露资料库入口；直接 URL 绕过仍由学生 API 的后端 403 拦截。 */
+const isTakingExam = computed(() => route.name === 'ExamTaking')
+const visibleNavItems = computed(() => navItems.filter((item) => {
+  if (item.path !== '/student/knowledge') return true
+  return userStore.role === 'STUDENT' && !isTakingExam.value
+}))
 
 const avatarText = computed(() => (userStore.userInfo?.realName || userStore.userInfo?.username || '?').charAt(0))
 

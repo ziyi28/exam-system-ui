@@ -4,6 +4,42 @@ import router from '@/router'
 import { useUserStore } from '@/stores/user'
 import type { Result } from '@/types'
 
+export interface ApiRequestError extends Error {
+  status?: number
+}
+
+export interface ApiRequestConfig extends AxiosRequestConfig {
+  /** 页面会自行展示错误状态时，关闭全局消息提示；401 登录失效仍会统一处理。 */
+  suppressGlobalError?: boolean
+}
+
+function createApiError(message: string, status?: number): ApiRequestError {
+  const error = new Error(message) as ApiRequestError
+  error.status = status
+  return error
+}
+
+export function getApiErrorStatus(error: unknown) {
+  if (!error || typeof error !== 'object') return undefined
+  const directStatus = Number((error as ApiRequestError).status)
+  if (Number.isFinite(directStatus)) return directStatus
+  const responseStatus = Number((error as { response?: { status?: number } }).response?.status)
+  return Number.isFinite(responseStatus) ? responseStatus : undefined
+}
+
+export function getApiErrorMessage(error: unknown, fallback = '请求失败') {
+  return error instanceof Error && error.message ? error.message : fallback
+}
+
+function handleUnauthorized(message: string) {
+  const userStore = useUserStore()
+  userStore.clearLogin()
+  if (router.currentRoute.value.path !== '/login') {
+    ElMessage.warning(message)
+    router.push({ path: '/login', query: { redirect: router.currentRoute.value.fullPath } })
+  }
+}
+
 /**
  * Axios 实例 - 统一处理 token 携带与业务状态码
  *
@@ -28,6 +64,7 @@ instance.interceptors.request.use((config) => {
 instance.interceptors.response.use(
   (response) => {
     const result = response.data as Result
+    const suppressGlobalError = (response.config as ApiRequestConfig).suppressGlobalError === true
     // 文件流（Excel 模板下载等）直接透传
     if (response.config.responseType === 'blob') {
       return response
@@ -36,40 +73,64 @@ instance.interceptors.response.use(
       return result.data as never
     }
     if (result.code === 401) {
-      const userStore = useUserStore()
-      userStore.clearLogin()
-      if (router.currentRoute.value.path !== '/login') {
-        ElMessage.warning(result.message || '登录已过期，请重新登录')
-        router.push({ path: '/login', query: { redirect: router.currentRoute.value.fullPath } })
-      }
-      return Promise.reject(new Error(result.message))
+      const message = result.message || '登录已过期，请重新登录'
+      handleUnauthorized(message)
+      return Promise.reject(createApiError(message, result.code))
     }
-    ElMessage.error(result.message || '请求失败')
-    return Promise.reject(new Error(result.message))
+    const message = result.message || '请求失败'
+    if (!suppressGlobalError) {
+      if (result.code === 403) {
+        ElMessage.warning(message)
+      } else {
+        ElMessage.error(message)
+      }
+    }
+    return Promise.reject(createApiError(message, result.code))
   },
   (error) => {
-    ElMessage.error(error.message === 'Network Error' ? '网络错误，请检查后端服务是否启动' : (error.message || '请求异常'))
-    return Promise.reject(error)
+    const responseData = error.response?.data && typeof error.response.data === 'object'
+      ? error.response.data as Partial<Result>
+      : undefined
+    const statusValue = Number(responseData?.code ?? error.response?.status)
+    const status = Number.isFinite(statusValue) ? statusValue : undefined
+    const message = responseData?.message
+      || (error.message === 'Network Error' ? '网络错误，请检查后端服务是否启动' : (error.message || '请求异常'))
+
+    const suppressGlobalError = (error.config as ApiRequestConfig | undefined)?.suppressGlobalError === true
+    if (status === 401) {
+      handleUnauthorized(message)
+    } else if (!suppressGlobalError) {
+      if (status === 403) {
+        ElMessage.warning(message)
+      } else {
+        ElMessage.error(message)
+      }
+    }
+
+    const apiError = error as ApiRequestError
+    apiError.message = message
+    apiError.status = status
+    return Promise.reject(apiError)
   },
 )
 
 /**
  * 类型化请求封装：resolve 出的直接是 Result.data
  */
-function request<T = void>(config: AxiosRequestConfig): Promise<T> {
+function request<T = void>(config: ApiRequestConfig): Promise<T> {
   return instance.request(config)
 }
 
-export function get<T = void>(url: string, params?: Record<string, unknown>): Promise<T> {
-  return request<T>({ method: 'get', url, params })
+export function get<T = void>(url: string, params?: Record<string, unknown>, config?: ApiRequestConfig): Promise<T> {
+  return request<T>({ ...config, method: 'get', url, params })
 }
 
-export function post<T = void>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
-  return request<T>({ method: 'post', url, data, ...config })
+export function post<T = void>(url: string, data?: unknown, config?: ApiRequestConfig): Promise<T> {
+  return request<T>({ ...config, method: 'post', url, data })
 }
 
-export function put<T = void>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
-  return request<T>({ method: 'put', url, data, ...config })
+export function put<T = void>(url: string, data?: unknown, config?: ApiRequestConfig): Promise<T> {
+  return request<T>({ ...config, method: 'put', url, data })
 }
 
 export function del<T = void>(url: string, params?: Record<string, unknown>): Promise<T> {

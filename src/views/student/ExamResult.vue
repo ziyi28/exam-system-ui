@@ -31,7 +31,7 @@
         <!-- AI 总评 -->
         <el-alert v-if="record.status === '进行中'" type="warning" :closable="false" show-icon title="考试仍在进行中" style="margin-top: 16px" />
         <el-alert v-else-if="record.status === '已完成'" type="info" :closable="false" show-icon style="margin-top: 16px">
-          <template #title>试卷已提交，AI 批阅中，稍后刷新查看成绩与评语</template>
+          <template #title>试卷已提交，AI 正在批阅中，页面会自动刷新，无需手动操作…</template>
         </el-alert>
         <div v-else-if="summary" class="ai-summary">
           <div class="summary-title"><el-icon><MagicStick /></el-icon> AI 智能总评</div>
@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Check, MagicStick } from '@element-plus/icons-vue'
 import { getExamDetail } from '@/api/exam'
@@ -137,12 +137,39 @@ function correctTag(isCorrect?: number): 'success' | 'danger' | 'warning' | 'inf
   return ({ 0: 'danger', 1: 'success', 2: 'warning' }[isCorrect ?? -1] ?? 'info') as never
 }
 
+// ---- 批阅中自动轮询：交卷后 AI 批阅是异步的，"已完成"状态需要轮询直到变成"已批阅" ----
+let pollTimer: number | undefined
+
+function schedulePoll() {
+  if (pollTimer != null) return
+  pollTimer = window.setTimeout(async () => {
+    pollTimer = undefined
+    try {
+      record.value = await getExamDetail(Number(route.params.recordId))
+    } catch {
+      // 轮询失败静默重试，不打断页面展示
+    }
+    if (record.value?.status === '已完成') {
+      schedulePoll()
+    }
+  }, 3000)
+}
+
 onMounted(async () => {
   loading.value = true
   try {
     record.value = await getExamDetail(Number(route.params.recordId))
   } finally {
     loading.value = false
+  }
+  if (record.value?.status === '已完成') {
+    schedulePoll()
+  }
+})
+
+onBeforeUnmount(() => {
+  if (pollTimer != null) {
+    window.clearTimeout(pollTimer)
   }
 })
 </script>
