@@ -28,6 +28,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'questions', name: 'QuestionList', component: () => import('@/views/admin/question/QuestionList.vue'), meta: { title: '题库管理', icon: 'Document' } },
       { path: 'questions/import', name: 'QuestionImport', component: () => import('@/views/admin/question/QuestionImport.vue'), meta: { title: '批量导入 / AI出题', icon: 'MagicStick' } },
       { path: 'questions/hot', name: 'HotQuestions', component: () => import('@/views/admin/question/HotQuestions.vue'), meta: { title: '热题看板', icon: 'TrendCharts' } },
+      { path: 'knowledge', name: 'KnowledgeBaseManage', component: () => import('@/views/admin/knowledge/KnowledgeBaseManage.vue'), meta: { title: 'AI 知识库', icon: 'Collection', roles: ['ADMIN', 'TEACHER'] } },
       { path: 'categories', name: 'CategoryManage', component: () => import('@/views/admin/category/CategoryManage.vue'), meta: { title: '分类管理', icon: 'FolderOpened' } },
       { path: 'papers', name: 'PaperList', component: () => import('@/views/admin/paper/PaperList.vue'), meta: { title: '试卷管理', icon: 'Notebook' } },
       { path: 'papers/edit', name: 'PaperEdit', component: () => import('@/views/admin/paper/PaperEdit.vue'), meta: { title: '组卷', hidden: true } },

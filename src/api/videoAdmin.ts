@@ -13,17 +13,20 @@ export function pageVideosForAdmin(params: {
   return get<MpPage<Video>>('/api/admin/videos', params)
 }
 
-/** 管理员上传视频（直接发布） */
-export function uploadVideo(data: {
-  title: string
-  description?: string
-  categoryId: number
-  tags?: string
-  uploaderName: string
-  duration?: number
-  videoFile: File
-  coverFile?: File
-}) {
+/** 管理员上传视频（直接发布）；onProgress 上报“浏览器→服务器”的上传百分比 */
+export function uploadVideo(
+  data: {
+    title: string
+    description?: string
+    categoryId: number
+    tags?: string
+    uploaderName: string
+    duration?: number
+    videoFile: File
+    coverFile?: File
+  },
+  onProgress?: (percent: number) => void,
+) {
   const formData = new FormData()
   formData.append('title', data.title)
   if (data.description) formData.append('description', data.description)
@@ -33,7 +36,13 @@ export function uploadVideo(data: {
   if (data.duration != null) formData.append('duration', String(data.duration))
   formData.append('videoFile', data.videoFile)
   if (data.coverFile) formData.append('coverFile', data.coverFile)
-  return post('/api/admin/videos/upload', formData)
+  // 大视频上传：关闭超时（覆盖全局 120s），并上报上传进度
+  return post('/api/admin/videos/upload', formData, {
+    timeout: 0,
+    onUploadProgress: (e) => {
+      if (onProgress && e.total) onProgress(Math.round((e.loaded * 100) / e.total))
+    },
+  })
 }
 
 /** 审核视频：status 1-通过 2-拒绝，拒绝时需填 reason */

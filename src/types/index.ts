@@ -254,6 +254,66 @@ export interface Video {
   createdAt?: string
 }
 
+// ==================== AI 知识库 / RAG ====================
+
+export interface KnowledgeBase {
+  id: number
+  name: string
+  description?: string
+  ownerId?: number
+  ownerName?: string
+  status?: string
+  documentCount?: number
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface KnowledgeBaseCreateForm {
+  name: string
+  description?: string
+}
+
+export interface KnowledgeDocument {
+  id: number
+  knowledgeBaseId: number
+  fileName: string
+  mimeType?: string
+  sizeBytes?: number
+  sha256?: string
+  /** 后端索引任务状态，例如 PENDING / PROCESSING / READY / FAILED */
+  status: string
+  progress?: number
+  chunkCount?: number
+  errorMessage?: string
+  jobId?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface RagCitation {
+  documentId: number
+  documentName: string
+  chunkId?: string | number
+  quote: string
+  pageStart?: number
+  pageEnd?: number
+  sectionPath?: string
+  score?: number
+}
+
+export interface RagAnswerForm {
+  knowledgeBaseIds: number[]
+  question: string
+}
+
+export interface RagAnswer {
+  answer: string
+  evidenceStatus: string
+  citations: RagCitation[]
+  model?: string
+  latencyMs?: number
+}
+
 // ==================== 统计 ====================
 
 export interface Stats {

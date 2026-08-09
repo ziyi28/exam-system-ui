@@ -68,7 +68,15 @@
   </el-card>
 
   <!-- 上传视频对话框 -->
-  <el-dialog v-model="uploadVisible" title="上传视频（直接发布）" width="540px" destroy-on-close>
+  <el-dialog
+    v-model="uploadVisible"
+    title="上传视频（直接发布）"
+    width="540px"
+    destroy-on-close
+    :close-on-click-modal="!uploading"
+    :close-on-press-escape="!uploading"
+    :show-close="!uploading"
+  >
     <el-form :model="uploadForm" label-width="90px">
       <el-form-item label="标题" required>
         <el-input v-model="uploadForm.title" placeholder="视频标题" />
@@ -95,8 +103,14 @@
         </el-upload>
       </el-form-item>
     </el-form>
+    <div v-if="uploading" class="upload-progress">
+      <el-progress :percentage="uploadPercent" :stroke-width="16" text-inside />
+      <p class="upload-tip">
+        {{ uploadPercent >= 100 ? '已接收，服务器正在转存到云存储，请耐心等待，勿关闭页面…' : '正在上传到服务器…' }}
+      </p>
+    </div>
     <template #footer>
-      <el-button @click="uploadVisible = false">取消</el-button>
+      <el-button :disabled="uploading" @click="uploadVisible = false">取消</el-button>
       <el-button type="primary" :loading="uploading" @click="handleUpload">上传并发布</el-button>
     </template>
   </el-dialog>
@@ -171,6 +185,7 @@ async function handleDelete(row: Video) {
 // ---- 上传 ----
 const uploadVisible = ref(false)
 const uploading = ref(false)
+const uploadPercent = ref(0)
 const videoFile = ref<File | null>(null)
 const coverFile = ref<File | null>(null)
 const uploadForm = reactive({ title: '', description: '', categoryId: undefined as number | undefined, tags: '' })
@@ -181,16 +196,20 @@ async function handleUpload() {
     return
   }
   uploading.value = true
+  uploadPercent.value = 0
   try {
-    await uploadVideo({
-      title: uploadForm.title,
-      description: uploadForm.description,
-      categoryId: uploadForm.categoryId,
-      tags: uploadForm.tags,
-      uploaderName: userStore.userInfo?.realName || userStore.userInfo?.username || '管理员',
-      videoFile: videoFile.value,
-      coverFile: coverFile.value ?? undefined,
-    })
+    await uploadVideo(
+      {
+        title: uploadForm.title,
+        description: uploadForm.description,
+        categoryId: uploadForm.categoryId,
+        tags: uploadForm.tags,
+        uploaderName: userStore.userInfo?.realName || userStore.userInfo?.username || '管理员',
+        videoFile: videoFile.value,
+        coverFile: coverFile.value ?? undefined,
+      },
+      (p) => (uploadPercent.value = p),
+    )
     ElMessage.success('视频上传成功')
     uploadVisible.value = false
     videoFile.value = null
@@ -212,5 +231,15 @@ onMounted(async () => {
 .no-cover {
   color: var(--gray-400);
   font-size: 12px;
+}
+
+.upload-progress {
+  margin-top: 8px;
+}
+
+.upload-tip {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--gray-500);
 }
 </style>
