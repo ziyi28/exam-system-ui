@@ -24,7 +24,7 @@ body {
   font-size: 14px;
   line-height: 1.6;
   color: var(--gray-800);
-  background-color: var(--gray-50);
+  background: var(--page-bg);
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -51,27 +51,31 @@ a {
 
 /* ========== 页面级工具类 ========== */
 
-/* 页面头：标题 + 说明 + 右侧主操作 */
+/* 页面头：工具型产品的标题与主操作 */
 .page-header {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   justify-content: space-between;
   gap: var(--space-4);
+  min-height: 92px;
   margin-bottom: var(--space-5);
+  padding: 18px 0 20px;
+  border-bottom: 1px solid var(--gray-200);
 }
 
 .page-header__title {
   margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.3;
+  font-size: clamp(23px, 2vw, 29px);
+  font-weight: 700;
+  line-height: 1.25;
   color: var(--gray-900);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
 .page-header__desc {
-  margin: 4px 0 0;
-  font-size: 13px;
+  margin: 8px 0 0;
+  max-width: 620px;
+  font-size: 14px;
   color: var(--gray-500);
 }
 
@@ -85,6 +89,25 @@ a {
 /* 通用页面卡片间距 */
 .page-card {
   margin-bottom: var(--space-4);
+}
+
+.page-section {
+  margin-top: var(--space-8);
+}
+
+.page-section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.page-section__title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--gray-900);
 }
 
 /* 筛选表单行 */
@@ -101,6 +124,49 @@ a {
   display: flex;
   justify-content: flex-end;
   margin-top: var(--space-4);
+}
+
+/* 后台列表页：筛选、数据和分页保持稳定的阅读节奏 */
+.data-card > .el-card__body {
+  padding: var(--space-6);
+}
+
+.data-card .filter-bar {
+  margin-bottom: var(--space-5);
+  padding: var(--space-4);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-md);
+  background: var(--surface-muted);
+}
+
+.data-card .el-table {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.data-card .pagination-bar {
+  padding-top: var(--space-2);
+}
+
+/* 详情与编辑页：突出顶部信息，降低长内容的视觉噪声 */
+.detail-card > .el-card__body,
+.workspace-card > .el-card__body {
+  padding: var(--space-6);
+}
+
+.workspace-card,
+.data-card,
+.detail-card {
+  border: 1px solid var(--gray-200);
+  box-shadow: none;
+}
+
+.detail-question-card {
+  margin-bottom: var(--space-4);
+}
+
+.detail-question-card > .el-card__body {
+  padding: var(--space-5) var(--space-6);
 }
 
 /* 区块标题（详情页分节用） */
@@ -132,4 +198,34 @@ a {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+    min-height: 0;
+    margin-bottom: var(--space-5);
+    padding: 14px 0 18px;
+  }
+
+  .page-header__title {
+    font-size: 21px;
+  }
+
+  .page-header__actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .data-card > .el-card__body,
+  .detail-card > .el-card__body,
+  .workspace-card > .el-card__body,
+  .detail-question-card > .el-card__body {
+    padding: var(--space-4);
+  }
+
+  .data-card .filter-bar {
+    padding: var(--space-3);
+  }
 }

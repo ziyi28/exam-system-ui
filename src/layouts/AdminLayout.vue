@@ -1,7 +1,7 @@
 <template>
   <el-container class="admin-layout">
     <!-- 侧边栏 -->
-    <el-aside :width="collapsed ? '64px' : '220px'" class="sidebar">
+    <el-aside :width="collapsed ? '78px' : '264px'" class="sidebar">
       <div class="logo" @click="router.push('/admin/dashboard')">
         <el-icon :size="26"><Reading /></el-icon>
         <span v-show="!collapsed" class="logo-text">智能考试系统</span>
@@ -24,7 +24,7 @@
       <!-- 顶栏 -->
       <el-header class="header">
         <div class="header-left">
-          <el-icon class="collapse-btn" :size="20" @click="collapsed = !collapsed">
+          <el-icon class="collapse-btn" :size="20" @click="toggleSidebar">
             <Expand v-if="collapsed" />
             <Fold v-else />
           </el-icon>
@@ -59,6 +59,19 @@
         <router-view />
       </el-main>
     </el-container>
+
+    <el-drawer v-model="mobileMenuVisible" direction="ltr" size="280px" :with-header="false" class="mobile-drawer">
+      <div class="drawer-brand" @click="router.push('/admin/dashboard'); mobileMenuVisible = false">
+        <span><el-icon :size="24"><Reading /></el-icon></span>
+        <div><b>智能考试系统</b><small>管理工作台</small></div>
+      </div>
+      <el-menu :default-active="route.path" router class="drawer-menu" @select="mobileMenuVisible = false">
+        <el-menu-item v-for="item in menuItems" :key="item.path" :index="item.path">
+          <el-icon><component :is="item.icon" /></el-icon>
+          <template #title>{{ item.title }}</template>
+        </el-menu-item>
+      </el-menu>
+    </el-drawer>
   </el-container>
 </template>
 
@@ -72,6 +85,15 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 const collapsed = ref(false)
+const mobileMenuVisible = ref(false)
+
+function toggleSidebar() {
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    mobileMenuVisible.value = true
+    return
+  }
+  collapsed.value = !collapsed.value
+}
 
 const roleText = computed(() => (userStore.role === 'ADMIN' ? '管理员' : '教师'))
 const avatarText = computed(() => (userStore.userInfo?.realName || userStore.userInfo?.username || '?').charAt(0))
@@ -108,11 +130,12 @@ async function handleCommand(command: string) {
 <style scoped>
 .admin-layout {
   height: 100%;
+  min-width: 0;
 }
 
 .sidebar {
-  background: #fff;
-  border-right: 1px solid var(--gray-100);
+  background: #f8f9fa;
+  border-right: 1px solid var(--gray-200);
   transition: width var(--duration-base) var(--ease-out-expo);
   overflow-x: hidden;
   display: flex;
@@ -124,29 +147,31 @@ async function handleCommand(command: string) {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  height: 56px;
+  height: 72px;
   color: var(--brand-600);
   cursor: pointer;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 17px;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .logo-text {
   color: var(--gray-900);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 .sidebar-menu {
   border-right: none;
-  padding: 4px 8px;
-  --el-menu-item-height: 44px;
+  padding: 12px 14px 32px;
+  background: transparent;
+  --el-menu-bg-color: transparent;
+  --el-menu-item-height: 48px;
 }
 
 .sidebar-menu :deep(.el-menu-item) {
   border-radius: var(--radius-md);
-  margin-bottom: 2px;
+  margin-bottom: 4px;
   color: var(--gray-600);
   transition:
     background-color var(--duration-fast) var(--ease-out-expo),
@@ -154,34 +179,42 @@ async function handleCommand(command: string) {
 }
 
 .sidebar-menu :deep(.el-menu-item:hover) {
-  background-color: var(--gray-50);
-  color: var(--gray-800);
+  background-color: var(--gray-100);
+  color: var(--gray-900);
 }
 
 .sidebar-menu :deep(.el-menu-item.is-active) {
-  background-color: var(--brand-50);
-  color: var(--brand-600);
+  background: var(--brand-50);
+  color: var(--brand-700);
   font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--brand-600);
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #fff;
-  border-bottom: 1px solid var(--gray-100);
-  height: 56px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--gray-200);
+  height: 64px;
+  padding: 0 28px;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
 }
 
 .collapse-btn {
   cursor: pointer;
-  color: var(--gray-500);
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  color: var(--gray-600);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
   transition: color var(--duration-fast) var(--ease-out-expo);
 }
 
@@ -192,7 +225,7 @@ async function handleCommand(command: string) {
 .header-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .user-dropdown {
@@ -200,7 +233,11 @@ async function handleCommand(command: string) {
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  padding: 6px 10px 6px 6px;
   color: var(--gray-800);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  background: var(--surface);
 }
 
 .avatar {
@@ -210,8 +247,73 @@ async function handleCommand(command: string) {
 }
 
 .main {
-  background: var(--gray-50);
-  padding: 20px;
+  min-width: 0;
+  background: var(--page-bg);
+  padding: 8px 28px 32px;
   overflow-y: auto;
+}
+
+.drawer-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.drawer-brand > span {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  border-radius: var(--radius-md);
+  background: var(--brand-600);
+}
+
+.drawer-brand div {
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer-brand b {
+  color: var(--gray-900);
+}
+
+.drawer-brand small {
+  color: var(--gray-400);
+  font-size: 10px;
+}
+
+.drawer-menu {
+  border-right: 0;
+}
+
+.drawer-menu :deep(.el-menu-item) {
+  margin-bottom: 4px;
+  border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+
+  .header {
+    height: 64px;
+    padding: 0 16px;
+  }
+
+  .header-left :deep(.el-breadcrumb) {
+    display: none;
+  }
+
+  .username {
+    display: none;
+  }
+
+  .main {
+    padding: 6px 14px 24px;
+  }
 }
 </style>

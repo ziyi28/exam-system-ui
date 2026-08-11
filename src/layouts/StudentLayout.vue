@@ -1,5 +1,5 @@
 <template>
-  <div class="student-layout">
+  <div class="student-layout" :class="{ 'is-exam-mode': isTakingExam }">
     <!-- 顶部导航 -->
     <header class="topbar">
       <div class="topbar-inner">
@@ -45,7 +45,7 @@
       <router-view />
     </main>
 
-    <footer class="footer">智能学习考试平台 · AI 智能批阅 · 在线学习</footer>
+    <footer class="footer">智能考试系统 · 教学、考试与学习反馈</footer>
   </div>
 </template>
 
@@ -95,27 +95,26 @@ async function handleCommand(command: string) {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--gray-50);
+  background: var(--page-bg);
+  --student-topbar-height: 68px;
 }
 
 .topbar {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--gray-100);
+  background: rgba(255, 255, 255, 0.97);
+  border-bottom: 1px solid var(--gray-200);
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
 }
 
 .topbar-inner {
-  max-width: 1200px;
+  max-width: var(--content-max);
   margin: 0 auto;
-  height: 60px;
+  min-height: var(--student-topbar-height);
   display: flex;
   align-items: center;
-  gap: 40px;
-  padding: 0 16px;
+  gap: 32px;
+  padding: 0 24px;
 }
 
 .brand {
@@ -131,7 +130,14 @@ async function handleCommand(command: string) {
 }
 
 .brand-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
   color: var(--brand-600);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  background: var(--surface);
 }
 
 .nav {
@@ -141,8 +147,8 @@ async function handleCommand(command: string) {
 }
 
 .nav-item {
-  padding: 8px 16px;
-  border-radius: 20px;
+  position: relative;
+  padding: 23px 11px 21px;
   color: var(--gray-600);
   font-size: 15px;
   transition:
@@ -151,14 +157,22 @@ async function handleCommand(command: string) {
 }
 
 .nav-item:hover {
-  color: var(--brand-600);
-  background: var(--brand-50);
+  color: var(--gray-900);
 }
 
 .nav-item.active {
-  color: var(--brand-600);
-  background: var(--brand-50);
+  color: var(--brand-700);
   font-weight: 600;
+}
+
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  bottom: -1px;
+  left: 10px;
+  height: 2px;
+  background: var(--brand-600);
 }
 
 .right {
@@ -171,7 +185,10 @@ async function handleCommand(command: string) {
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 5px 10px 5px 5px;
   cursor: pointer;
+  color: var(--gray-700);
+  border-radius: var(--radius-md);
 }
 
 .avatar {
@@ -182,16 +199,119 @@ async function handleCommand(command: string) {
 
 .content {
   flex: 1;
-  max-width: 1200px;
+  max-width: var(--content-max);
   width: 100%;
   margin: 0 auto;
-  padding: 20px 16px 28px;
+  padding: 28px 24px 48px;
 }
 
 .footer {
   text-align: center;
   color: var(--gray-400);
   font-size: 13px;
-  padding: 20px 0 24px;
+  padding: 24px 16px 28px;
+  border-top: 1px solid var(--gray-200);
+  background: var(--surface);
+}
+
+.student-layout.is-exam-mode {
+  --student-topbar-height: 64px;
+}
+
+.is-exam-mode .topbar-inner {
+  min-height: var(--student-topbar-height);
+}
+
+.is-exam-mode .nav,
+.is-exam-mode .footer {
+  display: none;
+}
+
+.is-exam-mode .content {
+  max-width: 1160px;
+  padding-top: 20px;
+}
+
+@media (max-width: 900px) {
+  .topbar-inner {
+    gap: 18px;
+    padding: 0 16px;
+  }
+
+  .nav-item {
+    padding: 23px 9px 21px;
+    font-size: 14px;
+  }
+
+  .content {
+    padding: 24px 16px 32px;
+  }
+}
+
+@media (max-width: 680px) {
+  .student-layout {
+    --student-topbar-height: 176px;
+  }
+
+  .topbar-inner {
+    min-height: var(--student-topbar-height);
+    align-content: center;
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 10px 14px 8px;
+  }
+
+  .brand {
+    font-size: 16px;
+  }
+
+  .brand-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+
+  .right {
+    margin-left: auto;
+    gap: 8px;
+  }
+
+  .right :deep(.el-button) {
+    padding: 6px 8px;
+  }
+
+  .username {
+    display: none;
+  }
+
+  .nav {
+    order: 3;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    flex-basis: 100%;
+    gap: 4px;
+    padding: 10px 0 0;
+    border-top: 1px solid var(--gray-100);
+  }
+
+  .nav-item {
+    padding: 7px 4px;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .nav-item.active::after {
+    display: none;
+  }
+
+  .content {
+    padding: 20px 14px 28px;
+  }
+
+  .is-exam-mode .topbar-inner {
+    min-height: 64px;
+    flex-wrap: nowrap;
+    padding: 8px 14px;
+  }
 }
 </style>

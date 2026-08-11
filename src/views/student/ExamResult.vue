@@ -9,6 +9,7 @@
             <div class="score-total">/ {{ record.paper?.totalScore ?? '-' }} 分</div>
           </div>
           <div class="result-info">
+            <span class="result-kicker">考试结果</span>
             <h2>{{ record.paper?.name ?? '考试结果' }}</h2>
             <div class="meta-line">
               <el-tag :type="examStatusTag(record.status)" size="small">{{ record.status }}</el-tag>
@@ -31,10 +32,10 @@
         <!-- AI 总评 -->
         <el-alert v-if="record.status === '进行中'" type="warning" :closable="false" show-icon title="考试仍在进行中" style="margin-top: 16px" />
         <el-alert v-else-if="record.status === '已完成'" type="info" :closable="false" show-icon style="margin-top: 16px">
-          <template #title>试卷已提交，AI 正在批阅中，页面会自动刷新，无需手动操作…</template>
+          <template #title>试卷已提交，系统正在批阅，页面会自动刷新，无需手动操作…</template>
         </el-alert>
         <div v-else-if="summary" class="ai-summary">
-          <div class="summary-title"><el-icon><MagicStick /></el-icon> AI 智能总评</div>
+          <div class="summary-title">综合评语</div>
           <p>{{ summary }}</p>
         </div>
       </el-card>
@@ -63,7 +64,7 @@
           <span>标准答案：<el-text type="success">{{ item.question?.answer?.answer ?? '-' }}</el-text></span>
         </div>
         <el-alert v-if="item.record.aiCorrection" type="info" :closable="false" style="margin-top: 8px">
-          <template #title>AI 点评：{{ item.record.aiCorrection }}</template>
+          <template #title>点评：{{ item.record.aiCorrection }}</template>
         </el-alert>
         <div v-if="item.question?.analysis" class="analysis">解析:{{ item.question.analysis }}</div>
       </el-card>
@@ -74,7 +75,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Check, MagicStick } from '@element-plus/icons-vue'
+import { Check } from '@element-plus/icons-vue'
 import { getExamDetail } from '@/api/exam'
 import type { AnswerRecord, ExamRecord, Question } from '@/types'
 import { typeText, typeTag, examStatusTag, letter } from '@/utils/format'
@@ -176,7 +177,15 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .result-card {
-  margin-bottom: 20px;
+  margin-bottom: 28px;
+  overflow: hidden;
+  border: 1px solid var(--gray-200);
+  background: var(--surface);
+  box-shadow: none;
+}
+
+.result-card :deep(.el-card__body) {
+  padding: 28px;
 }
 
 .result-head {
@@ -186,10 +195,12 @@ onBeforeUnmount(() => {
 }
 
 .score-circle {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 6px solid var(--danger);
+  width: 126px;
+  height: 110px;
+  border: 1px solid var(--gray-200);
+  border-left: 4px solid var(--danger);
+  border-radius: var(--radius-md);
+  background: var(--danger-bg);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -198,7 +209,9 @@ onBeforeUnmount(() => {
 }
 
 .score-circle.pass {
-  border-color: var(--success);
+  border-color: var(--gray-200);
+  border-left-color: var(--success);
+  background: var(--success-bg);
 }
 
 .score-num {
@@ -206,6 +219,7 @@ onBeforeUnmount(() => {
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
+  color: var(--gray-900);
 }
 
 .score-total {
@@ -218,14 +232,23 @@ onBeforeUnmount(() => {
 }
 
 .result-info h2 {
-  margin: 0 0 10px;
+  margin: 5px 0 12px;
+  font-size: 23px;
+  color: var(--gray-900);
+}
+
+.result-kicker {
+  color: var(--brand-600);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
 }
 
 .meta-line {
   display: flex;
   align-items: center;
   gap: 16px;
-  color: var(--gray-600);
+  color: var(--gray-500);
   font-size: 14px;
   margin-bottom: 10px;
 }
@@ -257,6 +280,13 @@ onBeforeUnmount(() => {
   color: var(--danger);
 }
 
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
 .ai-summary {
   margin-top: 16px;
   background: var(--brand-50);
@@ -277,7 +307,7 @@ onBeforeUnmount(() => {
 .ai-summary p {
   margin: 0;
   line-height: 1.8;
-  color: var(--gray-800);
+  color: var(--gray-700);
 }
 
 .section-title {
@@ -285,7 +315,11 @@ onBeforeUnmount(() => {
 }
 
 .question-card {
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.question-card :deep(.el-card__body) {
+  padding: 22px 24px;
 }
 
 .question-title {
@@ -313,6 +347,7 @@ onBeforeUnmount(() => {
 
 .choice.correct {
   color: var(--success);
+  font-weight: 600;
 }
 
 .check-icon {
@@ -334,9 +369,41 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 768px) {
+  .result-card :deep(.el-card__body) {
+    padding: 22px 18px;
+  }
+
   .result-head {
     flex-direction: column;
     text-align: center;
+    gap: 20px;
+  }
+
+  .meta-line,
+  .stat-line,
+  .actions {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .meta-line {
+    gap: 8px 12px;
+  }
+
+  .answer-compare {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+    margin-left: 0;
+  }
+
+  .choices,
+  .analysis {
+    margin-left: 0;
+  }
+
+  .question-card :deep(.el-card__body) {
+    padding: 18px;
   }
 }
 </style>

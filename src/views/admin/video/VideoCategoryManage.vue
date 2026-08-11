@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  <el-card shadow="never">
+  <el-card shadow="never" class="data-card">
 
     <el-table v-loading="loading" :data="tree" row-key="id" default-expand-all>
       <el-table-column prop="name" label="分类名称" min-width="200" />

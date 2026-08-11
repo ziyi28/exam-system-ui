@@ -1,17 +1,19 @@
 <template>
   <div v-loading="loading">
-    <el-card shadow="never" class="page-card">
-      <template #header>
-        <div class="card-header">
-          <span>考试记录详情</span>
-          <div>
-            <el-button v-if="record && record.status === '已完成'" type="primary" :loading="grading" @click="handleGrade">
-              触发 AI 批阅
-            </el-button>
-            <el-button @click="router.back()">返回</el-button>
-          </div>
-        </div>
-      </template>
+    <div class="page-header">
+      <div>
+        <h2 class="page-header__title">考试记录详情</h2>
+        <p class="page-header__desc">查看考生作答、切屏记录与 AI 批阅结果。</p>
+      </div>
+      <div class="page-header__actions">
+        <el-button v-if="record && record.status === '已完成'" type="primary" :loading="grading" @click="handleGrade">
+          触发 AI 批阅
+        </el-button>
+        <el-button @click="router.back()">返回列表</el-button>
+      </div>
+    </div>
+
+    <el-card shadow="never" class="detail-card exam-detail-card">
       <el-descriptions v-if="record" :column="4" border>
         <el-descriptions-item label="考生">{{ record.studentName }}</el-descriptions-item>
         <el-descriptions-item label="试卷" :span="2">{{ record.paper?.name ?? '-' }}</el-descriptions-item>
@@ -39,7 +41,7 @@
     </el-card>
 
     <!-- 逐题详情 -->
-    <el-card v-for="(item, index) in answerItems" :key="item.record.id" shadow="never" class="question-card">
+    <el-card v-for="(item, index) in answerItems" :key="item.record.id" shadow="never" class="detail-question-card">
       <div class="question-title">
         <span class="index">{{ index + 1 }}.</span>
         <el-tag v-if="item.question" :type="typeTag(item.question.type)" size="small">
@@ -143,20 +145,14 @@ onMounted(loadData)
 </script>
 
 <style scoped>
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
 .score {
   color: var(--danger);
   font-size: 18px;
   font-variant-numeric: tabular-nums;
 }
 
-.question-card {
-  margin-bottom: 12px;
+.exam-detail-card {
+  margin-bottom: 20px;
 }
 
 .question-title {
@@ -196,5 +192,25 @@ onMounted(loadData)
   display: flex;
   gap: 32px;
   font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .exam-detail-card {
+    overflow-x: auto;
+  }
+
+  .exam-detail-card :deep(.el-descriptions__table) {
+    min-width: 560px;
+  }
+
+  .choices,
+  .answer-compare {
+    margin-left: 0;
+  }
+
+  .answer-compare {
+    flex-direction: column;
+    gap: 4px;
+  }
 }
 </style>

@@ -13,7 +13,7 @@
 
     <el-row :gutter="16" class="knowledge-layout">
       <el-col :xs="24" :lg="7">
-        <el-card v-loading="knowledgeBaseLoading" shadow="never" class="knowledge-base-card">
+        <el-card v-loading="knowledgeBaseLoading" shadow="never" class="knowledge-base-card workspace-card">
           <template #header>
             <div class="card-header">
               <span>知识库（{{ knowledgeBases.length }}）</span>
@@ -60,7 +60,7 @@
 
       <el-col :xs="24" :lg="17">
         <template v-if="selectedKnowledgeBase">
-          <el-card shadow="never" class="page-card">
+          <el-card shadow="never" class="page-card workspace-card">
             <template #header>
               <div class="card-header">
                 <div class="card-title-copy">
@@ -131,7 +131,7 @@
               <el-table-column label="更新时间" width="170">
                 <template #default="{ row }">{{ formatDateTime(row.updatedAt || row.createdAt) }}</template>
               </el-table-column>
-              <el-table-column label="操作" width="180" fixed="right">
+              <el-table-column label="操作" width="240" fixed="right">
                 <template #default="{ row }">
                   <el-button
                     v-if="isDocumentReady(row)"
@@ -140,6 +140,15 @@
                     @click="openDocumentPreview(row)"
                   >
                     预览
+                  </el-button>
+                  <el-button
+                    v-if="isDocumentReady(row)"
+                    link
+                    type="warning"
+                    :loading="retryingDocumentId === row.id"
+                    @click="handleReindexDocument(row)"
+                  >
+                    重建索引
                   </el-button>
                   <el-button
                     v-if="isDocumentFailed(row)"
@@ -163,7 +172,7 @@
             </el-table>
           </el-card>
 
-          <el-card shadow="never" class="rag-test-card">
+          <el-card shadow="never" class="rag-test-card workspace-card">
             <template #header>
               <div class="card-title-copy">
                 <span>RAG 检索测试</span>
@@ -249,7 +258,7 @@
           </el-card>
         </template>
 
-        <el-card v-else shadow="never">
+        <el-card v-else shadow="never" class="workspace-card">
           <el-empty description="请先创建或选择一个知识库" />
         </el-card>
       </el-col>
@@ -689,6 +698,27 @@ async function handleRetryDocument(document: KnowledgeDocument) {
   }
 }
 
+async function handleReindexDocument(document: KnowledgeDocument) {
+  await ElMessageBox.confirm(
+    `将按最新切分规则重建「${document.fileName}」的索引。知识库会自动下架，完成后请预览并重新发布。`,
+    '重建索引',
+    {
+      type: 'warning',
+      confirmButtonText: '开始重建',
+      cancelButtonText: '取消',
+    },
+  )
+  const knowledgeBaseId = selectedKnowledgeBaseId.value
+  retryingDocumentId.value = document.id
+  try {
+    await retryKnowledgeDocument(document.id, true)
+    await loadKnowledgeBaseData(knowledgeBaseId)
+    ElMessage.success('索引重建已提交；完成后请预览并重新发布知识库')
+  } finally {
+    retryingDocumentId.value = undefined
+  }
+}
+
 async function handleDeleteDocument(document: KnowledgeDocument) {
   await ElMessageBox.confirm(`确定删除文档「${document.fileName}」及其向量索引吗？`, '删除文档', {
     type: 'warning',
@@ -890,9 +920,10 @@ onBeforeUnmount(() => {
 }
 
 .knowledge-base-item {
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-md);
-  padding: var(--space-3);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  background: var(--surface-muted);
   cursor: pointer;
   transition:
     border-color var(--duration-fast) var(--ease-out-expo),
@@ -1039,8 +1070,8 @@ onBeforeUnmount(() => {
 }
 
 .citation-card {
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
   padding: var(--space-3) var(--space-4);
   background: var(--el-bg-color);
 }

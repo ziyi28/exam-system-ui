@@ -3,10 +3,15 @@
     <template v-if="record && paper">
       <!-- 顶部信息栏 -->
       <el-card shadow="never" class="exam-header">
-        <div class="header-inner">
-          <div>
+          <div class="header-inner">
+          <div class="paper-overview">
+            <span class="paper-kicker">正在作答</span>
             <div class="paper-name">{{ paper.name }}</div>
             <div class="paper-meta">共 {{ questions.length }} 题 · 总分 {{ paper.totalScore }} 分</div>
+            <div class="answer-progress">
+              <span>已完成 {{ answeredCount }} / {{ questions.length }}</span>
+              <el-progress :percentage="progressPercentage" :show-text="false" :stroke-width="6" />
+            </div>
           </div>
           <div class="header-right">
             <el-tag v-if="windowSwitches > 0" type="danger" effect="plain" size="small">
@@ -73,7 +78,7 @@
               :model-value="answers[q.id!]"
               type="textarea"
               :rows="5"
-              placeholder="请输入你的答案，AI 将根据语义进行评分…"
+              placeholder="请输入你的答案，提交后系统将自动批阅…"
               @update:model-value="(v: string) => (answers[q.id!] = v)"
             />
           </el-card>
@@ -140,6 +145,7 @@ function isAnswered(questionId: number) {
 }
 
 const answeredCount = computed(() => questions.value.filter((q) => isAnswered(q.id!)).length)
+const progressPercentage = computed(() => (questions.value.length ? Math.round((answeredCount.value / questions.value.length) * 100) : 0))
 
 function scrollToQuestion(questionId: number) {
   document.getElementById(`question-${questionId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -191,7 +197,7 @@ async function handleSubmit(auto: boolean) {
   if (!auto) {
     const unanswered = questions.value.length - answeredCount.value
     await ElMessageBox.confirm(
-      unanswered > 0 ? `还有 ${unanswered} 道题未作答，确定交卷吗？` : '确认交卷吗？交卷后将由 AI 自动批阅。',
+      unanswered > 0 ? `还有 ${unanswered} 道题未作答，确定交卷吗？` : '确认交卷吗？交卷后系统将自动批阅。',
       '交卷确认',
       { type: 'warning', confirmButtonText: '交卷', cancelButtonText: '继续答题' },
     )
@@ -202,7 +208,7 @@ async function handleSubmit(auto: boolean) {
   try {
     const answerList = questions.value.map((q) => ({ questionId: q.id!, userAnswer: answers[q.id!] ?? '' }))
     await submitAnswers(recordId, answerList)
-    ElMessage.success('交卷成功，AI 正在批阅中')
+    ElMessage.success('交卷成功，系统正在批阅中')
     router.replace(`/student/result/${recordId}`)
   } finally {
     loadingMsg.close()
@@ -238,14 +244,16 @@ onBeforeUnmount(() => {
 <style scoped>
 .exam-header {
   position: sticky;
-  top: 68px;
+  top: calc(var(--student-topbar-height) + 12px);
   z-index: 10;
   margin-bottom: 16px;
-  /* 沉浸式毛玻璃：sticky 元素上使用 backdrop-filter 安全 */
-  --el-card-bg-color: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  --el-card-bg-color: var(--surface);
+  border: 1px solid var(--gray-200);
   box-shadow: var(--shadow-sm);
+}
+
+.exam-header :deep(.el-card__body) {
+  padding: 18px 22px;
 }
 
 .header-inner {
@@ -254,16 +262,45 @@ onBeforeUnmount(() => {
   justify-content: space-between;
 }
 
+.paper-overview {
+  min-width: 0;
+  flex: 1;
+}
+
+.paper-kicker {
+  display: inline-block;
+  margin-bottom: 4px;
+  color: var(--brand-600);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
 .paper-name {
   font-size: 17px;
   font-weight: 700;
   letter-spacing: -0.01em;
+  color: var(--gray-900);
 }
 
 .paper-meta {
   font-size: 13px;
   color: var(--gray-500);
   margin-top: 2px;
+}
+
+.answer-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 260px;
+  margin-top: 10px;
+  color: var(--gray-500);
+  font-size: 12px;
+}
+
+.answer-progress :deep(.el-progress) {
+  flex: 1;
 }
 
 .header-right {
@@ -278,7 +315,7 @@ onBeforeUnmount(() => {
   gap: 6px;
   font-size: 22px;
   font-weight: 700;
-  color: var(--brand-600);
+  color: var(--brand-700);
   font-variant-numeric: tabular-nums;
 }
 
@@ -315,7 +352,13 @@ onBeforeUnmount(() => {
 }
 
 .question-card {
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  border: 1px solid var(--gray-200);
+  box-shadow: none;
+}
+
+.question-card :deep(.el-card__body) {
+  padding: 24px;
 }
 
 .question-title {
@@ -327,11 +370,12 @@ onBeforeUnmount(() => {
 .q-index {
   font-weight: 700;
   color: var(--brand-600);
+  font-size: 18px;
 }
 
 .q-text {
-  margin: 10px 0 14px;
-  font-size: 15px;
+  margin: 14px 0 18px;
+  font-size: 16px;
   line-height: 1.7;
 }
 
@@ -346,7 +390,7 @@ onBeforeUnmount(() => {
   width: 100%;
   margin-right: 0 !important;
   height: auto;
-  padding: 10px 14px;
+  padding: 12px 14px;
   white-space: normal;
   border-radius: var(--radius-md);
   transition:
@@ -355,14 +399,23 @@ onBeforeUnmount(() => {
 }
 
 .choice-item:hover {
-  background: var(--gray-50);
+  background: var(--brand-50);
 }
 
 .answer-sheet {
-  width: 240px;
+  width: 256px;
   flex-shrink: 0;
   position: sticky;
-  top: 150px;
+  top: 178px;
+}
+
+.answer-sheet :deep(.el-card__header) {
+  font-size: 14px;
+}
+
+.answer-sheet :deep(.el-card) {
+  border: 1px solid var(--gray-200);
+  box-shadow: none;
 }
 
 .sheet-grid {
@@ -372,7 +425,7 @@ onBeforeUnmount(() => {
 }
 
 .sheet-item {
-  height: 34px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -420,6 +473,34 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 768px) {
+  .exam-header {
+    position: static;
+  }
+
+  .header-inner {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .countdown {
+    font-size: 19px;
+  }
+
+  .answer-progress {
+    max-width: none;
+  }
+
+  .question-card :deep(.el-card__body) {
+    padding: 18px;
+  }
+
   .answer-sheet {
     display: none;
   }

@@ -1,10 +1,13 @@
 <template>
-  <div>
-    <div class="page-title">
-      <h2>我的成绩</h2>
+  <div class="records-page">
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title">我的成绩</h1>
+        <p class="page-header__desc">查看已完成考试的成绩与批阅结果。</p>
+      </div>
     </div>
 
-    <el-card shadow="never">
+    <el-card shadow="never" class="records-card">
       <el-table v-loading="loading" :data="records" stripe>
         <el-table-column type="index" label="#" width="60" />
         <el-table-column label="试卷" min-width="200">
@@ -67,18 +70,17 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.page-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.page-title h2 {
-  margin: 0;
+.records-card :deep(.el-card__body) {
+  padding: 8px 24px 24px;
 }
 
 .score-good {
   color: var(--success);
+}
+
+@media (max-width: 768px) {
+  .records-card :deep(.el-card__body) {
+    padding: 6px 14px 18px;
+  }
 }
 </style>

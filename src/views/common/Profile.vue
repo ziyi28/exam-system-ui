@@ -1,9 +1,15 @@
 <template>
   <div class="profile-page">
+    <div class="page-header">
+      <div>
+        <h2 class="page-header__title">个人中心</h2>
+        <p class="page-header__desc">查看账号资料并维护登录密码。</p>
+      </div>
+    </div>
     <el-row :gutter="16">
       <!-- 基本信息 -->
       <el-col :xs="24" :md="10">
-        <el-card>
+        <el-card shadow="never" class="workspace-card">
           <template #header>基本信息</template>
           <div class="user-brief">
             <el-avatar :size="64" class="avatar">{{ avatarText }}</el-avatar>
@@ -22,7 +28,7 @@
 
       <!-- 修改密码 -->
       <el-col :xs="24" :md="14">
-        <el-card>
+        <el-card shadow="never" class="workspace-card">
           <template #header>修改密码</template>
           <el-form ref="formRef" :model="form" :rules="rules" label-width="90px" style="max-width: 420px">
             <el-form-item label="旧密码" prop="oldPassword">
@@ -118,5 +124,11 @@ async function handleSubmit() {
 
 .desc {
   margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .profile-page :deep(.el-form) {
+    max-width: none !important;
+  }
 }
 </style>

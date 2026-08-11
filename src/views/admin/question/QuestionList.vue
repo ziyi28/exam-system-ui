@@ -11,7 +11,7 @@
       </div>
     </div>
 
-    <el-card shadow="never">
+    <el-card shadow="never" class="data-card">
       <!-- 筛选区 -->
       <div class="filter-bar">
         <el-select v-model="query.categoryId" placeholder="全部分类" clearable style="width: 150px">

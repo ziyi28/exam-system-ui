@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  <el-card shadow="never">
+  <el-card shadow="never" class="data-card">
 
     <el-table v-loading="loading" :data="banners" stripe>
       <el-table-column prop="id" label="ID" width="70" />
