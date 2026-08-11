@@ -8,9 +8,9 @@
 
 ## 系统截图
 
-| 新版登录 | 智能出题 |
+| 登录 | 智能出题 |
 | --- | --- |
-| ![新版登录](./docs/screenshots/knowledge-base-current.jpg) | ![智能出题](./docs/screenshots/ai-question.png) |
+| ![登录](./docs/screenshots/login.png) | ![智能出题](./docs/screenshots/ai-question.png) |
 
 | 管理端 | 学生端 |
 | --- | --- |
@@ -20,7 +20,7 @@
 
 ## AI 知识库与学习保护
 
-![新版界面：登录入口](./docs/screenshots/knowledge-base-current.jpg)
+![新版界面：AI 知识库管理](./docs/screenshots/knowledge-base-current.jpg)
 
 ![知识库学习与考试保护流程](./docs/screenshots/knowledge-base-workflow.svg)
 
