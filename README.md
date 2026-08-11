@@ -14,7 +14,7 @@
 
 | 管理端 | 学生端 |
 | --- | --- |
-| ![管理端](./docs/screenshots/admin.png) | ![学生端](./docs/screenshots/student.png) |
+| ![新版管理端](./docs/screenshots/admin-current.jpg) | ![新版学生端](./docs/screenshots/student-current.jpg) |
 
 ---
 
