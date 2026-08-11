@@ -1,15 +1,17 @@
 <template>
   <div>
-    <el-card shadow="never" class="page-card">
-      <template #header>
-        <div class="card-header">
-          <span>{{ paperId ? '编辑试卷' : '手动组卷' }}</span>
-          <div>
-            <el-button @click="router.back()">返回</el-button>
-            <el-button type="primary" :loading="saving" @click="handleSave">保存试卷</el-button>
-          </div>
-        </div>
-      </template>
+    <div class="page-header">
+      <div>
+        <h2 class="page-header__title">{{ paperId ? '编辑试卷' : '手动组卷' }}</h2>
+        <p class="page-header__desc">设置试卷基础信息，从题库选择题目并配置对应分值。</p>
+      </div>
+      <div class="page-header__actions">
+        <el-button @click="router.back()">返回</el-button>
+        <el-button type="primary" :loading="saving" @click="handleSave">保存试卷</el-button>
+      </div>
+    </div>
+
+    <el-card shadow="never" class="detail-card paper-base-card">
       <el-form :model="form" label-width="90px" inline>
         <el-form-item label="试卷名称" required>
           <el-input v-model="form.name" placeholder="请输入试卷名称" style="width: 260px" />
@@ -27,7 +29,7 @@
     <el-row :gutter="16">
       <!-- 题库选题 -->
       <el-col :xs="24" :md="14">
-        <el-card shadow="never">
+        <el-card shadow="never" class="workspace-card">
           <template #header>题库选题</template>
           <div class="filter-bar">
             <el-select v-model="query.categoryId" placeholder="全部分类" clearable style="width: 140px">
@@ -70,7 +72,7 @@
 
       <!-- 已选题目 -->
       <el-col :xs="24" :md="10">
-        <el-card shadow="never">
+        <el-card shadow="never" class="workspace-card selected-questions-card">
           <template #header>已选题目（可设置分值）</template>
           <el-empty v-if="!selected.length" description="从左侧题库添加题目" />
           <el-table v-else :data="selected" size="small" max-height="540">
@@ -198,9 +200,18 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.paper-base-card {
+  margin-bottom: 16px;
+}
+
+.selected-questions-card {
+  height: 100%;
+}
+
+@media (max-width: 768px) {
+  .paper-base-card :deep(.el-form--inline .el-form-item) {
+    display: flex;
+    margin-right: 0;
+  }
 }
 </style>

@@ -13,7 +13,7 @@
       </div>
     </div>
 
-    <el-card shadow="never">
+    <el-card shadow="never" class="data-card hot-questions-card">
       <el-empty v-if="!loading && !questions.length" description="暂无热题数据" />
       <el-row v-loading="loading" :gutter="16">
         <el-col v-for="(q, index) in questions" :key="q.id" :xs="24" :sm="12" :md="8" class="hot-col">
@@ -100,17 +100,18 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px;
-  border: 1px solid var(--el-border-color-lighter);
-  border-radius: var(--radius-lg, 8px);
+  padding: 18px;
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  background: var(--surface-muted);
   cursor: pointer;
   transition: box-shadow 0.2s, border-color 0.2s;
   height: 100%;
 }
 
 .hot-card:hover {
-  border-color: var(--el-color-primary-light-5);
-  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.08));
+  border-color: var(--brand-100);
+  box-shadow: var(--shadow-sm);
 }
 
 .hot-rank {
@@ -127,18 +128,18 @@ onMounted(async () => {
 }
 
 .hot-rank--gold {
-  background: #fdf1d0;
-  color: #b8860b;
+  background: var(--warning-bg);
+  color: var(--warning);
 }
 
 .hot-rank--silver {
-  background: #eef0f2;
-  color: #757b80;
+  background: var(--gray-100);
+  color: var(--gray-600);
 }
 
 .hot-rank--bronze {
-  background: #f7e3d4;
-  color: #a0562b;
+  background: var(--danger-bg);
+  color: var(--danger);
 }
 
 .hot-body {
@@ -147,7 +148,7 @@ onMounted(async () => {
 }
 
 .hot-title {
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 8px;
 }
 

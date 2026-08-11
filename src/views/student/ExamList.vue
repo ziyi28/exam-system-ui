@@ -1,20 +1,29 @@
 <template>
-  <div>
-    <div class="page-title">
-      <h2>在线考试</h2>
-      <el-input v-model="keyword" placeholder="搜索试卷名称" clearable style="width: 240px" :prefix-icon="Search" @keyup.enter="loadData" @clear="loadData" />
+  <div class="exam-list-page">
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title">在线考试</h1>
+        <p class="page-header__desc">选择已发布的试卷，在规定时间内完成作答。</p>
+      </div>
+      <div class="page-header__actions">
+        <el-input v-model="keyword" class="exam-search" placeholder="搜索试卷名称" clearable :prefix-icon="Search" @keyup.enter="loadData" @clear="loadData" />
+        <el-button type="primary" plain @click="loadData">搜索</el-button>
+      </div>
     </div>
 
-    <el-empty v-if="!loading && !papers.length" description="暂无可参加的考试" />
+    <el-empty v-if="!loading && !papers.length" class="empty-state" description="暂无可参加的考试" />
 
     <el-row v-loading="loading" :gutter="16">
       <el-col v-for="paper in papers" :key="paper.id" :xs="24" :sm="12" :md="8">
-        <el-card shadow="hover" class="exam-card">
+        <el-card shadow="never" class="exam-card">
           <div class="exam-head">
             <div class="exam-icon">
               <el-icon :size="22"><Notebook /></el-icon>
             </div>
-            <div class="exam-name">{{ paper.name }}</div>
+            <div class="exam-head__main">
+              <div class="exam-name">{{ paper.name }}</div>
+              <span class="exam-status">待参加</span>
+            </div>
           </div>
           <p class="exam-desc">{{ paper.description || '暂无描述' }}</p>
           <div class="exam-meta">
@@ -75,15 +84,12 @@ onMounted(loadData)
 </script>
 
 <style scoped>
-.page-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
+.exam-search {
+  width: 260px;
 }
 
-.page-title h2 {
-  margin: 0;
+.empty-state {
+  padding: 72px 0;
 }
 
 .exam-card {
@@ -91,6 +97,10 @@ onMounted(loadData)
   transition:
     transform var(--duration-base) var(--ease-out-expo),
     box-shadow var(--duration-base) var(--ease-out-expo);
+}
+
+.exam-card :deep(.el-card__body) {
+  padding: 22px;
 }
 
 .exam-card:hover {
@@ -118,7 +128,20 @@ onMounted(loadData)
 .exam-name {
   font-size: 16px;
   font-weight: 600;
+  color: var(--gray-900);
+}
+
+.exam-head__main {
+  min-width: 0;
   flex: 1;
+}
+
+.exam-status {
+  display: inline-block;
+  margin-top: 4px;
+  color: var(--success);
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .exam-desc {
@@ -132,11 +155,15 @@ onMounted(loadData)
 }
 
 .exam-meta {
-  display: flex;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
   color: var(--gray-600);
   font-size: 13px;
-  margin-bottom: 12px;
+  margin: 20px 0 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--gray-100);
+  border-bottom: 1px solid var(--gray-100);
 }
 
 .exam-meta span {
@@ -147,5 +174,21 @@ onMounted(loadData)
 
 .start-btn {
   width: 100%;
+  min-height: 40px;
+}
+
+@media (max-width: 768px) {
+  .exam-search {
+    width: min(100%, 260px);
+  }
+
+  .exam-meta {
+    gap: 6px;
+    font-size: 12px;
+  }
+
+  .exam-meta span {
+    white-space: nowrap;
+  }
 }
 </style>

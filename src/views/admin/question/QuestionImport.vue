@@ -1,9 +1,15 @@
 <template>
   <div>
+    <div class="page-header">
+      <div>
+        <h2 class="page-header__title">批量导入 / AI 出题</h2>
+        <p class="page-header__desc">通过 Excel 导入或 AI 生成题目，确认预览后再写入题库。</p>
+      </div>
+    </div>
     <el-row :gutter="16">
       <!-- Excel 导入 -->
       <el-col :xs="24" :md="10">
-        <el-card shadow="never">
+        <el-card shadow="never" class="workspace-card">
           <template #header>
             <div class="card-header">
               <span>Excel 批量导入</span>
@@ -27,7 +33,7 @@
         </el-card>
 
         <!-- AI 生成 -->
-        <el-card shadow="never" style="margin-top: 16px">
+        <el-card shadow="never" class="workspace-card ai-generator-card">
           <template #header>AI 智能出题</template>
           <el-form :model="aiForm" label-width="90px">
             <el-form-item label="主题" required>
@@ -72,7 +78,7 @@
 
       <!-- 预览与导入 -->
       <el-col :xs="24" :md="14">
-        <el-card shadow="never">
+        <el-card shadow="never" class="workspace-card preview-card">
           <template #header>
             <div class="card-header">
               <span>待导入题目预览（{{ previewList.length }} 道）</span>
@@ -194,6 +200,10 @@ onMounted(async () => {
   justify-content: space-between;
 }
 
+.ai-generator-card {
+  margin-top: 16px;
+}
+
 .preview-list {
   max-height: 70vh;
   overflow-y: auto;
@@ -203,9 +213,10 @@ onMounted(async () => {
 }
 
 .preview-item {
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-md);
-  padding: 12px;
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  background: var(--surface-muted);
 }
 
 .upload-icon {
@@ -247,5 +258,17 @@ onMounted(async () => {
   margin-top: 8px;
   font-size: 13px;
   color: var(--warning);
+}
+
+@media (max-width: 768px) {
+  .card-header,
+  .preview-title {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .preview-list {
+    max-height: none;
+  }
 }
 </style>

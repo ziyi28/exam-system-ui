@@ -1,21 +1,36 @@
 <template>
   <div class="login-page">
     <div class="login-panel">
-      <!-- 左侧品牌区 -->
-      <div class="brand-side">
-        <el-icon :size="56" color="#fff"><Reading /></el-icon>
-        <h1>智能考试系统</h1>
-        <p>AI 智能组卷 · 自动批阅 · 在线学习</p>
-        <ul class="feature-list">
-          <li><el-icon><MagicStick /></el-icon> AI 智能生成题目与组卷</li>
-          <li><el-icon><EditPen /></el-icon> 主观题 AI 语义评分</li>
-          <li><el-icon><VideoPlay /></el-icon> 视频课程在线学习</li>
-          <li><el-icon><TrendCharts /></el-icon> 成绩分析与排行榜</li>
-        </ul>
-      </div>
+      <section class="brand-side">
+        <div class="brand-lockup">
+          <span class="brand-mark"><el-icon :size="24"><Reading /></el-icon></span>
+          <div>
+            <strong>智能考试系统</strong>
+            <small>教 · 学 · 考 · 评</small>
+          </div>
+        </div>
 
-      <!-- 右侧表单区 -->
-      <div class="form-side">
+        <div class="brand-copy">
+          <span class="brand-kicker">面向教学全过程</span>
+          <h1>考试不是终点，<br /><em>反馈才是。</em></h1>
+          <p>组织考试、完成作答、查看结果。把复杂流程收进一套清楚、可靠的教学工具。</p>
+        </div>
+
+        <ul class="feature-list">
+          <li><span>01</span><div><b>组织考试</b><small>配置试卷、考试范围与参与人员</small></div></li>
+          <li><span>02</span><div><b>在线作答</b><small>专注完成答题并实时保存进度</small></div></li>
+          <li><span>03</span><div><b>查看反馈</b><small>回顾得分、解析与知识薄弱点</small></div></li>
+        </ul>
+
+        <div class="brand-footnote">让考试过程更清楚，让反馈真正回到学习。</div>
+      </section>
+
+      <aside class="form-side">
+        <div class="form-intro">
+          <span>账号入口</span>
+          <h2>登录系统</h2>
+          <p>使用分配给你的账号进入相应工作台</p>
+        </div>
         <el-tabs v-model="activeTab" class="login-tabs">
           <!-- 登录 -->
           <el-tab-pane label="登录" name="login">
@@ -33,7 +48,9 @@
               </el-form-item>
             </el-form>
             <div class="tips">
-              <el-text size="small" type="info">测试账号：admin / teacher_zhang / student_li（密码均 123456）</el-text>
+              <span>体验账号</span>
+              <p>admin / teacher_zhang / student_li</p>
+              <small>密码均为 123456</small>
             </div>
           </el-tab-pane>
 
@@ -60,7 +77,8 @@
             </el-form>
           </el-tab-pane>
         </el-tabs>
-      </div>
+        <div class="form-footer">账号问题请联系系统管理员</div>
+      </aside>
     </div>
   </div>
 </template>
@@ -148,74 +166,111 @@ async function handleRegister() {
 
 <style scoped>
 .login-page {
-  height: 100%;
+  min-height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--gray-50);
-  /* 极淡圆点纹理，打破纯平背景 */
-  background-image: radial-gradient(var(--gray-300) 1px, transparent 1px);
-  background-size: 24px 24px;
+  overflow-y: auto;
+  background: #e9edf0;
+  padding: 32px;
 }
 
 .login-panel {
-  display: flex;
-  width: 860px;
-  min-height: 480px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.94fr) minmax(420px, 1.06fr);
+  align-items: stretch;
+  width: min(1180px, 100%);
+  min-height: min(700px, calc(100vh - 64px));
+  border: 1px solid #d7dde2;
   border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
-  border: 1px solid var(--gray-200);
-  box-shadow: var(--shadow-lg);
 }
 
 .brand-side {
-  position: relative;
-  flex: 1;
-  /* 同色相 subtle 渐变：brand-800 → brand-700，禁跨色相 */
-  background: linear-gradient(160deg, var(--brand-800) 0%, var(--brand-700) 100%);
-  color: #fff;
-  padding: 48px 40px;
+  color: var(--gray-800);
+  padding: clamp(36px, 5vw, 64px);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  overflow: hidden;
+  justify-content: space-between;
+  background: #f3f5f4;
+  border-right: 1px solid var(--gray-200);
 }
 
-/* 低透明度同心圆装饰 */
-.brand-side::before {
-  content: '';
-  position: absolute;
-  right: -120px;
-  top: -120px;
-  width: 320px;
-  height: 320px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(255, 255, 255, 0.1);
-  pointer-events: none;
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
-.brand-side::after {
-  content: '';
-  position: absolute;
-  right: -60px;
-  top: -60px;
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(255, 255, 255, 0.08);
-  pointer-events: none;
+.brand-mark {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  color: var(--brand-600);
+  background: var(--surface);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
 }
 
-.brand-side h1 {
-  margin: 16px 0 8px;
-  font-size: 28px;
-  color: #fff;
-  letter-spacing: -0.02em;
+.brand-lockup div {
+  display: flex;
+  flex-direction: column;
 }
 
-.brand-side p {
-  margin: 0 0 32px;
-  opacity: 0.78;
+.brand-lockup strong {
+  color: var(--gray-900);
+  font-size: 17px;
+}
+
+.brand-lockup small {
+  color: var(--gray-500);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+
+.brand-copy {
+  max-width: 540px;
+  margin: auto 0;
+  padding: 54px 0 42px;
+}
+
+.brand-copy h1 {
+  margin: 18px 0 20px;
+  color: var(--gray-900);
+  font-size: clamp(40px, 4vw, 56px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.05em;
+}
+
+.brand-copy h1 em {
+  color: var(--brand-600);
+  font-style: normal;
+}
+
+.brand-copy p {
+  max-width: 480px;
+  margin: 0;
+  color: var(--gray-600);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.brand-kicker,
+.form-intro > span {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.brand-kicker {
+  color: var(--brand-600);
 }
 
 .feature-list {
@@ -224,44 +279,223 @@ async function handleRegister() {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0;
 }
 
 .feature-list li {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  opacity: 0.88;
+  gap: 16px;
+  min-width: 0;
+  padding: 14px 0;
+  border-top: 1px solid var(--gray-200);
+}
+
+.feature-list li > span {
+  width: 28px;
+  display: block;
+  flex: none;
+  color: var(--gray-400);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.feature-list li > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.feature-list b {
+  color: var(--gray-800);
+  font-size: 13px;
+}
+
+.feature-list small {
+  color: var(--gray-500);
+  font-size: 11px;
+}
+
+.brand-footnote {
+  margin-top: 24px;
+  color: var(--gray-500);
+  font-size: 11px;
 }
 
 .form-side {
-  width: 400px;
-  background: #fff;
-  padding: 40px 36px;
+  position: relative;
+  width: 100%;
+  max-width: none;
+  background: var(--surface);
+  padding: clamp(54px, 6vw, 84px);
   display: flex;
   flex-direction: column;
   justify-content: center;
+  box-shadow: none;
+}
+
+.form-side::before {
+  display: none;
+}
+
+.form-intro {
+  position: relative;
+  margin-bottom: 28px;
+}
+
+.form-intro > span {
+  color: var(--brand-600);
+}
+
+.form-intro h2 {
+  margin: 8px 0 6px;
+  font-size: 28px;
+  letter-spacing: -0.03em;
+}
+
+.form-intro p {
+  margin: 0;
+  color: var(--gray-500);
+  font-size: 14px;
+}
+
+.login-tabs :deep(.el-tabs__header) {
+  margin-bottom: 28px;
+}
+
+.login-tabs :deep(.el-tabs__nav-wrap::after) {
+  height: 1px;
+  background: var(--gray-100);
+}
+
+.login-tabs :deep(.el-tabs__item) {
+  height: 44px;
+  padding: 0 24px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.login-tabs :deep(.el-form-item) {
+  margin-bottom: 20px;
+}
+
+.login-tabs :deep(.el-input__wrapper) {
+  min-height: 50px;
+  padding: 0 16px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--gray-200) inset;
+}
+
+.login-tabs :deep(.el-input__wrapper.is-focus) {
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--brand-600) inset;
 }
 
 .submit-btn {
   width: 100%;
+  min-height: 50px;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  letter-spacing: 0.06em;
 }
 
 .tips {
-  text-align: center;
-  margin-top: 4px;
+  margin-top: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  background: var(--gray-50);
+  text-align: left;
 }
 
-@media (max-width: 900px) {
-  .login-panel {
-    width: 94vw;
+.tips span {
+  color: var(--brand-600);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.tips p {
+  margin: 3px 0 0;
+  color: var(--gray-700);
+  font-size: 12px;
+}
+
+.tips small {
+  color: var(--gray-400);
+}
+
+.form-footer {
+  margin-top: 28px;
+  color: var(--gray-400);
+  font-size: 11px;
+}
+
+@media (max-width: 1100px) {
+  .login-page {
+    padding: 24px;
   }
-  .brand-side {
+
+  .login-panel {
+    grid-template-columns: minmax(0, 0.86fr) minmax(390px, 1.14fr);
+  }
+
+  .brand-copy h1 {
+    font-size: 48px;
+  }
+
+  .feature-list li:nth-child(3) {
     display: none;
   }
-  .form-side {
-    width: 100%;
+}
+
+@media (max-width: 760px) {
+  .login-page {
+    align-items: flex-start;
+    overflow-y: auto;
+    padding: 14px;
   }
+
+  .login-panel {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+    border-radius: var(--radius-lg);
+  }
+
+  .brand-side {
+    padding: 24px;
+    border-right: 0;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .brand-copy {
+    padding: 38px 0 12px;
+  }
+
+  .brand-copy h1 {
+    margin: 16px 0 14px;
+    font-size: clamp(34px, 10vw, 44px);
+  }
+
+  .brand-copy p {
+    font-size: 14px;
+    line-height: 1.75;
+  }
+
+  .feature-list,
+  .brand-footnote {
+    display: none;
+  }
+
+  .form-side {
+    max-width: none;
+    padding: 36px 24px 32px;
+  }
+
+  .form-intro h2 {
+    font-size: 26px;
+  }
+
 }
 </style>

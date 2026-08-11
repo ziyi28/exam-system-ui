@@ -11,7 +11,7 @@
       </div>
     </div>
 
-    <el-card shadow="never">
+    <el-card shadow="never" class="data-card">
       <div class="filter-bar">
         <el-input v-model="query.name" placeholder="试卷名称" clearable style="width: 200px" @keyup.enter="loadData" />
         <el-select v-model="query.status" placeholder="全部状态" clearable style="width: 140px">

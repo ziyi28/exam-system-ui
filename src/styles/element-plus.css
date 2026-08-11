@@ -10,7 +10,7 @@
   --el-card-border-radius: var(--radius-lg);
   --el-card-border-color: var(--gray-200);
   --el-card-padding: var(--space-5);
-  box-shadow: var(--shadow-xs);
+  box-shadow: none;
   transition: box-shadow var(--duration-base) var(--ease-out-expo);
 }
 
@@ -18,7 +18,8 @@
   font-size: 15px;
   font-weight: 600;
   color: var(--gray-800);
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-5) var(--space-6);
+  border-bottom-color: var(--gray-100);
 }
 
 /* ---------- 表格：灰底表头、hover 品牌淡染、数字对齐 ---------- */
@@ -32,6 +33,11 @@
 
 .el-table th.el-table__cell {
   font-weight: 600;
+  height: 46px;
+}
+
+.el-table .el-table__cell {
+  padding: 12px 0;
 }
 
 /* ---------- 对话框：大圆角 + header 分隔线 ---------- */
@@ -65,6 +71,14 @@
     transform var(--duration-fast) var(--ease-out-expo);
 }
 
+.el-button--primary {
+  --el-button-bg-color: var(--brand-600);
+  --el-button-border-color: var(--brand-600);
+  --el-button-hover-bg-color: var(--brand-500);
+  --el-button-hover-border-color: var(--brand-500);
+  box-shadow: none;
+}
+
 .el-button:not(.is-disabled):not(.is-link):not(.is-text):active {
   transform: translateY(1px);
 }
@@ -86,6 +100,11 @@
 .el-textarea__inner,
 .el-select__wrapper {
   transition: box-shadow var(--duration-fast) var(--ease-out-expo);
+}
+
+.el-input__wrapper,
+.el-select__wrapper {
+  min-height: 38px;
 }
 
 /* ---------- 消息 / 通知圆角 ---------- */

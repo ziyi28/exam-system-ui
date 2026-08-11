@@ -6,7 +6,7 @@
     </div>
   </div>
 
-  <el-card shadow="never">
+  <el-card shadow="never" class="data-card">
     <el-tabs v-model="activeTab">
       <!-- 考试记录 -->
       <el-tab-pane label="考试记录" name="records">

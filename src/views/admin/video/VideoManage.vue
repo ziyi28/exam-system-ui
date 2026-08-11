@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  <el-card shadow="never">
+  <el-card shadow="never" class="data-card">
     <div class="filter-bar">
       <el-select v-model="query.status" placeholder="全部状态" clearable style="width: 130px">
         <el-option label="待审核" :value="0" />

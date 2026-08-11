@@ -57,8 +57,9 @@ export function uploadKnowledgeDocument(
   })
 }
 
-export function retryKnowledgeDocument(id: number) {
-  return post<KnowledgeDocument>(`/api/ai/documents/${id}/retry`)
+export function retryKnowledgeDocument(id: number, force = false) {
+  const suffix = force ? '?force=true' : ''
+  return post<KnowledgeDocument>(`/api/ai/documents/${id}/retry${suffix}`)
 }
 
 export function deleteKnowledgeDocument(id: number) {

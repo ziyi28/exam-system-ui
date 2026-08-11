@@ -1,12 +1,16 @@
 <template>
   <div v-loading="loading">
-    <el-card shadow="never" class="page-card">
-      <template #header>
-        <div class="card-header">
-          <span>试卷详情</span>
-          <el-button @click="router.back()">返回</el-button>
-        </div>
-      </template>
+    <div class="page-header">
+      <div>
+        <h2 class="page-header__title">试卷详情</h2>
+        <p class="page-header__desc">查看试卷配置、题目结构与标准答案。</p>
+      </div>
+      <div class="page-header__actions">
+        <el-button @click="router.back()">返回列表</el-button>
+      </div>
+    </div>
+
+    <el-card shadow="never" class="detail-card paper-detail-card">
       <el-descriptions v-if="paper" :column="4" border>
         <el-descriptions-item label="试卷名称" :span="2">{{ paper.name }}</el-descriptions-item>
         <el-descriptions-item label="状态">
@@ -19,7 +23,7 @@
       </el-descriptions>
     </el-card>
 
-    <el-card v-for="(q, index) in paper?.questions ?? []" :key="q.id" shadow="never" class="question-card">
+    <el-card v-for="(q, index) in paper?.questions ?? []" :key="q.id" shadow="never" class="detail-question-card">
       <div class="question-title">
         <span class="index">{{ index + 1 }}.</span>
         <el-tag :type="typeTag(q.type)" size="small">{{ typeText(q.type, q.multi) }}</el-tag>
@@ -65,14 +69,8 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.question-card {
-  margin-bottom: 12px;
+.paper-detail-card {
+  margin-bottom: 20px;
 }
 
 .question-title {
@@ -116,5 +114,21 @@ onMounted(async () => {
   margin: 8px 0 0 24px;
   color: var(--gray-500);
   font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .paper-detail-card :deep(.el-descriptions__table) {
+    min-width: 560px;
+  }
+
+  .paper-detail-card {
+    overflow-x: auto;
+  }
+
+  .choices,
+  .answer-line,
+  .analysis {
+    margin-left: 0;
+  }
 }
 </style>

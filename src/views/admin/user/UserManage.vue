@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  <el-card shadow="never">
+  <el-card shadow="never" class="data-card">
     <div class="filter-bar">
       <el-input v-model="query.username" placeholder="用户名" clearable style="width: 150px" @keyup.enter="handleSearch" />
       <el-input v-model="query.realName" placeholder="真实姓名" clearable style="width: 150px" @keyup.enter="handleSearch" />
