@@ -8,13 +8,27 @@
 
 ## 系统截图
 
-| 登录 | 智能出题 |
+| 新版登录 | 智能出题 |
 | --- | --- |
-| ![登录](./docs/screenshots/login.png) | ![智能出题](./docs/screenshots/ai-question.png) |
+| ![新版登录](./docs/screenshots/knowledge-base-current.jpg) | ![智能出题](./docs/screenshots/ai-question.png) |
 
 | 管理端 | 学生端 |
 | --- | --- |
 | ![管理端](./docs/screenshots/admin.png) | ![学生端](./docs/screenshots/student.png) |
+
+---
+
+## AI 知识库与学习保护
+
+![新版界面：登录入口](./docs/screenshots/knowledge-base-current.jpg)
+
+![知识库学习与考试保护流程](./docs/screenshots/knowledge-base-workflow.svg)
+
+- 管理员与教师可在 **AI 知识库** 中上传 `MD`、`DOCX`、`PDF`、`TXT`，查看实际索引分块，再进行带引用的检索测试。
+- 文档索引完成后默认仍为未发布；教师确认资料范围和召回质量后，才可发布给学生学习。
+- 学生仅能查看已发布资料。考试记录处于进行中时，知识库列表、文档预览和 RAG 问答均由服务端阻断，前端不会在答题页提供助手入口。
+
+管理端入口：`/admin/knowledge`；学生学习入口：`/student/knowledge`。
 
 ---
 
