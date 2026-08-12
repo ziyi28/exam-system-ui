@@ -1,17 +1,13 @@
 <template>
   <div v-loading="loading">
-    <div class="page-header">
-      <div>
-        <h2 class="page-header__title">考试记录详情</h2>
-        <p class="page-header__desc">查看考生作答、切屏记录与 AI 批阅结果。</p>
-      </div>
-      <div class="page-header__actions">
+    <AppPageHeader title="考试记录详情" description="查看考生作答、切屏记录与 AI 批阅结果">
+      <template #actions>
         <el-button v-if="record && record.status === '已完成'" type="primary" :loading="grading" @click="handleGrade">
           触发 AI 批阅
         </el-button>
         <el-button @click="router.back()">返回列表</el-button>
-      </div>
-    </div>
+      </template>
+    </AppPageHeader>
 
     <el-card shadow="never" class="detail-card exam-detail-card">
       <el-descriptions v-if="record" :column="4" border>
@@ -42,33 +38,29 @@
 
     <!-- 逐题详情 -->
     <el-card v-for="(item, index) in answerItems" :key="item.record.id" shadow="never" class="detail-question-card">
-      <div class="question-title">
-        <span class="index">{{ index + 1 }}.</span>
-        <el-tag v-if="item.question" :type="typeTag(item.question.type)" size="small">
-          {{ typeText(item.question.type, item.question.multi) }}
-        </el-tag>
-        <el-tag :type="correctTag(item.record.isCorrect)" size="small" effect="dark">
-          {{ correctText(item.record.isCorrect) }} {{ item.record.score ?? 0 }}分
-        </el-tag>
-        <span class="title-text">{{ item.question?.title ?? `题目#${item.record.questionId}` }}</span>
-      </div>
-      <div v-if="item.question?.choices?.length" class="choices">
-        <div v-for="(c, ci) in item.question.choices" :key="ci" class="choice" :class="{ correct: c.isCorrect }">
-          {{ letter(ci) }}. {{ c.content }}
-          <el-icon v-if="c.isCorrect" class="check-icon"><Check /></el-icon>
-        </div>
-      </div>
-      <div class="answer-compare">
-        <div>学生答案：<el-text :type="item.record.isCorrect === 1 ? 'success' : 'danger'">{{ item.record.userAnswer || '（未作答）' }}</el-text></div>
-        <div>标准答案：<el-text type="success">{{ item.question?.answer?.answer ?? '-' }}</el-text></div>
-      </div>
-      <el-alert
-        v-if="item.record.aiCorrection"
-        type="info"
-        :closable="false"
-        :title="`AI 点评：${item.record.aiCorrection}`"
-        style="margin-top: 8px"
-      />
+      <QuestionReviewCard
+        :index="index"
+        :question="item.question"
+        :title-fallback="`题目#${item.record.questionId}`"
+        :score-text="`${item.record.score ?? 0} 分`"
+      >
+        <template #status>
+          <el-tag :type="correctTag(item.record.isCorrect)" size="small" effect="dark">
+            {{ correctText(item.record.isCorrect) }}
+          </el-tag>
+        </template>
+        <template #answer>
+          <div>学生答案：<el-text :type="item.record.isCorrect === 1 ? 'success' : 'danger'">{{ item.record.userAnswer || '（未作答）' }}</el-text></div>
+        </template>
+        <template #feedback>
+          <el-alert
+            v-if="item.record.aiCorrection"
+            type="info"
+            :closable="false"
+            :title="`AI 点评：${item.record.aiCorrection}`"
+          />
+        </template>
+      </QuestionReviewCard>
     </el-card>
   </div>
 </template>
@@ -77,11 +69,12 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { Check } from '@element-plus/icons-vue'
 import { getExamRecordDetail } from '@/api/examRecord'
 import { gradeExam } from '@/api/exam'
+import QuestionReviewCard from '@/components/question/QuestionReviewCard.vue'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 import type { AnswerRecord, ExamRecord, Question } from '@/types'
-import { typeText, typeTag, examStatusTag, letter } from '@/utils/format'
+import { examStatusTag } from '@/utils/format'
 
 const route = useRoute()
 const router = useRouter()
@@ -152,46 +145,11 @@ onMounted(loadData)
 }
 
 .exam-detail-card {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 }
 
-.question-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 500;
-}
-
-.index {
-  color: var(--gray-500);
-}
-
-.title-text {
-  flex: 1;
-}
-
-.choices {
-  margin: 10px 0 0 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  color: var(--gray-600);
-}
-
-.choice.correct {
-  color: var(--success);
-}
-
-.check-icon {
-  color: var(--success);
-  vertical-align: -2px;
-}
-
-.answer-compare {
-  margin: 10px 0 0 24px;
-  display: flex;
-  gap: 32px;
-  font-size: 13px;
+.detail-question-card {
+  margin-bottom: var(--space-4);
 }
 
 @media (max-width: 768px) {
@@ -201,16 +159,6 @@ onMounted(loadData)
 
   .exam-detail-card :deep(.el-descriptions__table) {
     min-width: 560px;
-  }
-
-  .choices,
-  .answer-compare {
-    margin-left: 0;
-  }
-
-  .answer-compare {
-    flex-direction: column;
-    gap: 4px;
   }
 }
 </style>

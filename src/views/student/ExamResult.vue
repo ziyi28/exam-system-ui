@@ -43,30 +43,24 @@
       <!-- 逐题解析 -->
       <h3 v-if="answerItems.length" class="section-title">答题详情</h3>
       <el-card v-for="(item, index) in answerItems" :key="item.record.id" shadow="never" class="question-card">
-        <div class="question-title">
-          <span class="q-index">{{ index + 1 }}.</span>
-          <el-tag v-if="item.question" :type="typeTag(item.question.type)" size="small">
-            {{ typeText(item.question.type, item.question.multi) }}
-          </el-tag>
-          <el-tag :type="correctTag(item.record.isCorrect)" size="small" effect="dark">
-            {{ correctText(item.record.isCorrect) }} · {{ item.record.score ?? 0 }} 分
-          </el-tag>
-          <span class="title-text">{{ item.question?.title ?? `题目#${item.record.questionId}` }}</span>
-        </div>
-        <div v-if="item.question?.choices?.length" class="choices">
-          <div v-for="(c, ci) in item.question.choices" :key="ci" class="choice" :class="{ correct: c.isCorrect }">
-            {{ letter(ci) }}. {{ c.content }}
-            <el-icon v-if="c.isCorrect" class="check-icon"><Check /></el-icon>
-          </div>
-        </div>
-        <div class="answer-compare">
-          <span>我的答案：<el-text :type="item.record.isCorrect === 1 ? 'success' : 'danger'">{{ item.record.userAnswer || '（未作答）' }}</el-text></span>
-          <span>标准答案：<el-text type="success">{{ item.question?.answer?.answer ?? '-' }}</el-text></span>
-        </div>
-        <el-alert v-if="item.record.aiCorrection" type="info" :closable="false" style="margin-top: 8px">
-          <template #title>点评：{{ item.record.aiCorrection }}</template>
-        </el-alert>
-        <div v-if="item.question?.analysis" class="analysis">解析:{{ item.question.analysis }}</div>
+        <QuestionReviewCard
+          :index="index"
+          :question="item.question"
+          :title-fallback="`题目#${item.record.questionId}`"
+          :score-text="`${item.record.score ?? 0} 分`"
+        >
+          <template #status>
+            <el-tag :type="correctTag(item.record.isCorrect)" size="small" effect="dark">
+              {{ correctText(item.record.isCorrect) }}
+            </el-tag>
+          </template>
+          <template #answer>
+            <span>我的答案：<el-text :type="item.record.isCorrect === 1 ? 'success' : 'danger'">{{ item.record.userAnswer || '（未作答）' }}</el-text></span>
+          </template>
+          <template #feedback>
+            <el-alert v-if="item.record.aiCorrection" type="info" :closable="false" :title="`点评：${item.record.aiCorrection}`" />
+          </template>
+        </QuestionReviewCard>
       </el-card>
     </template>
   </div>
@@ -75,10 +69,10 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Check } from '@element-plus/icons-vue'
 import { getExamDetail } from '@/api/exam'
+import QuestionReviewCard from '@/components/question/QuestionReviewCard.vue'
 import type { AnswerRecord, ExamRecord, Question } from '@/types'
-import { typeText, typeTag, examStatusTag, letter } from '@/utils/format'
+import { examStatusTag } from '@/utils/format'
 
 const route = useRoute()
 const router = useRouter()
@@ -179,8 +173,8 @@ onBeforeUnmount(() => {
 .result-card {
   margin-bottom: 28px;
   overflow: hidden;
-  border: 1px solid var(--gray-200);
-  background: var(--surface);
+  border: 1px solid var(--border-default);
+  background: var(--surface-1);
   box-shadow: none;
 }
 
@@ -197,7 +191,7 @@ onBeforeUnmount(() => {
 .score-circle {
   width: 126px;
   height: 110px;
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--border-default);
   border-left: 4px solid var(--danger);
   border-radius: var(--radius-md);
   background: var(--danger-bg);
@@ -209,7 +203,7 @@ onBeforeUnmount(() => {
 }
 
 .score-circle.pass {
-  border-color: var(--gray-200);
+  border-color: var(--border-default);
   border-left-color: var(--success);
   background: var(--success-bg);
 }
@@ -219,12 +213,12 @@ onBeforeUnmount(() => {
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
-  color: var(--gray-900);
+  color: var(--text-strong);
 }
 
 .score-total {
   font-size: 13px;
-  color: var(--gray-500);
+  color: var(--text-muted);
 }
 
 .result-info {
@@ -234,7 +228,7 @@ onBeforeUnmount(() => {
 .result-info h2 {
   margin: 5px 0 12px;
   font-size: 23px;
-  color: var(--gray-900);
+  color: var(--text-strong);
 }
 
 .result-kicker {
@@ -248,7 +242,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 16px;
-  color: var(--gray-500);
+  color: var(--text-muted);
   font-size: 14px;
   margin-bottom: 10px;
 }
@@ -307,7 +301,7 @@ onBeforeUnmount(() => {
 .ai-summary p {
   margin: 0;
   line-height: 1.8;
-  color: var(--gray-700);
+  color: var(--text-secondary);
 }
 
 .section-title {
@@ -320,52 +314,6 @@ onBeforeUnmount(() => {
 
 .question-card :deep(.el-card__body) {
   padding: 22px 24px;
-}
-
-.question-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 500;
-}
-
-.q-index {
-  color: var(--gray-500);
-}
-
-.title-text {
-  flex: 1;
-}
-
-.choices {
-  margin: 10px 0 0 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  color: var(--gray-600);
-}
-
-.choice.correct {
-  color: var(--success);
-  font-weight: 600;
-}
-
-.check-icon {
-  color: var(--success);
-  vertical-align: -2px;
-}
-
-.answer-compare {
-  margin: 10px 0 0 24px;
-  display: flex;
-  gap: 32px;
-  font-size: 13px;
-}
-
-.analysis {
-  margin: 8px 0 0 24px;
-  color: var(--gray-500);
-  font-size: 13px;
 }
 
 @media (max-width: 768px) {
@@ -388,18 +336,6 @@ onBeforeUnmount(() => {
 
   .meta-line {
     gap: 8px 12px;
-  }
-
-  .answer-compare {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 4px;
-    margin-left: 0;
-  }
-
-  .choices,
-  .analysis {
-    margin-left: 0;
   }
 
   .question-card :deep(.el-card__body) {
