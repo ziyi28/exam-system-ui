@@ -1,11 +1,10 @@
 <template>
   <el-container class="admin-layout">
     <!-- 侧边栏 -->
-    <el-aside :width="collapsed ? '78px' : '264px'" class="sidebar">
-      <div class="logo" @click="router.push('/admin/dashboard')">
-        <el-icon :size="26"><Reading /></el-icon>
-        <span v-show="!collapsed" class="logo-text">智能考试系统</span>
-      </div>
+    <el-aside :width="collapsed ? '78px' : '264px'" class="sidebar" :class="{ 'is-collapsed': collapsed }">
+      <button type="button" class="logo" @click="router.push('/admin/dashboard')">
+        <BrandMark :compact="collapsed" subtitle="管理工作台" />
+      </button>
       <el-menu
         :default-active="route.path"
         :collapse="collapsed"
@@ -24,16 +23,24 @@
       <!-- 顶栏 -->
       <el-header class="header">
         <div class="header-left">
-          <el-icon class="collapse-btn" :size="20" @click="toggleSidebar">
-            <Expand v-if="collapsed" />
-            <Fold v-else />
-          </el-icon>
+          <button
+            type="button"
+            class="collapse-btn"
+            :aria-label="isMobile ? '打开导航菜单' : collapsed ? '展开侧栏' : '折叠侧栏'"
+            @click="toggleSidebar"
+          >
+            <el-icon :size="18">
+              <Expand v-if="collapsed" />
+              <Fold v-else />
+            </el-icon>
+          </button>
           <el-breadcrumb separator="/">
             <el-breadcrumb-item>管理端</el-breadcrumb-item>
             <el-breadcrumb-item>{{ route.meta.title }}</el-breadcrumb-item>
           </el-breadcrumb>
         </div>
         <div class="header-right">
+          <ThemeToggle />
           <el-tag size="small" :type="userStore.role === 'ADMIN' ? 'danger' : 'warning'" effect="plain">
             {{ roleText }}
           </el-tag>
@@ -56,15 +63,16 @@
 
       <!-- 内容区 -->
       <el-main class="main">
-        <router-view />
+        <div class="page-content">
+          <router-view />
+        </div>
       </el-main>
     </el-container>
 
     <el-drawer v-model="mobileMenuVisible" direction="ltr" size="280px" :with-header="false" class="mobile-drawer">
-      <div class="drawer-brand" @click="router.push('/admin/dashboard'); mobileMenuVisible = false">
-        <span><el-icon :size="24"><Reading /></el-icon></span>
-        <div><b>智能考试系统</b><small>管理工作台</small></div>
-      </div>
+      <router-link to="/admin/dashboard" class="drawer-brand" @click="mobileMenuVisible = false">
+        <BrandMark subtitle="管理工作台" />
+      </router-link>
       <el-menu :default-active="route.path" router class="drawer-menu" @select="mobileMenuVisible = false">
         <el-menu-item v-for="item in menuItems" :key="item.path" :index="item.path">
           <el-icon><component :is="item.icon" /></el-icon>
@@ -80,12 +88,17 @@ import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+import ThemeToggle from '@/components/ui/ThemeToggle.vue'
+import BrandMark from '@/components/brand/BrandMark.vue'
 
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 const collapsed = ref(false)
 const mobileMenuVisible = ref(false)
+
+// ≤768px 时折叠按钮实际打开移动抽屉，语义标签与桌面端不同
+const isMobile = computed(() => window.matchMedia('(max-width: 768px)').matches)
 
 function toggleSidebar() {
   if (window.matchMedia('(max-width: 768px)').matches) {
@@ -134,8 +147,8 @@ async function handleCommand(command: string) {
 }
 
 .sidebar {
-  background: #f8f9fa;
-  border-right: 1px solid var(--gray-200);
+  background: var(--surface-1);
+  border-right: 1px solid var(--border-subtle);
   transition: width var(--duration-base) var(--ease-out-expo);
   overflow-x: hidden;
   display: flex;
@@ -145,20 +158,17 @@ async function handleCommand(command: string) {
 .logo {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  height: 72px;
+  justify-content: flex-start;
+  gap: 12px;
+  height: 76px;
+  padding: 0 18px;
   color: var(--brand-600);
   cursor: pointer;
-  font-weight: 600;
-  font-size: 17px;
+  background: transparent;
+  border: 0;
+  font: inherit;
   white-space: nowrap;
   flex-shrink: 0;
-}
-
-.logo-text {
-  color: var(--gray-900);
-  letter-spacing: -0.02em;
 }
 
 .sidebar-menu {
@@ -172,30 +182,66 @@ async function handleCommand(command: string) {
 .sidebar-menu :deep(.el-menu-item) {
   border-radius: var(--radius-md);
   margin-bottom: 4px;
-  color: var(--gray-600);
+  color: var(--text-secondary);
+  transition:
+    background-color var(--duration-fast) var(--ease-out-expo),
+    color var(--duration-fast) var(--ease-out-expo);
+}
+
+.sidebar-menu :deep(.el-menu-item .el-icon) {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  border-radius: 8px;
   transition:
     background-color var(--duration-fast) var(--ease-out-expo),
     color var(--duration-fast) var(--ease-out-expo);
 }
 
 .sidebar-menu :deep(.el-menu-item:hover) {
-  background-color: var(--gray-100);
-  color: var(--gray-900);
+  background-color: var(--surface-2);
+  color: var(--text-strong);
 }
 
 .sidebar-menu :deep(.el-menu-item.is-active) {
+  position: relative;
   background: var(--brand-50);
   color: var(--brand-700);
   font-weight: 600;
-  box-shadow: inset 3px 0 0 var(--brand-600);
+}
+
+.sidebar-menu :deep(.el-menu-item.is-active::before) {
+  content: '';
+  position: absolute;
+  top: 13px;
+  bottom: 13px;
+  left: 0;
+  width: 3px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--brand-600), var(--accent-violet));
+}
+
+.sidebar-menu :deep(.el-menu-item.is-active .el-icon) {
+  color: var(--brand-600);
+  background: color-mix(in srgb, var(--brand-600) 13%, transparent);
+}
+
+.sidebar-menu :deep(.el-menu--collapse .el-menu-item.is-active::before) {
+  display: none;
 }
 
 .header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--surface);
-  border-bottom: 1px solid var(--gray-200);
+  background: color-mix(in srgb, var(--surface-1) 88%, transparent);
+  backdrop-filter: saturate(140%) blur(10px);
+  border-bottom: 1px solid var(--border-subtle);
   height: 64px;
   padding: 0 28px;
 }
@@ -212,8 +258,9 @@ async function handleCommand(command: string) {
   height: 34px;
   display: grid;
   place-items: center;
-  color: var(--gray-600);
-  border: 1px solid var(--gray-200);
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
   transition: color var(--duration-fast) var(--ease-out-expo);
 }
@@ -234,23 +281,29 @@ async function handleCommand(command: string) {
   gap: 8px;
   cursor: pointer;
   padding: 6px 10px 6px 6px;
-  color: var(--gray-800);
-  border: 1px solid var(--gray-200);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  background: var(--surface);
+  background: var(--surface-1);
 }
 
 .avatar {
   background: var(--brand-600);
-  color: #fff;
+  color: var(--text-on-brand);
   font-weight: 500;
 }
 
 .main {
   min-width: 0;
-  background: var(--page-bg);
+  background: var(--bg-canvas);
   padding: 8px 28px 32px;
   overflow-y: auto;
+}
+
+.page-content {
+  max-width: var(--content-max-admin);
+  margin: 0 auto;
+  min-height: 100%;
 }
 
 .drawer-brand {
@@ -258,31 +311,8 @@ async function handleCommand(command: string) {
   align-items: center;
   gap: 12px;
   margin-bottom: 20px;
+  padding: 4px 2px;
   cursor: pointer;
-}
-
-.drawer-brand > span {
-  width: 42px;
-  height: 42px;
-  display: grid;
-  place-items: center;
-  color: #fff;
-  border-radius: var(--radius-md);
-  background: var(--brand-600);
-}
-
-.drawer-brand div {
-  display: flex;
-  flex-direction: column;
-}
-
-.drawer-brand b {
-  color: var(--gray-900);
-}
-
-.drawer-brand small {
-  color: var(--gray-400);
-  font-size: 10px;
 }
 
 .drawer-menu {
@@ -292,6 +322,26 @@ async function handleCommand(command: string) {
 .drawer-menu :deep(.el-menu-item) {
   margin-bottom: 4px;
   border-radius: 12px;
+}
+
+@media (max-width: 1024px) {
+  /* 平板下展开态收窄到 216px；折叠态保持 el-aside 内联 78px，避免 216px 宽侧栏
+     与内部 64px 图标菜单之间出现空表面 */
+  .sidebar:not(.is-collapsed) {
+    width: 216px !important;
+  }
+
+  .header {
+    padding: 0 20px;
+  }
+
+  .header-right {
+    gap: 10px;
+  }
+
+  .main {
+    padding: 8px 20px 28px;
+  }
 }
 
 @media (max-width: 768px) {
