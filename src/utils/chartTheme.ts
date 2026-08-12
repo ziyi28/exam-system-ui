@@ -13,15 +13,19 @@ export function cssVar(name: string): string {
 /** 图表默认调色：单一度量场景一律用品牌色，不做彩虹色 */
 export function chartColors() {
   return {
-    primary: cssVar('--brand-600'),
+    primary: cssVar('--chart-primary'),
     primaryDark: cssVar('--brand-700'),
     primaryLight: cssVar('--brand-100'),
+    cyan: cssVar('--chart-cyan'),
+    violet: cssVar('--chart-violet'),
     success: cssVar('--success'),
     warning: cssVar('--warning'),
     danger: cssVar('--danger'),
-    axisLabel: cssVar('--gray-500'),
-    axisLine: cssVar('--gray-200'),
-    splitLine: cssVar('--gray-100'),
-    text: cssVar('--gray-800'),
+    axisLabel: cssVar('--chart-axis'),
+    axisLine: cssVar('--chart-grid'),
+    splitLine: cssVar('--chart-grid'),
+    text: cssVar('--chart-text'),
+    // 浮层（tooltip）背景：随主题的悬浮表面，避免深色下白底 tooltip
+    surface: cssVar('--surface-elevated'),
   }
 }
