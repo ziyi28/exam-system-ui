@@ -1,11 +1,6 @@
 <template>
   <div>
-    <div class="page-header">
-      <div>
-        <h2 class="page-header__title">批量导入 / AI 出题</h2>
-        <p class="page-header__desc">通过 Excel 导入或 AI 生成题目，确认预览后再写入题库。</p>
-      </div>
-    </div>
+    <AppPageHeader title="批量导入 / AI 出题" description="通过 Excel 导入或 AI 生成题目，确认预览后再写入题库" />
     <el-row :gutter="16">
       <!-- Excel 导入 -->
       <el-col :xs="24" :md="10">
@@ -122,6 +117,7 @@ import { ElMessage, type UploadFile } from 'element-plus'
 import { Download, UploadFilled, MagicStick, Check } from '@element-plus/icons-vue'
 import { downloadTemplate, previewExcel, aiGenerate, importQuestions } from '@/api/questionBatch'
 import { listCategories } from '@/api/category'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 import type { AiGenerateForm, Category, Question } from '@/types'
 import { typeText, typeTag, difficultyText, difficultyTag, letter } from '@/utils/format'
 
@@ -213,14 +209,21 @@ onMounted(async () => {
 }
 
 .preview-item {
-  border: 1px solid var(--gray-100);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 16px;
-  background: var(--surface-muted);
+  background: var(--surface-2);
+  transition:
+    border-color var(--duration-fast) var(--ease-out-expo),
+    background-color var(--duration-fast) var(--ease-out-expo);
+}
+
+.preview-item:hover {
+  border-color: var(--border-default);
 }
 
 .upload-icon {
-  color: var(--gray-400);
+  color: var(--text-muted);
 }
 
 .check-icon {
@@ -242,7 +245,7 @@ onMounted(async () => {
 .preview-choices {
   margin-top: 8px;
   padding-left: 8px;
-  color: var(--gray-600);
+  color: var(--text-secondary);
   font-size: 13px;
   display: flex;
   flex-direction: column;

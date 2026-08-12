@@ -92,10 +92,10 @@ function pageText(start?: number, end?: number) {
 }
 
 .preview-chunk {
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
   padding: var(--space-4);
-  background: var(--el-bg-color);
+  background: var(--surface-1);
 }
 
 .chunk-header,
@@ -111,7 +111,7 @@ function pageText(start?: number, end?: number) {
 }
 
 .chunk-header strong {
-  color: var(--gray-800);
+  color: var(--text-primary);
   font-size: 13px;
 }
 
@@ -122,7 +122,7 @@ function pageText(start?: number, end?: number) {
 }
 
 .chunk-text {
-  color: var(--gray-700);
+  color: var(--text-secondary);
   line-height: 1.8;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
