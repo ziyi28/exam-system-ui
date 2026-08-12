@@ -1,13 +1,9 @@
 <template>
-  <div class="page-header">
-    <div>
-      <h2 class="page-header__title">轮播图管理</h2>
-      <p class="page-header__desc">共 {{ banners.length }} 张轮播图，展示在学生端首页顶部</p>
-    </div>
-    <div class="page-header__actions">
+  <AppPageHeader title="轮播图管理" description="共 {{ banners.length }} 张轮播图，展示在学生端首页顶部">
+    <template #actions>
       <el-button type="primary" :icon="Plus" @click="openDialog()">添加轮播图</el-button>
-    </div>
-  </div>
+    </template>
+  </AppPageHeader>
 
   <el-card shadow="never" class="data-card">
 
@@ -80,6 +76,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules, type UploadFile } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { listBanners, uploadBannerImage, addBanner, updateBanner, deleteBanner, toggleBanner } from '@/api/banner'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 import type { Banner } from '@/types'
 
 const loading = ref(false)
@@ -172,14 +169,14 @@ onMounted(loadData)
 .upload-placeholder {
   width: 240px;
   height: 120px;
-  border: 1px dashed var(--gray-300);
+  border: 1px dashed var(--border-default);
   border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  color: var(--gray-500);
+  color: var(--text-muted);
   cursor: pointer;
   transition:
     border-color var(--duration-fast) var(--ease-out-expo),

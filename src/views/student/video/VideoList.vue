@@ -1,21 +1,20 @@
 <template>
   <div>
-    <div class="page-title">
-      <h2>视频学习</h2>
-      <div class="filters">
+    <AppPageHeader title="视频学习" description="在线课程随时学，支持投稿分享">
+      <template #actions>
         <el-select v-model="query.categoryId" placeholder="全部分类" clearable style="width: 160px" @change="handleSearch">
           <el-option v-for="c in categories" :key="c.id" :label="c.name" :value="c.id!" />
         </el-select>
         <el-input v-model="query.keyword" placeholder="搜索视频" clearable style="width: 200px" :prefix-icon="Search" @keyup.enter="handleSearch" @clear="handleSearch" />
         <el-button type="primary" plain :icon="Upload" @click="submitVisible = true">我要投稿</el-button>
-      </div>
-    </div>
+      </template>
+    </AppPageHeader>
 
     <el-empty v-if="!loading && !videos.length" description="暂无视频" />
 
     <el-row v-loading="loading" :gutter="16">
       <el-col v-for="video in videos" :key="video.id" :xs="12" :sm="8" :md="6">
-        <div class="video-card" @click="router.push(`/student/videos/${video.id}`)">
+        <router-link :to="`/student/videos/${video.id}`" class="video-card">
           <div class="video-cover">
             <img v-if="video.coverUrl" :src="video.coverUrl" :alt="video.title" />
             <div v-else class="cover-placeholder"><el-icon :size="32"><VideoCamera /></el-icon></div>
@@ -23,12 +22,12 @@
               {{ video.durationText ?? formatDuration(video.duration) }}
             </span>
           </div>
-          <div class="video-title">{{ video.title }}</div>
-          <div class="video-meta">
+          <span class="video-title">{{ video.title }}</span>
+          <span class="video-meta">
             <span>{{ video.categoryName ?? '未分类' }}</span>
             <span>{{ video.viewCount ?? 0 }} 观看 · {{ video.likeCount ?? 0 }} 赞</span>
-          </div>
-        </div>
+          </span>
+        </router-link>
       </el-col>
     </el-row>
 
@@ -94,15 +93,14 @@
 
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { ElMessage, type UploadFile } from 'element-plus'
 import { Search, Upload, VideoCamera, Picture } from '@element-plus/icons-vue'
 import { pageVideos, submitVideo } from '@/api/video'
 import { listVideoCategories } from '@/api/videoCategory'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 import type { Video, VideoCategory } from '@/types'
 import { formatDuration } from '@/utils/format'
 
-const router = useRouter()
 const loading = ref(false)
 const videos = ref<Video[]>([])
 const total = ref(0)
@@ -177,30 +175,15 @@ onMounted(async () => {
 .upload-tip {
   margin: 8px 0 0;
   font-size: 12px;
-  color: var(--gray-500);
-}
-
-.page-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.page-title h2 {
-  margin: 0;
-}
-
-.filters {
-  display: flex;
-  gap: 12px;
+  color: var(--text-muted);
 }
 
 .video-card {
-  cursor: pointer;
+  display: flex;
+  flex-direction: column;
   margin-bottom: 16px;
+  color: inherit;
+  text-decoration: none;
 }
 
 .video-cover {
@@ -208,7 +191,7 @@ onMounted(async () => {
   height: 130px;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  background: var(--gray-100);
+  background: var(--surface-2);
   transition: box-shadow var(--duration-base) var(--ease-out-expo);
 }
 
@@ -220,6 +203,7 @@ onMounted(async () => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
   transition: transform var(--duration-base) var(--ease-out-expo);
 }
 
@@ -232,15 +216,15 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--gray-400);
+  color: var(--text-muted);
 }
 
 .duration {
   position: absolute;
   right: 6px;
   bottom: 6px;
-  background: rgba(18, 25, 38, 0.72);
-  color: #fff;
+  background: var(--media-overlay);
+  color: var(--text-on-media);
   font-size: 12px;
   border-radius: 4px;
   padding: 1px 6px;
@@ -251,6 +235,7 @@ onMounted(async () => {
   font-size: 14px;
   font-weight: 500;
   margin-top: 8px;
+  color: var(--text-strong);
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -260,7 +245,7 @@ onMounted(async () => {
 .video-meta {
   display: flex;
   justify-content: space-between;
-  color: var(--gray-500);
+  color: var(--text-muted);
   font-size: 12px;
   margin-top: 4px;
 }

@@ -1,13 +1,9 @@
 <template>
-  <div class="page-header">
-    <div>
-      <h2 class="page-header__title">用户管理</h2>
-      <p class="page-header__desc">管理账号、角色与启用状态</p>
-    </div>
-    <div class="page-header__actions">
+  <AppPageHeader title="用户管理" description="管理账号、角色与启用状态">
+    <template #actions>
       <el-button type="primary" :icon="Plus" @click="openDialog()">新增用户</el-button>
-    </div>
-  </div>
+    </template>
+  </AppPageHeader>
 
   <el-card shadow="never" class="data-card">
     <div class="filter-bar">
@@ -104,6 +100,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import { Search, Refresh, Plus } from '@element-plus/icons-vue'
 import { pageUsers, addUser, updateUser, deleteUser, toggleUserStatus, resetUserPassword } from '@/api/user'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 import { useUserStore } from '@/stores/user'
 import type { Role, User, UserStatus } from '@/types'
 

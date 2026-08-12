@@ -1,18 +1,14 @@
 <template>
   <div>
-    <div class="page-header">
-      <div>
-        <h2 class="page-header__title">试卷管理</h2>
-        <p class="page-header__desc">组卷、发布与停用，支持 AI 按规则智能组卷</p>
-      </div>
-      <div class="page-header__actions">
+    <AppPageHeader title="试卷管理" description="组卷、发布与停用，支持 AI 按规则智能组卷">
+      <template #actions>
         <el-button :icon="MagicStick" @click="aiDialogVisible = true">AI 智能组卷</el-button>
         <el-button type="primary" :icon="Plus" @click="router.push('/admin/papers/edit')">手动组卷</el-button>
-      </div>
-    </div>
+      </template>
+    </AppPageHeader>
 
     <el-card shadow="never" class="data-card">
-      <div class="filter-bar">
+      <div class="filter-bar" aria-label="筛选条件">
         <el-input v-model="query.name" placeholder="试卷名称" clearable style="width: 200px" @keyup.enter="loadData" />
         <el-select v-model="query.status" placeholder="全部状态" clearable style="width: 140px">
           <el-option label="草稿" value="DRAFT" />
@@ -50,7 +46,7 @@
     </el-card>
 
     <!-- AI 组卷对话框 -->
-    <el-dialog v-model="aiDialogVisible" title="AI 智能组卷" width="680px" destroy-on-close>
+    <el-dialog v-model="aiDialogVisible" title="AI 智能组卷" width="min(680px, calc(100vw - 48px))" destroy-on-close>
       <el-form :model="aiForm" label-width="90px">
         <el-form-item label="试卷名称" required>
           <el-input v-model="aiForm.name" placeholder="请输入试卷名称" />
@@ -99,6 +95,7 @@ import { listPapers, updatePaperStatus, deletePaper, createPaperWithAI } from '@
 import { listCategories } from '@/api/category'
 import type { AiPaperForm, Category, Paper } from '@/types'
 import { paperStatusText, paperStatusTag } from '@/utils/format'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 
 const router = useRouter()
 const loading = ref(false)
@@ -177,7 +174,7 @@ onMounted(async () => {
 }
 
 .rule-label {
-  color: var(--gray-500);
+  color: var(--text-muted);
   white-space: nowrap;
 }
 </style>

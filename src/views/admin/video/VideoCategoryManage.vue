@@ -1,13 +1,9 @@
 <template>
-  <div class="page-header">
-    <div>
-      <h2 class="page-header__title">视频分类</h2>
-      <p class="page-header__desc">维护视频学习板块的分类结构</p>
-    </div>
-    <div class="page-header__actions">
+  <AppPageHeader title="视频分类" description="维护视频学习板块的分类结构">
+    <template #actions>
       <el-button type="primary" :icon="Plus" @click="openDialog()">新增分类</el-button>
-    </div>
-  </div>
+    </template>
+  </AppPageHeader>
 
   <el-card shadow="never" class="data-card">
 
@@ -78,6 +74,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { getVideoCategoryTree, addVideoCategory, updateVideoCategory, deleteVideoCategory } from '@/api/videoCategory'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 import type { VideoCategory } from '@/types'
 
 const loading = ref(false)
