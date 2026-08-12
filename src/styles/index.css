@@ -23,8 +23,8 @@ body {
   font-family: var(--font-sans);
   font-size: 14px;
   line-height: 1.6;
-  color: var(--gray-800);
-  background: var(--page-bg);
+  color: var(--text-primary);
+  background: var(--bg-canvas);
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -34,7 +34,7 @@ h1,
 h2,
 h3,
 h4 {
-  color: var(--gray-900);
+  color: var(--text-strong);
   letter-spacing: -0.01em;
   text-wrap: balance;
 }
@@ -49,9 +49,14 @@ a {
   outline-offset: 2px;
 }
 
+/* 应用画布：浅色为主色相背景 + 极淡的蓝紫/青径向光晕 */
+#app {
+  background: var(--bg-canvas-accent);
+}
+
 /* ========== 页面级工具类 ========== */
 
-/* 页面头：工具型产品的标题与主操作 */
+/* 页面头：工具的标题与主操作 */
 .page-header {
   display: flex;
   align-items: flex-end;
@@ -60,15 +65,15 @@ a {
   min-height: 92px;
   margin-bottom: var(--space-5);
   padding: 18px 0 20px;
-  border-bottom: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .page-header__title {
   margin: 0;
-  font-size: clamp(23px, 2vw, 29px);
+  font-size: clamp(24px, 2vw, 30px);
   font-weight: 700;
   line-height: 1.25;
-  color: var(--gray-900);
+  color: var(--text-strong);
   letter-spacing: -0.025em;
 }
 
@@ -76,7 +81,7 @@ a {
   margin: 8px 0 0;
   max-width: 620px;
   font-size: 14px;
-  color: var(--gray-500);
+  color: var(--text-secondary);
 }
 
 .page-header__actions {
@@ -107,7 +112,7 @@ a {
   margin: 0;
   font-size: 17px;
   font-weight: 700;
-  color: var(--gray-900);
+  color: var(--text-strong);
 }
 
 /* 筛选表单行 */
@@ -134,13 +139,13 @@ a {
 .data-card .filter-bar {
   margin-bottom: var(--space-5);
   padding: var(--space-4);
-  border: 1px solid var(--gray-100);
-  border-radius: var(--radius-md);
-  background: var(--surface-muted);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
 }
 
 .data-card .el-table {
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }
 
@@ -157,7 +162,7 @@ a {
 .workspace-card,
 .data-card,
 .detail-card {
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--border-default);
   box-shadow: none;
 }
 
@@ -174,7 +179,7 @@ a {
   margin: 0 0 var(--space-3);
   font-size: 15px;
   font-weight: 600;
-  color: var(--gray-800);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -190,7 +195,7 @@ a {
 
 /* 次要文字 */
 .text-secondary {
-  color: var(--gray-500);
+  color: var(--text-secondary);
 }
 
 /* 文本溢出省略 */
@@ -198,6 +203,22 @@ a {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* ========== 全局减少动态效果 ========== */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 @media (max-width: 768px) {

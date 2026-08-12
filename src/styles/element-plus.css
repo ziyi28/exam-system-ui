@@ -8,8 +8,9 @@
 /* ---------- 卡片：细边框 + 极浅阴影，header 更有分量 ---------- */
 .el-card {
   --el-card-border-radius: var(--radius-lg);
-  --el-card-border-color: var(--gray-200);
+  --el-card-border-color: var(--border-default);
   --el-card-padding: var(--space-5);
+  --el-card-bg-color: var(--surface-1);
   box-shadow: none;
   transition: box-shadow var(--duration-base) var(--ease-out-expo);
 }
@@ -17,17 +18,25 @@
 .el-card__header {
   font-size: 15px;
   font-weight: 600;
-  color: var(--gray-800);
+  color: var(--text-strong);
   padding: var(--space-5) var(--space-6);
-  border-bottom-color: var(--gray-100);
+  border-bottom-color: var(--border-subtle);
+}
+
+/* 深色下官方 html.dark .el-card 会以 (0,2,1) 覆盖 .el-card{--el-card-bg-color} (0,1,0)，
+   提升特异性保持卡片背景与页面画布一致 */
+:root[data-theme='dark'] .el-card {
+  --el-card-bg-color: var(--surface-1);
 }
 
 /* ---------- 表格：灰底表头、hover 品牌淡染、数字对齐 ---------- */
 .el-table {
-  --el-table-header-bg-color: var(--gray-50);
-  --el-table-header-text-color: var(--gray-600);
-  --el-table-row-hover-bg-color: color-mix(in srgb, var(--brand-600) 4%, white);
-  --el-table-border-color: var(--gray-100);
+  --el-table-header-bg-color: var(--surface-2);
+  --el-table-header-text-color: var(--text-secondary);
+  --el-table-row-hover-bg-color: color-mix(in srgb, var(--brand-600) 5%, var(--surface-1));
+  --el-table-border-color: var(--border-subtle);
+  --el-table-tr-bg-color: var(--surface-1);
+  --el-table-expanded-cell-bg-color: var(--surface-1);
   font-variant-numeric: tabular-nums;
 }
 
@@ -47,7 +56,7 @@
 }
 
 .el-dialog__header {
-  border-bottom: 1px solid var(--gray-100);
+  border-bottom: 1px solid var(--border-subtle);
   margin-right: 0;
   padding-bottom: var(--space-4);
 }
@@ -77,6 +86,14 @@
   --el-button-hover-bg-color: var(--brand-500);
   --el-button-hover-border-color: var(--brand-500);
   box-shadow: none;
+}
+
+/* 深色主题主按钮：亮靛底配白字仅 2.98:1，改用 --text-on-brand 深字达 6.19:1，
+   与 avatar/答题卡/时长遮罩的深字浅底写法一致；浅色主题不受影响 */
+:root[data-theme='dark'] .el-button--primary {
+  --el-button-text-color: var(--text-on-brand);
+  --el-button-hover-text-color: var(--text-on-brand);
+  --el-button-active-color: var(--text-on-brand);
 }
 
 .el-button:not(.is-disabled):not(.is-link):not(.is-text):active {
@@ -113,12 +130,38 @@
   box-shadow: var(--shadow-md);
 }
 
-/* ---------- 下拉菜单 ---------- */
+/* ---------- 下拉菜单 / 弹层 ---------- */
 .el-dropdown-menu {
   border-radius: var(--radius-md);
 }
 
+.el-dialog,
+.el-drawer {
+  --el-dialog-bg-color: var(--surface-elevated);
+  --el-drawer-bg-color: var(--surface-elevated);
+}
+
+.el-popper {
+  --el-popper-bg-color: var(--surface-elevated);
+  --el-box-shadow-light: var(--shadow-md);
+}
+
 /* ---------- 空状态文字 ---------- */
 .el-empty__description p {
-  color: var(--gray-400);
+  color: var(--text-muted);
+}
+
+/* ---------- 输入控件焦点：主题化 ---------- */
+.el-input__wrapper,
+.el-textarea__inner,
+.el-select__wrapper {
+  --el-input-bg-color: var(--surface-1);
+  --el-input-border-color: var(--border-default);
+  --el-input-hover-border-color: var(--brand-500);
+  --el-input-focus-border-color: var(--brand-600);
+}
+
+/* ---------- 弹窗遮罩：固定深色压暗，不随主题反转 ---------- */
+.el-overlay {
+  background-color: var(--overlay-mask);
 }
