@@ -1,15 +1,11 @@
 <template>
   <div>
-    <div class="page-header">
-      <div>
-        <h2 class="page-header__title">{{ paperId ? '编辑试卷' : '手动组卷' }}</h2>
-        <p class="page-header__desc">设置试卷基础信息，从题库选择题目并配置对应分值。</p>
-      </div>
-      <div class="page-header__actions">
+    <AppPageHeader :title="paperId ? '编辑试卷' : '手动组卷'" description="设置试卷基础信息，从题库选择题目并配置对应分值">
+      <template #actions>
         <el-button @click="router.back()">返回</el-button>
         <el-button type="primary" :loading="saving" @click="handleSave">保存试卷</el-button>
-      </div>
-    </div>
+      </template>
+    </AppPageHeader>
 
     <el-card shadow="never" class="detail-card paper-base-card">
       <el-form :model="form" label-width="90px" inline>
@@ -26,12 +22,12 @@
       <el-alert :closable="false" type="info" show-icon :title="`已选 ${selected.length} 道题，总分 ${totalScore} 分`" />
     </el-card>
 
-    <el-row :gutter="16">
+    <el-row :gutter="16" align="top">
       <!-- 题库选题 -->
-      <el-col :xs="24" :md="14">
+      <el-col :xs="24" :lg="14">
         <el-card shadow="never" class="workspace-card">
           <template #header>题库选题</template>
-          <div class="filter-bar">
+          <div class="filter-bar" aria-label="筛选条件">
             <el-select v-model="query.categoryId" placeholder="全部分类" clearable style="width: 140px">
               <el-option v-for="c in categories" :key="c.id" :label="c.name" :value="c.id!" />
             </el-select>
@@ -71,7 +67,7 @@
       </el-col>
 
       <!-- 已选题目 -->
-      <el-col :xs="24" :md="10">
+      <el-col :xs="24" :lg="10" class="selected-col">
         <el-card shadow="never" class="workspace-card selected-questions-card">
           <template #header>已选题目（可设置分值）</template>
           <el-empty v-if="!selected.length" description="从左侧题库添加题目" />
@@ -103,6 +99,7 @@ import { Search } from '@element-plus/icons-vue'
 import { pageQuestions } from '@/api/question'
 import { listCategories } from '@/api/category'
 import { createPaper, updatePaper, getPaperDetail } from '@/api/paper'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 import type { Category, Question } from '@/types'
 import { typeText, typeTag } from '@/utils/format'
 
@@ -201,11 +198,22 @@ onMounted(async () => {
 
 <style scoped>
 .paper-base-card {
-  margin-bottom: 16px;
+  margin-bottom: var(--space-4);
 }
 
-.selected-questions-card {
-  height: 100%;
+/* 已选列：桌面双栏下局部吸顶，窄屏恢复普通文档流 */
+@media (min-width: 1200px) {
+  .selected-col {
+    position: sticky;
+    top: var(--space-4);
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 1199px) {
+  .selected-col {
+    height: auto;
+  }
 }
 
 @media (max-width: 768px) {

@@ -1,15 +1,11 @@
 <template>
   <div>
-    <div class="page-header">
-      <div>
-        <h2 class="page-header__title">AI 知识库</h2>
-        <p class="page-header__desc">上传可信资料并建立向量索引；教师可在入题前验证检索答案与引用依据</p>
-      </div>
-      <div class="page-header__actions">
+    <AppPageHeader title="AI 知识库" description="上传可信资料并建立向量索引；教师可在入题前验证检索答案与引用依据">
+      <template #actions>
         <el-button :icon="Refresh" :loading="knowledgeBaseLoading" @click="refreshAll">刷新</el-button>
         <el-button type="primary" :icon="Plus" @click="openCreateDialog">新建知识库</el-button>
-      </div>
-    </div>
+      </template>
+    </AppPageHeader>
 
     <el-row :gutter="16" class="knowledge-layout">
       <el-col :xs="24" :lg="7">
@@ -217,44 +213,7 @@
               </div>
             </el-form>
 
-            <div v-if="ragResult" class="rag-result">
-              <div class="rag-answer-header">
-                <h3>回答</h3>
-                <el-tag :type="evidenceStatusTag(ragResult.evidenceStatus)" effect="plain">
-                  {{ evidenceStatusText(ragResult.evidenceStatus) }}
-                </el-tag>
-              </div>
-              <div class="rag-answer-text">{{ ragResult.answer || '未生成回答' }}</div>
-              <div v-if="ragResult.model || ragResult.latencyMs != null" class="rag-result-meta">
-                <span v-if="ragResult.model">模型：{{ ragResult.model }}</span>
-                <span v-if="ragResult.latencyMs != null">耗时：{{ formatLatency(ragResult.latencyMs) }}</span>
-              </div>
-
-              <el-divider content-position="left">引用依据（{{ ragResult.citations.length }}）</el-divider>
-              <el-empty v-if="!ragResult.citations.length" :image-size="72" description="本次回答未返回可核验引用" />
-              <div v-else class="citation-list">
-                <article v-for="(citation, index) in ragResult.citations" :key="citationKey(citation, index)" class="citation-card">
-                  <div class="citation-header">
-                    <strong>{{ index + 1 }}. {{ citation.documentName || `文档 #${citation.documentId}` }}</strong>
-                    <div class="citation-tags">
-                      <el-tag v-if="citation.pageStart != null && citation.pageStart > 0" size="small" type="info" effect="plain">
-                        {{ citationPageText(citation) }}
-                      </el-tag>
-                      <el-tag v-if="citation.sectionPath" size="small" type="info" effect="plain">
-                        {{ citation.sectionPath }}
-                      </el-tag>
-                      <el-tag v-if="citation.chunkId != null" size="small" type="info" effect="plain">
-                        片段 {{ citation.chunkId }}
-                      </el-tag>
-                      <el-tag v-if="citation.score != null" size="small" type="success" effect="plain">
-                        相关度 {{ formatScore(citation.score) }}
-                      </el-tag>
-                    </div>
-                  </div>
-                  <p class="citation-content">{{ citation.quote || '（无可展示片段）' }}</p>
-                </article>
-              </div>
-            </div>
+            <RagAnswerPanel :result="ragResult" empty-citation-text="本次回答未返回可核验引用" />
           </el-card>
         </template>
 
@@ -351,6 +310,7 @@ import {
 } from 'element-plus'
 import { Files, Loading, Plus, Refresh, Search, Upload, UploadFilled } from '@element-plus/icons-vue'
 import DocumentPreviewDrawer from '@/components/knowledge/DocumentPreviewDrawer.vue'
+import RagAnswerPanel from '@/components/knowledge/RagAnswerPanel.vue'
 import {
   answerWithRag,
   createKnowledgeBase,
@@ -368,7 +328,6 @@ import type {
   KnowledgeDocument,
   KnowledgeDocumentPreview,
   RagAnswer,
-  RagCitation,
 } from '@/types'
 
 type TagType = 'primary' | 'success' | 'warning' | 'danger' | 'info'
@@ -780,50 +739,6 @@ const ragQuestion = ref('')
 const ragAsking = ref(false)
 const ragResult = ref<RagAnswer | null>(null)
 
-function evidenceStatusText(status?: string) {
-  const normalized = normalizeStatus(status)
-  const text: Record<string, string> = {
-    SUPPORTED: '证据充分',
-    GROUNDED: '证据充分',
-    SUFFICIENT: '证据充分',
-    PARTIAL: '部分有依据',
-    INSUFFICIENT: '证据不足',
-    NO_EVIDENCE: '未检索到依据',
-    UNSUPPORTED: '缺少依据',
-  }
-  return text[normalized] || status || '证据状态未知'
-}
-
-function evidenceStatusTag(status?: string): TagType {
-  const normalized = normalizeStatus(status)
-  if (['SUPPORTED', 'GROUNDED', 'SUFFICIENT'].includes(normalized)) return 'success'
-  if (['INSUFFICIENT', 'NO_EVIDENCE', 'UNSUPPORTED'].includes(normalized)) return 'danger'
-  return 'warning'
-}
-
-function formatLatency(latencyMs: number) {
-  const value = Number(latencyMs)
-  if (!Number.isFinite(value)) return '-'
-  return value >= 1000 ? `${(value / 1000).toFixed(2)} 秒` : `${Math.round(value)} ms`
-}
-
-function formatScore(score: number) {
-  const value = Number(score)
-  if (!Number.isFinite(value)) return '-'
-  if (value >= 0 && value <= 1) return `${(value * 100).toFixed(1)}%`
-  return value.toFixed(3)
-}
-
-function citationKey(citation: RagCitation, index: number) {
-  return `${citation.documentId}-${citation.chunkId ?? index}-${index}`
-}
-
-function citationPageText(citation: RagCitation) {
-  const start = citation.pageStart
-  const end = citation.pageEnd
-  return end != null && start != null && end > start ? `第 ${start}-${end} 页` : `第 ${start} 页`
-}
-
 async function handleAskRag() {
   const question = ragQuestion.value.trim()
   if (!ragKnowledgeBaseIds.value.length) {
@@ -870,19 +785,13 @@ onBeforeUnmount(() => {
 .knowledge-base-title-row,
 .knowledge-base-tags,
 .knowledge-base-meta,
-.rag-actions,
-.rag-answer-header,
-.citation-header,
-.citation-tags,
-.rag-result-meta {
+.rag-actions {
   display: flex;
   align-items: center;
 }
 
 .card-header,
-.rag-actions,
-.rag-answer-header,
-.citation-header {
+.rag-actions {
   justify-content: space-between;
   gap: var(--space-3);
 }
@@ -890,9 +799,7 @@ onBeforeUnmount(() => {
 .card-actions,
 .knowledge-base-title-row,
 .knowledge-base-tags,
-.knowledge-base-meta,
-.citation-tags,
-.rag-result-meta {
+.knowledge-base-meta {
   gap: var(--space-2);
 }
 
@@ -908,7 +815,7 @@ onBeforeUnmount(() => {
 }
 
 .card-title-copy small {
-  color: var(--gray-500);
+  color: var(--text-muted);
   font-size: 12px;
   font-weight: 400;
 }
@@ -920,20 +827,36 @@ onBeforeUnmount(() => {
 }
 
 .knowledge-base-item {
-  border: 1px solid var(--gray-100);
+  position: relative;
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
-  background: var(--surface-muted);
+  background: var(--surface-2);
   cursor: pointer;
   transition:
     border-color var(--duration-fast) var(--ease-out-expo),
     background-color var(--duration-fast) var(--ease-out-expo);
 }
 
-.knowledge-base-item:hover,
+.knowledge-base-item:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-2);
+}
+
 .knowledge-base-item.selected {
-  border-color: var(--brand-500);
+  border-color: var(--brand-600);
   background: var(--brand-50);
+}
+
+.knowledge-base-item.selected::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: -1px;
+  width: 3px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--brand-600), var(--accent-violet));
 }
 
 .knowledge-base-item:focus-visible {
@@ -954,13 +877,13 @@ onBeforeUnmount(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--gray-900);
+  color: var(--text-strong);
   font-weight: 600;
 }
 
 .knowledge-base-description {
   margin: 6px 0 8px;
-  color: var(--gray-500);
+  color: var(--text-muted);
   font-size: 13px;
   display: -webkit-box;
   overflow: hidden;
@@ -969,7 +892,7 @@ onBeforeUnmount(() => {
 }
 
 .knowledge-base-meta {
-  color: var(--gray-500);
+  color: var(--text-muted);
   font-size: 12px;
   flex-wrap: wrap;
 }
@@ -1029,77 +952,8 @@ onBeforeUnmount(() => {
   margin-top: calc(0px - var(--space-3));
 }
 
-.rag-result {
-  margin-top: var(--space-5);
-  border-top: 1px solid var(--gray-100);
-  padding-top: var(--space-5);
-}
-
-.rag-answer-header h3 {
-  margin: 0;
-  font-size: 16px;
-}
-
-.rag-answer-text,
-.citation-content {
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-.rag-answer-text {
-  margin-top: var(--space-3);
-  padding: var(--space-4);
-  border-left: 3px solid var(--brand-600);
-  border-radius: var(--radius-md);
-  background: var(--brand-50);
-  color: var(--gray-800);
-  line-height: 1.8;
-}
-
-.rag-result-meta {
-  margin-top: var(--space-2);
-  color: var(--gray-500);
-  font-size: 12px;
-  flex-wrap: wrap;
-}
-
-.citation-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.citation-card {
-  border: 1px solid var(--gray-100);
-  border-radius: var(--radius-lg);
-  padding: var(--space-3) var(--space-4);
-  background: var(--el-bg-color);
-}
-
-.citation-header {
-  align-items: flex-start;
-}
-
-.citation-header strong {
-  color: var(--gray-800);
-  font-size: 13px;
-}
-
-.citation-tags {
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  flex-shrink: 0;
-}
-
-.citation-content {
-  margin: var(--space-2) 0 0;
-  color: var(--gray-600);
-  font-size: 13px;
-  line-height: 1.7;
-}
-
 .upload-icon {
-  color: var(--gray-400);
+  color: var(--text-muted);
 }
 
 .upload-progress-block {
@@ -1108,7 +962,7 @@ onBeforeUnmount(() => {
 
 .upload-progress-block p {
   margin: 6px 0 0;
-  color: var(--gray-500);
+  color: var(--text-muted);
   font-size: 12px;
   text-align: center;
 }
@@ -1120,24 +974,17 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 768px) {
-  .page-header,
-  .card-header,
-  .citation-header {
+  .card-header {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .page-header__actions,
   .card-actions {
     justify-content: flex-start;
   }
 
   .rag-actions {
     align-items: flex-end;
-  }
-
-  .citation-tags {
-    justify-content: flex-start;
   }
 }
 </style>

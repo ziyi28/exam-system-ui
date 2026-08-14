@@ -1,13 +1,9 @@
 <template>
-  <div class="page-header">
-    <div>
-      <h2 class="page-header__title">视频管理</h2>
-      <p class="page-header__desc">上传课程视频，审核用户投稿</p>
-    </div>
-    <div class="page-header__actions">
+  <AppPageHeader title="视频管理" description="上传课程视频，审核用户投稿">
+    <template #actions>
       <el-button type="primary" :icon="Upload" @click="uploadVisible = true">上传视频</el-button>
-    </div>
-  </div>
+    </template>
+  </AppPageHeader>
 
   <el-card shadow="never" class="data-card">
     <div class="filter-bar">
@@ -122,6 +118,7 @@ import { ElMessage, ElMessageBox, type UploadFile } from 'element-plus'
 import { Search, Upload, VideoCamera, Picture } from '@element-plus/icons-vue'
 import { pageVideosForAdmin, uploadVideo, auditVideo, offlineVideo, deleteVideo } from '@/api/videoAdmin'
 import { listVideoCategories } from '@/api/videoCategory'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 import { useUserStore } from '@/stores/user'
 import type { Video, VideoCategory as VideoCategoryType } from '@/types'
 import { videoStatusText, videoStatusTag } from '@/utils/format'
@@ -229,7 +226,7 @@ onMounted(async () => {
 
 <style scoped>
 .no-cover {
-  color: var(--gray-400);
+  color: var(--text-muted);
   font-size: 12px;
 }
 
@@ -240,6 +237,6 @@ onMounted(async () => {
 .upload-tip {
   margin: 8px 0 0;
   font-size: 12px;
-  color: var(--gray-500);
+  color: var(--text-muted);
 }
 </style>

@@ -1,13 +1,8 @@
 <template>
   <div class="records-page">
-    <div class="page-header">
-      <div>
-        <h1 class="page-header__title">我的成绩</h1>
-        <p class="page-header__desc">查看已完成考试的成绩与批阅结果。</p>
-      </div>
-    </div>
+    <AppPageHeader title="我的成绩" description="查看已完成考试的成绩与批阅结果" />
 
-    <el-card shadow="never" class="records-card">
+    <el-card shadow="never" class="data-card records-card">
       <el-table v-loading="loading" :data="records" stripe>
         <el-table-column type="index" label="#" width="60" />
         <el-table-column label="试卷" min-width="200">
@@ -48,6 +43,7 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { listMyRecords } from '@/api/exam'
 import { listPapers } from '@/api/paper'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 import type { ExamRecord } from '@/types'
 import { examStatusTag } from '@/utils/format'
 

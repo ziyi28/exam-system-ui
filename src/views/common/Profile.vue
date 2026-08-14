@@ -1,11 +1,6 @@
 <template>
   <div class="profile-page">
-    <div class="page-header">
-      <div>
-        <h2 class="page-header__title">个人中心</h2>
-        <p class="page-header__desc">查看账号资料并维护登录密码。</p>
-      </div>
-    </div>
+    <AppPageHeader title="个人中心" description="查看账号资料并维护登录密码" />
     <el-row :gutter="16">
       <!-- 基本信息 -->
       <el-col :xs="24" :md="10">
@@ -57,6 +52,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { updatePassword } from '@/api/user'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -111,7 +107,7 @@ async function handleSubmit() {
 
 .avatar {
   background: var(--brand-600);
-  color: #fff;
+  color: var(--text-on-brand);
   font-size: 24px;
   font-weight: 500;
 }

@@ -1,19 +1,30 @@
 <template>
   <div>
-    <div class="page-title">
-      <h2>排行榜</h2>
-      <div class="filters">
+    <AppPageHeader title="排行榜" description="看看大家在每张试卷上的表现，向优秀学习">
+      <template #actions>
         <el-select v-model="paperId" placeholder="全部试卷" clearable style="width: 220px" @change="loadData">
           <el-option v-for="p in papers" :key="p.id" :label="p.name" :value="p.id!" />
         </el-select>
-      </div>
-    </div>
+      </template>
+    </AppPageHeader>
 
     <!-- 前三名 -->
     <el-row v-if="top3.length" :gutter="16" class="podium">
       <el-col v-for="(item, index) in top3" :key="item.id" :xs="24" :sm="8">
-        <el-card shadow="hover" class="podium-card" :class="`rank-${index + 1}`">
-          <div class="medal">{{ ['🥇', '🥈', '🥉'][index] }}</div>
+        <el-card shadow="never" class="podium-card" :class="`rank-${index + 1}`">
+          <div class="medal" :class="`medal--${index + 1}`" :aria-label="`第 ${index + 1} 名`">
+            <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+              <path
+                d="M6 4h20l-3 9.5a7 7 0 1 1-14 0z"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linejoin="round"
+              />
+              <circle cx="16" cy="17" r="5.4" stroke="currentColor" stroke-width="2" />
+              <path d="M13 20.5 11.5 27l4.5-2.4L20.5 27 19 20.5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+            </svg>
+          </div>
+          <div class="podium-rank">第 {{ index + 1 }} 名</div>
           <div class="podium-name">{{ item.studentName }}</div>
           <div class="podium-score">{{ item.score }} <span class="total">/ {{ item.paperTotalScore ?? '-' }}</span></div>
           <div class="podium-paper ellipsis">{{ item.paperName }}</div>
@@ -44,6 +55,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { getRanking } from '@/api/examRecord'
 import { listPapers } from '@/api/paper'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 import type { ExamRanking, Paper } from '@/types'
 
 const loading = ref(false)
@@ -70,17 +82,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.page-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.page-title h2 {
-  margin: 0;
-}
-
 .podium {
   margin-bottom: 16px;
 }
@@ -88,6 +89,7 @@ onMounted(async () => {
 .podium-card {
   text-align: center;
   padding: 8px 0;
+  border: 1px solid var(--border-default);
   transition:
     transform var(--duration-base) var(--ease-out-expo),
     box-shadow var(--duration-base) var(--ease-out-expo);
@@ -95,29 +97,59 @@ onMounted(async () => {
 
 .podium-card:hover {
   transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
-/* 低饱和金 / 银 / 铜 */
+/* 奖牌色与 Dashboard 一致 */
 .rank-1 {
-  border-top: 4px solid #d4a72c;
+  border-top: 3px solid var(--medal-gold);
 }
 
 .rank-2 {
-  border-top: 4px solid var(--gray-400);
+  border-top: 3px solid var(--medal-silver);
 }
 
 .rank-3 {
-  border-top: 4px solid #b3773f;
+  border-top: 3px solid var(--medal-bronze);
 }
 
 .medal {
-  font-size: 36px;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto;
+  color: var(--text-muted);
+}
+
+.medal--1 {
+  color: var(--medal-gold);
+}
+
+.medal--2 {
+  color: var(--medal-silver);
+}
+
+.medal--3 {
+  color: var(--medal-bronze);
+}
+
+.medal svg {
+  width: 100%;
+  height: 100%;
+}
+
+.podium-rank {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
 }
 
 .podium-name {
   font-size: 17px;
   font-weight: 700;
-  margin-top: 6px;
+  margin-top: 4px;
+  color: var(--text-strong);
 }
 
 .podium-score {
@@ -131,12 +163,12 @@ onMounted(async () => {
 
 .podium-score .total {
   font-size: 14px;
-  color: var(--gray-500);
+  color: var(--text-muted);
   font-weight: 400;
 }
 
 .podium-paper {
-  color: var(--gray-500);
+  color: var(--text-muted);
   font-size: 13px;
 }
 </style>

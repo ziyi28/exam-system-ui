@@ -1,13 +1,9 @@
 <template>
-  <div class="page-header">
-    <div>
-      <h2 class="page-header__title">公告管理</h2>
-      <p class="page-header__desc">共 {{ notices.length }} 条公告，紧急公告会在学生端置顶提示</p>
-    </div>
-    <div class="page-header__actions">
+  <AppPageHeader title="公告管理" description="共 {{ notices.length }} 条公告，紧急公告会在学生端置顶提示">
+    <template #actions>
       <el-button type="primary" :icon="Plus" @click="openDialog()">发布公告</el-button>
-    </div>
-  </div>
+    </template>
+  </AppPageHeader>
 
   <el-card shadow="never" class="data-card">
 
@@ -80,6 +76,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { listNotices, addNotice, updateNotice, deleteNotice, toggleNotice } from '@/api/notice'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 import type { Notice, NoticeType } from '@/types'
 
 const loading = ref(false)

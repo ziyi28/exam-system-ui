@@ -1,15 +1,11 @@
 <template>
   <div class="exam-list-page">
-    <div class="page-header">
-      <div>
-        <h1 class="page-header__title">在线考试</h1>
-        <p class="page-header__desc">选择已发布的试卷，在规定时间内完成作答。</p>
-      </div>
-      <div class="page-header__actions">
+    <AppPageHeader title="在线考试" description="选择已发布的试卷，在规定时间内完成作答">
+      <template #actions>
         <el-input v-model="keyword" class="exam-search" placeholder="搜索试卷名称" clearable :prefix-icon="Search" @keyup.enter="loadData" @clear="loadData" />
         <el-button type="primary" plain @click="loadData">搜索</el-button>
-      </div>
-    </div>
+      </template>
+    </AppPageHeader>
 
     <el-empty v-if="!loading && !papers.length" class="empty-state" description="暂无可参加的考试" />
 
@@ -47,6 +43,7 @@ import { ElMessageBox } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import { listPapers } from '@/api/paper'
 import { startExam } from '@/api/exam'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 import type { Paper } from '@/types'
 
 const router = useRouter()
@@ -128,7 +125,7 @@ onMounted(loadData)
 .exam-name {
   font-size: 16px;
   font-weight: 600;
-  color: var(--gray-900);
+  color: var(--text-strong);
 }
 
 .exam-head__main {
@@ -145,7 +142,7 @@ onMounted(loadData)
 }
 
 .exam-desc {
-  color: var(--gray-500);
+  color: var(--text-muted);
   font-size: 13px;
   height: 38px;
   overflow: hidden;
@@ -158,12 +155,12 @@ onMounted(loadData)
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
-  color: var(--gray-600);
+  color: var(--text-secondary);
   font-size: 13px;
   margin: 20px 0 16px;
   padding: 12px 0;
-  border-top: 1px solid var(--gray-100);
-  border-bottom: 1px solid var(--gray-100);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .exam-meta span {

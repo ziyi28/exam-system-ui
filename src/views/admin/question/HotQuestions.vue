@@ -1,24 +1,20 @@
 <template>
   <div>
-    <div class="page-header">
-      <div>
-        <h2 class="page-header__title">热题看板</h2>
-        <p class="page-header__desc">按题目详情被查看的次数排序，不足部分以最新创建题目补齐</p>
-      </div>
-      <div class="page-header__actions">
+    <AppPageHeader title="热题看板" description="按题目详情被查看的次数排序，不足部分以最新创建题目补齐">
+      <template #actions>
         <el-select v-model="displaySize" style="width: 110px" @change="loadData">
           <el-option v-for="n in sizeOptions" :key="n" :label="`显示 ${n} 条`" :value="n" />
         </el-select>
         <el-button :icon="Refresh" :loading="refreshing" @click="handleRefresh">刷新热度缓存</el-button>
-      </div>
-    </div>
+      </template>
+    </AppPageHeader>
 
     <el-card shadow="never" class="data-card hot-questions-card">
       <el-empty v-if="!loading && !questions.length" description="暂无热题数据" />
       <el-row v-loading="loading" :gutter="16">
         <el-col v-for="(q, index) in questions" :key="q.id" :xs="24" :sm="12" :md="8" class="hot-col">
-          <div class="hot-card" @click="router.push('/admin/questions')">
-            <div class="hot-rank" :class="rankClass(index)">{{ index + 1 }}</div>
+          <router-link to="/admin/questions" class="hot-card">
+            <div class="hot-rank" :class="rankClass(index)" :aria-label="`第 ${index + 1} 名`">{{ index + 1 }}</div>
             <div class="hot-body">
               <div class="hot-title ellipsis">{{ q.title }}</div>
               <div class="hot-meta">
@@ -27,7 +23,7 @@
                 <span class="hot-category">{{ categoryName(q.categoryId) }}</span>
               </div>
             </div>
-          </div>
+          </router-link>
         </el-col>
       </el-row>
     </el-card>
@@ -36,15 +32,13 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Refresh } from '@element-plus/icons-vue'
 import { getPopularQuestions, refreshPopularQuestions } from '@/api/question'
 import { listCategories } from '@/api/category'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 import type { Category, Question } from '@/types'
 import { typeText, typeTag, difficultyText, difficultyTag } from '@/utils/format'
-
-const router = useRouter()
 
 const loading = ref(false)
 const refreshing = ref(false)
@@ -101,17 +95,25 @@ onMounted(async () => {
   align-items: center;
   gap: 12px;
   padding: 18px;
-  border: 1px solid var(--gray-100);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  background: var(--surface-muted);
-  cursor: pointer;
-  transition: box-shadow 0.2s, border-color 0.2s;
+  background: var(--surface-2);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color var(--duration-base) var(--ease-out-expo),
+    box-shadow var(--duration-base) var(--ease-out-expo);
   height: 100%;
 }
 
 .hot-card:hover {
-  border-color: var(--brand-100);
+  border-color: var(--brand-500);
   box-shadow: var(--shadow-sm);
+}
+
+.hot-card:focus-visible {
+  outline: 2px solid var(--brand-600);
+  outline-offset: 2px;
 }
 
 .hot-rank {
@@ -123,23 +125,40 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  background: var(--el-fill-color);
-  color: var(--el-text-color-secondary);
+  background: var(--surface-1);
+  color: var(--text-muted);
 }
 
-.hot-rank--gold {
-  background: var(--warning-bg);
-  color: var(--warning);
+/* 浅色下奖牌原色数字在 16% tint 圆底上仅约 2:1，改中性圆底 + 加深数字达标；
+   深色下保留 16% tint + 原色（6.7–10.9:1 已达标） */
+:root:not([data-theme='dark']) .hot-rank--gold {
+  background: var(--surface-2);
+  color: color-mix(in srgb, var(--medal-gold) 55%, black);
 }
 
-.hot-rank--silver {
-  background: var(--gray-100);
-  color: var(--gray-600);
+:root:not([data-theme='dark']) .hot-rank--silver {
+  background: var(--surface-2);
+  color: color-mix(in srgb, var(--medal-silver) 55%, black);
 }
 
-.hot-rank--bronze {
-  background: var(--danger-bg);
-  color: var(--danger);
+:root:not([data-theme='dark']) .hot-rank--bronze {
+  background: var(--surface-2);
+  color: color-mix(in srgb, var(--medal-bronze) 55%, black);
+}
+
+:root[data-theme='dark'] .hot-rank--gold {
+  background: color-mix(in srgb, var(--medal-gold) 16%, transparent);
+  color: var(--medal-gold);
+}
+
+:root[data-theme='dark'] .hot-rank--silver {
+  background: color-mix(in srgb, var(--medal-silver) 16%, transparent);
+  color: var(--medal-silver);
+}
+
+:root[data-theme='dark'] .hot-rank--bronze {
+  background: color-mix(in srgb, var(--medal-bronze) 16%, transparent);
+  color: var(--medal-bronze);
 }
 
 .hot-body {
@@ -160,6 +179,6 @@ onMounted(async () => {
 
 .hot-category {
   font-size: 12px;
-  color: var(--el-text-color-secondary);
+  color: var(--text-muted);
 }
 </style>

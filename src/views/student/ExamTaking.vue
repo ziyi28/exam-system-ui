@@ -89,15 +89,17 @@
           <el-card shadow="never">
             <template #header>答题卡（{{ answeredCount }} / {{ questions.length }}）</template>
             <div class="sheet-grid">
-              <div
+              <button
                 v-for="(q, index) in questions"
                 :key="q.id"
+                type="button"
                 class="sheet-item"
                 :class="{ answered: isAnswered(q.id!) }"
+                :aria-label="`跳转到第 ${index + 1} 题${isAnswered(q.id!) ? '（已作答）' : '（未作答）'}`"
                 @click="scrollToQuestion(q.id!)"
               >
                 {{ index + 1 }}
-              </div>
+              </button>
             </div>
             <div class="sheet-legend">
               <span><i class="dot answered" /> 已答</span>
@@ -247,8 +249,8 @@ onBeforeUnmount(() => {
   top: calc(var(--student-topbar-height) + 12px);
   z-index: 10;
   margin-bottom: 16px;
-  --el-card-bg-color: var(--surface);
-  border: 1px solid var(--gray-200);
+  --el-card-bg-color: var(--surface-1);
+  border: 1px solid var(--border-default);
   box-shadow: var(--shadow-sm);
 }
 
@@ -280,12 +282,12 @@ onBeforeUnmount(() => {
   font-size: 17px;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: var(--gray-900);
+  color: var(--text-strong);
 }
 
 .paper-meta {
   font-size: 13px;
-  color: var(--gray-500);
+  color: var(--text-muted);
   margin-top: 2px;
 }
 
@@ -295,7 +297,7 @@ onBeforeUnmount(() => {
   gap: 10px;
   max-width: 260px;
   margin-top: 10px;
-  color: var(--gray-500);
+  color: var(--text-muted);
   font-size: 12px;
 }
 
@@ -353,7 +355,7 @@ onBeforeUnmount(() => {
 
 .question-card {
   margin-bottom: 16px;
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--border-default);
   box-shadow: none;
 }
 
@@ -414,7 +416,7 @@ onBeforeUnmount(() => {
 }
 
 .answer-sheet :deep(.el-card) {
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--border-default);
   box-shadow: none;
 }
 
@@ -429,10 +431,13 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-sm);
+  background: transparent;
   cursor: pointer;
+  font-family: inherit;
   font-size: 13px;
+  color: var(--text-primary);
   font-variant-numeric: tabular-nums;
   transition:
     border-color var(--duration-fast) var(--ease-out-expo),
@@ -445,10 +450,15 @@ onBeforeUnmount(() => {
   color: var(--brand-600);
 }
 
+.sheet-item:focus-visible {
+  outline: 2px solid var(--brand-600);
+  outline-offset: 2px;
+}
+
 .sheet-item.answered {
   background: var(--brand-600);
   border-color: var(--brand-600);
-  color: #fff;
+  color: var(--text-on-brand);
 }
 
 .sheet-legend {
@@ -456,7 +466,7 @@ onBeforeUnmount(() => {
   gap: 16px;
   margin-top: 12px;
   font-size: 12px;
-  color: var(--gray-500);
+  color: var(--text-muted);
 }
 
 .dot {
@@ -464,7 +474,7 @@ onBeforeUnmount(() => {
   width: 10px;
   height: 10px;
   border-radius: 3px;
-  background: var(--gray-200);
+  background: var(--border-default);
   margin-right: 4px;
 }
 

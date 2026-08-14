@@ -2,30 +2,32 @@
   <div class="login-page">
     <div class="login-panel">
       <section class="brand-side">
-        <div class="brand-lockup">
-          <span class="brand-mark"><el-icon :size="24"><Reading /></el-icon></span>
-          <div>
-            <strong>智能考试系统</strong>
-            <small>教 · 学 · 考 · 评</small>
+        <BrandMark class="brand-side__mark" subtitle="教 · 学 · 考 · 评" />
+
+        <div class="brand-hero">
+          <div class="brand-copy">
+            <span class="brand-kicker">面向教学全过程</span>
+            <h1>考试不是终点，<br /><em>反馈才是。</em></h1>
+            <p>组织考试、完成作答、查看结果。把复杂流程收进一套清楚、可靠的教学工具。</p>
+          </div>
+
+          <div class="brand-bottom">
+            <BrandScene variant="login" class="brand-scene" />
+            <ul class="feature-list">
+              <li><span>01</span><div><b>组织考试</b><small>配置试卷、考试范围与参与人员</small></div></li>
+              <li><span>02</span><div><b>在线作答</b><small>专注完成答题并实时保存进度</small></div></li>
+              <li><span>03</span><div><b>查看反馈</b><small>回顾得分、解析与知识薄弱点</small></div></li>
+            </ul>
           </div>
         </div>
-
-        <div class="brand-copy">
-          <span class="brand-kicker">面向教学全过程</span>
-          <h1>考试不是终点，<br /><em>反馈才是。</em></h1>
-          <p>组织考试、完成作答、查看结果。把复杂流程收进一套清楚、可靠的教学工具。</p>
-        </div>
-
-        <ul class="feature-list">
-          <li><span>01</span><div><b>组织考试</b><small>配置试卷、考试范围与参与人员</small></div></li>
-          <li><span>02</span><div><b>在线作答</b><small>专注完成答题并实时保存进度</small></div></li>
-          <li><span>03</span><div><b>查看反馈</b><small>回顾得分、解析与知识薄弱点</small></div></li>
-        </ul>
 
         <div class="brand-footnote">让考试过程更清楚，让反馈真正回到学习。</div>
       </section>
 
       <aside class="form-side">
+        <div class="login-theme-toggle">
+          <ThemeToggle />
+        </div>
         <div class="form-intro">
           <span>账号入口</span>
           <h2>登录系统</h2>
@@ -90,6 +92,9 @@ import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { User, Lock, Postcard } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import * as userApi from '@/api/user'
+import ThemeToggle from '@/components/ui/ThemeToggle.vue'
+import BrandMark from '@/components/brand/BrandMark.vue'
+import BrandScene from '@/components/brand/BrandScene.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -171,92 +176,51 @@ async function handleRegister() {
   align-items: center;
   justify-content: center;
   overflow-y: auto;
-  background: #e9edf0;
+  background: var(--bg-canvas-accent);
   padding: 32px;
 }
 
 .login-panel {
   display: grid;
-  grid-template-columns: minmax(0, 0.94fr) minmax(420px, 1.06fr);
+  grid-template-columns: minmax(0, 58fr) minmax(440px, 42fr);
   align-items: stretch;
-  width: min(1180px, 100%);
-  min-height: min(700px, calc(100vh - 64px));
-  border: 1px solid #d7dde2;
+  width: min(1200px, 100%);
+  min-height: min(720px, calc(100vh - 64px));
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-xl);
-  background: var(--surface);
+  background: var(--surface-1);
   box-shadow: var(--shadow-md);
   overflow: hidden;
 }
 
+/* ============ 品牌左侧（58%） ============ */
 .brand-side {
-  color: var(--gray-800);
-  padding: clamp(36px, 5vw, 64px);
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  background: #f3f5f4;
-  border-right: 1px solid var(--gray-200);
+  padding: clamp(32px, 4vw, 52px);
+  overflow: hidden;
+  border-right: 1px solid var(--border-subtle);
+  background:
+    radial-gradient(560px 340px at 6% -4%, color-mix(in srgb, var(--accent-violet) 9%, transparent), transparent 62%),
+    radial-gradient(520px 320px at 100% 106%, color-mix(in srgb, var(--accent-cyan) 8%, transparent), transparent 60%),
+    var(--surface-1);
 }
 
-.brand-lockup {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+.brand-side__mark {
+  flex: none;
 }
 
-.brand-mark {
-  width: 46px;
-  height: 46px;
-  display: grid;
-  place-items: center;
-  color: var(--brand-600);
-  background: var(--surface);
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-md);
-}
-
-.brand-lockup div {
+.brand-hero {
+  flex: 1;
   display: flex;
   flex-direction: column;
-}
-
-.brand-lockup strong {
-  color: var(--gray-900);
-  font-size: 17px;
-}
-
-.brand-lockup small {
-  color: var(--gray-500);
-  font-size: 10px;
-  letter-spacing: 0.12em;
+  justify-content: center;
+  min-height: 0;
 }
 
 .brand-copy {
   max-width: 540px;
-  margin: auto 0;
-  padding: 54px 0 42px;
-}
-
-.brand-copy h1 {
-  margin: 18px 0 20px;
-  color: var(--gray-900);
-  font-size: clamp(40px, 4vw, 56px);
-  font-weight: 700;
-  line-height: 1.08;
-  letter-spacing: -0.05em;
-}
-
-.brand-copy h1 em {
-  color: var(--brand-600);
-  font-style: normal;
-}
-
-.brand-copy p {
-  max-width: 480px;
-  margin: 0;
-  color: var(--gray-600);
-  font-size: 15px;
-  line-height: 1.8;
 }
 
 .brand-kicker,
@@ -273,10 +237,46 @@ async function handleRegister() {
   color: var(--brand-600);
 }
 
+.brand-copy h1 {
+  margin: 16px 0 16px;
+  color: var(--text-strong);
+  font-size: clamp(38px, 3.4vw, 50px);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.05em;
+}
+
+.brand-copy h1 em {
+  color: var(--brand-600);
+  font-style: normal;
+}
+
+.brand-copy p {
+  max-width: 480px;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.brand-bottom {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(20px, 3vw, 40px);
+  margin-top: clamp(20px, 3vw, 36px);
+}
+
+.brand-scene {
+  width: clamp(210px, 24vw, 300px);
+  flex: none;
+}
+
 .feature-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 0 2px;
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -287,15 +287,20 @@ async function handleRegister() {
   align-items: center;
   gap: 16px;
   min-width: 0;
-  padding: 14px 0;
-  border-top: 1px solid var(--gray-200);
+  padding: 11px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.feature-list li:first-child {
+  border-top: 0;
+  padding-top: 0;
 }
 
 .feature-list li > span {
   width: 28px;
   display: block;
   flex: none;
-  color: var(--gray-400);
+  color: var(--text-muted);
   font-size: 11px;
   font-weight: 700;
 }
@@ -307,31 +312,39 @@ async function handleRegister() {
 }
 
 .feature-list b {
-  color: var(--gray-800);
+  color: var(--text-primary);
   font-size: 13px;
 }
 
 .feature-list small {
-  color: var(--gray-500);
+  color: var(--text-muted);
   font-size: 11px;
 }
 
 .brand-footnote {
-  margin-top: 24px;
-  color: var(--gray-500);
+  flex: none;
+  margin-top: 20px;
+  color: var(--text-muted);
   font-size: 11px;
 }
 
+/* ============ 表单右侧（42%） ============ */
 .form-side {
   position: relative;
   width: 100%;
   max-width: none;
-  background: var(--surface);
+  background: var(--surface-1);
   padding: clamp(54px, 6vw, 84px);
   display: flex;
   flex-direction: column;
   justify-content: center;
   box-shadow: none;
+}
+
+.login-theme-toggle {
+  position: absolute;
+  top: 24px;
+  right: 24px;
 }
 
 .form-side::before {
@@ -355,7 +368,7 @@ async function handleRegister() {
 
 .form-intro p {
   margin: 0;
-  color: var(--gray-500);
+  color: var(--text-muted);
   font-size: 14px;
 }
 
@@ -365,7 +378,7 @@ async function handleRegister() {
 
 .login-tabs :deep(.el-tabs__nav-wrap::after) {
   height: 1px;
-  background: var(--gray-100);
+  background: var(--border-subtle);
 }
 
 .login-tabs :deep(.el-tabs__item) {
@@ -383,12 +396,12 @@ async function handleRegister() {
   min-height: 50px;
   padding: 0 16px;
   border-radius: var(--radius-md);
-  background: var(--surface);
-  box-shadow: 0 0 0 1px var(--gray-200) inset;
+  background: var(--surface-1);
+  box-shadow: 0 0 0 1px var(--border-default) inset;
 }
 
 .login-tabs :deep(.el-input__wrapper.is-focus) {
-  background: #fff;
+  background: var(--surface-1);
   box-shadow: 0 0 0 1px var(--brand-600) inset;
 }
 
@@ -403,9 +416,9 @@ async function handleRegister() {
 .tips {
   margin-top: 12px;
   padding: 14px 16px;
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  background: var(--gray-50);
+  background: var(--surface-2);
   text-align: left;
 }
 
@@ -417,17 +430,17 @@ async function handleRegister() {
 
 .tips p {
   margin: 3px 0 0;
-  color: var(--gray-700);
+  color: var(--text-primary);
   font-size: 12px;
 }
 
 .tips small {
-  color: var(--gray-400);
+  color: var(--text-muted);
 }
 
 .form-footer {
   margin-top: 28px;
-  color: var(--gray-400);
+  color: var(--text-muted);
   font-size: 11px;
 }
 
@@ -437,11 +450,15 @@ async function handleRegister() {
   }
 
   .login-panel {
-    grid-template-columns: minmax(0, 0.86fr) minmax(390px, 1.14fr);
+    grid-template-columns: minmax(0, 1fr) minmax(400px, 1fr);
   }
 
   .brand-copy h1 {
-    font-size: 48px;
+    font-size: 42px;
+  }
+
+  .brand-scene {
+    width: 200px;
   }
 
   .feature-list li:nth-child(3) {
@@ -449,7 +466,7 @@ async function handleRegister() {
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 860px) {
   .login-page {
     align-items: flex-start;
     overflow-y: auto;
@@ -466,16 +483,28 @@ async function handleRegister() {
   .brand-side {
     padding: 24px;
     border-right: 0;
-    border-bottom: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--border-subtle);
   }
 
-  .brand-copy {
-    padding: 38px 0 12px;
+  .brand-hero {
+    justify-content: flex-start;
+    margin-top: 34px;
+  }
+
+  .brand-bottom {
+    margin-top: 26px;
+  }
+
+  .brand-scene {
+    display: none;
+  }
+
+  .feature-list li:nth-child(3) {
+    display: flex;
   }
 
   .brand-copy h1 {
-    margin: 16px 0 14px;
-    font-size: clamp(34px, 10vw, 44px);
+    font-size: clamp(34px, 9vw, 44px);
   }
 
   .brand-copy p {
@@ -490,12 +519,11 @@ async function handleRegister() {
 
   .form-side {
     max-width: none;
-    padding: 36px 24px 32px;
+    padding: 40px 24px 36px;
   }
 
   .form-intro h2 {
     font-size: 26px;
   }
-
 }
 </style>

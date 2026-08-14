@@ -1,19 +1,15 @@
 <template>
   <div>
-    <div class="page-header">
-      <div>
-        <h2 class="page-header__title">题库管理</h2>
-        <p class="page-header__desc">维护题目、题型与难度，支持批量导入与 AI 出题</p>
-      </div>
-      <div class="page-header__actions">
+    <AppPageHeader title="题库管理" description="维护题目、题型与难度，支持批量导入与 AI 出题">
+      <template #actions>
         <el-button :icon="MagicStick" @click="router.push('/admin/questions/import')">批量导入 / AI出题</el-button>
         <el-button type="primary" :icon="Plus" @click="openDialog()">新增题目</el-button>
-      </div>
-    </div>
+      </template>
+    </AppPageHeader>
 
     <el-card shadow="never" class="data-card">
       <!-- 筛选区 -->
-      <div class="filter-bar">
+      <div class="filter-bar" aria-label="筛选条件">
         <el-select v-model="query.categoryId" placeholder="全部分类" clearable style="width: 150px">
           <el-option v-for="c in categories" :key="c.id" :label="c.name" :value="c.id!" />
         </el-select>
@@ -72,7 +68,7 @@
     </el-card>
 
     <!-- 编辑对话框 -->
-    <el-dialog v-model="dialogVisible" :title="form.id ? '编辑题目' : '新增题目'" width="720px" destroy-on-close top="5vh">
+    <el-dialog v-model="dialogVisible" :title="form.id ? '编辑题目' : '新增题目'" width="min(720px, calc(100vw - 48px))" destroy-on-close top="5vh">
       <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="题目" prop="title">
           <el-input v-model="form.title" type="textarea" :rows="2" placeholder="请输入题目内容" />
@@ -158,6 +154,7 @@ import { pageQuestions, getQuestion, createQuestion, updateQuestion, deleteQuest
 import { listCategories } from '@/api/category'
 import type { Category, Question, QuestionChoice } from '@/types'
 import { typeText, typeTag, difficultyText, difficultyTag, letter } from '@/utils/format'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 
 const router = useRouter()
 

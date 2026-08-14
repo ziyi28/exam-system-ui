@@ -3,10 +3,9 @@
     <!-- 顶部导航 -->
     <header class="topbar">
       <div class="topbar-inner">
-        <div class="brand" @click="router.push('/student/home')">
-          <el-icon :size="26" class="brand-icon"><Reading /></el-icon>
-          <span class="brand-text">智能考试系统</span>
-        </div>
+        <router-link to="/student/home" class="brand">
+          <BrandMark subtitle="教 · 学 · 考 · 评" />
+        </router-link>
         <nav class="nav">
           <router-link
             v-for="item in visibleNavItems"
@@ -19,6 +18,7 @@
           </router-link>
         </nav>
         <div class="right">
+          <ThemeToggle />
           <el-button v-if="userStore.isAdminSide" size="small" plain type="primary" @click="router.push('/admin/dashboard')">
             返回管理端
           </el-button>
@@ -54,6 +54,8 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+import ThemeToggle from '@/components/ui/ThemeToggle.vue'
+import BrandMark from '@/components/brand/BrandMark.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -95,13 +97,14 @@ async function handleCommand(command: string) {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--page-bg);
+  background: var(--bg-canvas);
   --student-topbar-height: 68px;
 }
 
 .topbar {
-  background: rgba(255, 255, 255, 0.97);
-  border-bottom: 1px solid var(--gray-200);
+  background: color-mix(in srgb, var(--surface-1) 88%, transparent);
+  backdrop-filter: saturate(140%) blur(10px);
+  border-bottom: 1px solid var(--border-subtle);
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
@@ -113,31 +116,17 @@ async function handleCommand(command: string) {
   min-height: var(--student-topbar-height);
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 24px;
   padding: 0 24px;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--gray-900);
-  letter-spacing: -0.01em;
   white-space: nowrap;
-}
-
-.brand-icon {
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  color: var(--brand-600);
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-md);
-  background: var(--surface);
+  text-decoration: none;
 }
 
 .nav {
@@ -148,31 +137,24 @@ async function handleCommand(command: string) {
 
 .nav-item {
   position: relative;
-  padding: 23px 11px 21px;
-  color: var(--gray-600);
+  padding: 9px 14px;
+  color: var(--text-secondary);
   font-size: 15px;
+  border-radius: 999px;
   transition:
     background-color var(--duration-fast) var(--ease-out-expo),
     color var(--duration-fast) var(--ease-out-expo);
 }
 
 .nav-item:hover {
-  color: var(--gray-900);
+  color: var(--text-strong);
+  background-color: var(--surface-2);
 }
 
 .nav-item.active {
   color: var(--brand-700);
   font-weight: 600;
-}
-
-.nav-item.active::after {
-  content: '';
-  position: absolute;
-  right: 10px;
-  bottom: -1px;
-  left: 10px;
-  height: 2px;
-  background: var(--brand-600);
+  background-color: var(--brand-50);
 }
 
 .right {
@@ -187,13 +169,13 @@ async function handleCommand(command: string) {
   gap: 8px;
   padding: 5px 10px 5px 5px;
   cursor: pointer;
-  color: var(--gray-700);
+  color: var(--text-primary);
   border-radius: var(--radius-md);
 }
 
 .avatar {
   background: var(--brand-600);
-  color: #fff;
+  color: var(--text-on-brand);
   font-weight: 500;
 }
 
@@ -207,11 +189,11 @@ async function handleCommand(command: string) {
 
 .footer {
   text-align: center;
-  color: var(--gray-400);
+  color: var(--text-muted);
   font-size: 13px;
   padding: 24px 16px 28px;
-  border-top: 1px solid var(--gray-200);
-  background: var(--surface);
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface-1);
 }
 
 .student-layout.is-exam-mode {
@@ -234,12 +216,12 @@ async function handleCommand(command: string) {
 
 @media (max-width: 900px) {
   .topbar-inner {
-    gap: 18px;
+    gap: 16px;
     padding: 0 16px;
   }
 
   .nav-item {
-    padding: 23px 9px 21px;
+    padding: 8px 10px;
     font-size: 14px;
   }
 
@@ -250,7 +232,7 @@ async function handleCommand(command: string) {
 
 @media (max-width: 680px) {
   .student-layout {
-    --student-topbar-height: 176px;
+    --student-topbar-height: 164px;
   }
 
   .topbar-inner {
@@ -261,14 +243,8 @@ async function handleCommand(command: string) {
     padding: 10px 14px 8px;
   }
 
-  .brand {
-    font-size: 16px;
-  }
-
-  .brand-icon {
-    width: 36px;
-    height: 36px;
-    font-size: 20px;
+  .brand :deep(.brand-mark__subtitle) {
+    display: none;
   }
 
   .right {
@@ -291,17 +267,13 @@ async function handleCommand(command: string) {
     flex-basis: 100%;
     gap: 4px;
     padding: 10px 0 0;
-    border-top: 1px solid var(--gray-100);
+    border-top: 1px solid var(--border-subtle);
   }
 
   .nav-item {
     padding: 7px 4px;
     font-size: 12px;
     text-align: center;
-  }
-
-  .nav-item.active::after {
-    display: none;
   }
 
   .content {

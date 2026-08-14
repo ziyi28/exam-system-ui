@@ -1,13 +1,9 @@
 <template>
-  <div class="page-header">
-    <div>
-      <h2 class="page-header__title">分类管理</h2>
-      <p class="page-header__desc">共 {{ flatCount }} 个分类，支持多级嵌套</p>
-    </div>
-    <div class="page-header__actions">
+  <AppPageHeader title="分类管理" description="共 {{ flatCount }} 个分类，支持多级嵌套">
+    <template #actions>
       <el-button type="primary" :icon="Plus" @click="openDialog()">新增分类</el-button>
-    </div>
-  </div>
+    </template>
+  </AppPageHeader>
 
   <el-card shadow="never" class="data-card">
 
@@ -61,6 +57,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { getCategoryTree, addCategory, updateCategory, deleteCategory } from '@/api/category'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 import type { Category } from '@/types'
 
 const loading = ref(false)

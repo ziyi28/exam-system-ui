@@ -1,16 +1,11 @@
 <template>
-  <div class="page-header">
-    <div>
-      <h2 class="page-header__title">考试记录</h2>
-      <p class="page-header__desc">查看考试记录与 AI 批阅详情，可删除异常记录</p>
-    </div>
-  </div>
+  <AppPageHeader title="考试记录" description="查看考试记录与 AI 批阅详情，可删除异常记录" />
 
   <el-card shadow="never" class="data-card">
     <el-tabs v-model="activeTab">
       <!-- 考试记录 -->
       <el-tab-pane label="考试记录" name="records">
-        <div class="filter-bar">
+        <div class="filter-bar" aria-label="筛选条件">
           <el-input v-model="query.studentName" placeholder="考生姓名" clearable style="width: 160px" @keyup.enter="handleSearch" />
           <el-select v-model="query.status" placeholder="全部状态" clearable style="width: 130px">
             <el-option label="进行中" :value="0" />
@@ -71,7 +66,7 @@
 
       <!-- 排行榜 -->
       <el-tab-pane label="成绩排行榜" name="ranking">
-        <div class="filter-bar">
+        <div class="filter-bar" aria-label="排行筛选">
           <el-select v-model="rankingPaperId" placeholder="全部试卷" clearable style="width: 220px" @change="loadRanking">
             <el-option v-for="p in papers" :key="p.id" :label="p.name" :value="p.id!" />
           </el-select>
@@ -79,12 +74,12 @@
           <el-text type="info" size="small">显示条数</el-text>
         </div>
         <el-table v-loading="rankingLoading" :data="ranking" stripe>
-          <el-table-column type="index" label="名次" width="70">
+          <el-table-column label="名次" width="70">
             <template #default="{ $index }">
-              <el-tag v-if="$index < 3" :type="['danger', 'warning', 'success'][$index] as any" size="small" effect="dark" round>
+              <span v-if="$index < 3" class="rank-medal" :class="`rank-medal--${$index + 1}`" :aria-label="`第 ${$index + 1} 名`">
                 {{ $index + 1 }}
-              </el-tag>
-              <span v-else style="padding-left: 6px">{{ $index + 1 }}</span>
+              </span>
+              <span v-else class="rank-num">{{ $index + 1 }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="studentName" label="考生" width="120" />
@@ -113,6 +108,7 @@ import { pageExamRecords, deleteExamRecord, getRanking } from '@/api/examRecord'
 import { listPapers } from '@/api/paper'
 import type { ExamRanking, ExamRecord, Paper } from '@/types'
 import { examStatusTag } from '@/utils/format'
+import AppPageHeader from '@/components/ui/AppPageHeader.vue'
 
 const router = useRouter()
 const activeTab = ref('records')
@@ -186,3 +182,37 @@ onMounted(async () => {
   papers.value = await listPapers()
 })
 </script>
+
+<style scoped>
+/* 前三名奖牌色，与 Dashboard 一致 */
+.rank-medal {
+  width: 26px;
+  height: 26px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.rank-medal--1 {
+  background: color-mix(in srgb, var(--medal-gold) 16%, transparent);
+  color: var(--medal-gold);
+}
+
+.rank-medal--2 {
+  background: color-mix(in srgb, var(--medal-silver) 16%, transparent);
+  color: var(--medal-silver);
+}
+
+.rank-medal--3 {
+  background: color-mix(in srgb, var(--medal-bronze) 16%, transparent);
+  color: var(--medal-bronze);
+}
+
+.rank-num {
+  color: var(--text-muted);
+  padding-left: 6px;
+}
+</style>

@@ -40,7 +40,7 @@
         <el-col :xs="24" :md="7">
           <el-card shadow="never">
             <template #header>热门推荐</template>
-            <div v-for="item in recommended" :key="item.id" class="rec-item" @click="goVideo(item.id!)">
+            <router-link v-for="item in recommended" :key="item.id" :to="`/student/videos/${item.id}`" class="rec-item" @click="reportWatch">
               <div class="rec-cover">
                 <img v-if="item.coverUrl" :src="item.coverUrl" :alt="item.title" />
                 <div v-else class="cover-placeholder"><el-icon><VideoCamera /></el-icon></div>
@@ -49,7 +49,7 @@
                 <div class="rec-title">{{ item.title }}</div>
                 <div class="rec-meta">{{ item.viewCount ?? 0 }} 观看</div>
               </div>
-            </div>
+            </router-link>
           </el-card>
         </el-col>
       </el-row>
@@ -59,13 +59,12 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { Star, StarFilled, VideoCamera } from '@element-plus/icons-vue'
 import { getVideoDetail, getPopularVideos, recordView, toggleLike } from '@/api/video'
 import type { Video } from '@/types'
 
 const route = useRoute()
-const router = useRouter()
 const loading = ref(false)
 const video = ref<Video | null>(null)
 const recommended = ref<Video[]>([])
@@ -101,11 +100,6 @@ async function handleLike() {
   video.value.likeCount = (video.value.likeCount ?? 0) + (result.isLiked ? 1 : -1)
 }
 
-function goVideo(id: number) {
-  reportWatch()
-  router.push(`/student/videos/${id}`)
-}
-
 async function loadData() {
   loading.value = true
   watchSeconds = 0
@@ -138,7 +132,7 @@ onBeforeUnmount(() => {
 .player {
   width: 100%;
   max-height: 480px;
-  background: var(--gray-900);
+  background: var(--media-surface);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   display: block;
 }
@@ -155,12 +149,12 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 16px;
-  color: var(--gray-500);
+  color: var(--text-muted);
   font-size: 13px;
 }
 
 .description {
-  color: var(--gray-600);
+  color: var(--text-secondary);
   line-height: 1.7;
   white-space: pre-wrap;
   margin: 0 0 10px;
@@ -170,7 +164,14 @@ onBeforeUnmount(() => {
   display: flex;
   gap: 10px;
   margin-bottom: 12px;
-  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.rec-item:focus-visible {
+  outline: 2px solid var(--brand-600);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }
 
 .rec-cover {
@@ -178,7 +179,7 @@ onBeforeUnmount(() => {
   height: 64px;
   border-radius: var(--radius-sm);
   overflow: hidden;
-  background: var(--gray-100);
+  background: var(--border-subtle);
   flex-shrink: 0;
 }
 
@@ -193,7 +194,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--gray-400);
+  color: var(--text-muted);
 }
 
 .rec-title {
@@ -211,7 +212,7 @@ onBeforeUnmount(() => {
 
 .rec-meta {
   font-size: 12px;
-  color: var(--gray-400);
+  color: var(--text-muted);
   margin-top: 4px;
 }
 </style>
