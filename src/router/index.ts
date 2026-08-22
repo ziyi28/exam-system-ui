@@ -40,6 +40,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'videos', name: 'VideoManage', component: () => import('@/views/admin/video/VideoManage.vue'), meta: { title: '视频管理', icon: 'VideoCamera' } },
       { path: 'video-categories', name: 'VideoCategoryManage', component: () => import('@/views/admin/video/VideoCategoryManage.vue'), meta: { title: '视频分类', icon: 'Films' } },
       { path: 'users', name: 'UserManage', component: () => import('@/views/admin/user/UserManage.vue'), meta: { title: '用户管理', icon: 'User', roles: ['ADMIN'] } },
+      { path: 'model-config', name: 'ModelConfig', component: () => import('@/views/admin/ModelConfigView.vue'), meta: { title: 'AI 模型配置', icon: 'Cpu', roles: ['ADMIN'] } },
       { path: 'profile', name: 'AdminProfile', component: () => import('@/views/common/Profile.vue'), meta: { title: '个人中心', hidden: true } },
     ],
   },
