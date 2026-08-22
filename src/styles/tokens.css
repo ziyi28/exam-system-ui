@@ -1,79 +1,73 @@
 /**
- * Design Tokens —— 全站唯一的视觉决策来源
+ * Design Tokens —— Precision Academic Terminal & Cybernetic Assessment Lab
  *
- * 结构：
- *  1. 明亮主题语义 tokens（--bg-* / --surface-* / --text-* / --border-* / --brand-* / 语义色 / 图表色）
- *  2. 深色主题语义 tokens（:root[data-theme='dark']）
- *  3. 兼容别名（--gray-* / --surface / --page-bg 等，供未迁移页面继续工作）
- *  4. 圆角 / 阴影 / 间距 / 字体 / 动效 / z-index
- *  5. Element Plus 变量映射（随主题联动）
- *
- * 规则：页面组件一律引用语义 token；新增样式禁止再写硬编码十六进制色。
- * 兼容别名只用于过渡，新代码应使用语义角色。
+ * 核心设计哲学：
+ *  1. 纯粹理性秩序与工业终端感：直角与 2px/4px 极微倒角，发丝级精密边框（Hairline Steel）。
+ *  2. 终端高光信号色彩：高饱和电子青绿（#00e58b）作为主信号，电离冷青（#00d5ff）与量子紫（#7952ff）作为辅助。
+ *  3. 暗黑模式为第一公民（深碳黑底），明亮模式为高反差高对比度科研冷白实验室模式。
+ *  4. 全量等宽数据排版（JetBrains Mono / Fira Code / tabular-nums）。
  */
 
 :root {
-  /* ========== 品牌色：蓝靛主色 + 青/紫辅助 ========== */
-  --brand-600: #4655e8;
-  --brand-700: color-mix(in srgb, var(--brand-600) 84%, black);
-  --brand-800: color-mix(in srgb, var(--brand-600) 66%, black);
-  --brand-500: color-mix(in srgb, var(--brand-600) 88%, white);
+  /* ========== 基础品牌色相：终端高光青绿 (Terminal Emerald) ========== */
+  --brand-600: #059669;
+  --brand-700: #047857;
+  --brand-800: #065f46;
+  --brand-500: #10b981;
   --brand-100: color-mix(in srgb, var(--brand-600) 12%, white);
   --brand-50: color-mix(in srgb, var(--brand-600) 6%, white);
 
-  --accent-cyan: #0fb6c6;
+  /* ========== 辅助信号色：电离冷青 + 量子紫 ========== */
+  --accent-cyan: #0284c7;
   --accent-cyan-soft: color-mix(in srgb, var(--accent-cyan) 10%, white);
-  --accent-violet: #8b5cf6;
+  --accent-violet: #6366f1;
   --accent-violet-soft: color-mix(in srgb, var(--accent-violet) 10%, white);
-  --accent-indigo: #5a67f0;
+  --accent-indigo: #4f46e5;
   --accent-indigo-soft: color-mix(in srgb, var(--accent-indigo) 10%, white);
 
   --text-on-brand: #ffffff;
-  /* 媒体遮罩上的文字：两主题恒白，不随主题翻转（--text-on-brand 深色会翻转为深字） */
   --text-on-media: #ffffff;
-  --media-overlay: rgba(12, 16, 26, 0.72);
-  /* 媒体播放区固定深色表面，两种主题保持一致，不随主题变浅 */
-  --media-surface: #10151f;
-  /* 弹层遮罩：始终为深色压暗，不随主题反转成白色蒙层 */
-  --overlay-mask: rgba(15, 20, 35, 0.4);
+  --media-overlay: rgba(15, 23, 42, 0.75);
+  --media-surface: #0f172a;
+  --overlay-mask: rgba(15, 23, 42, 0.5);
 
-  /* ========== 表面与背景（明亮） ========== */
-  --bg-canvas: #f5f7fc;
+  /* ========== 表面与背景（明亮实验室模式） ========== */
+  --bg-canvas: #f1f5f9;
   --bg-canvas-accent:
-    radial-gradient(1200px 480px at 85% -10%, rgba(139, 92, 246, 0.07), transparent 60%),
-    radial-gradient(1000px 420px at -10% 110%, rgba(15, 182, 198, 0.06), transparent 60%);
+    radial-gradient(1000px 400px at 90% -5%, rgba(99, 102, 241, 0.04), transparent 60%),
+    radial-gradient(800px 360px at -5% 105%, rgba(2, 132, 199, 0.04), transparent 60%);
   --surface-1: #ffffff;
-  --surface-2: #f5f6fa;
+  --surface-2: #f8fafc;
   --surface-elevated: #ffffff;
-  --surface-glass: rgba(255, 255, 255, 0.72);
+  --surface-glass: rgba(255, 255, 255, 0.85);
 
-  /* ========== 文字层级（明亮） ========== */
-  --text-strong: #17212b;
-  --text-primary: #27333f;
-  --text-secondary: #65717d;
-  --text-muted: #8b96a1;
+  /* ========== 文字层阶（明亮） ========== */
+  --text-strong: #0f172a;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
 
-  /* ========== 边框（明亮） ========== */
-  --border-subtle: #eceff2;
-  --border-default: #dde2e8;
-  --border-strong: #c6cdd6;
+  /* ========== 精密发丝边框（明亮） ========== */
+  --border-subtle: #e2e8f0;
+  --border-default: #cbd5e1;
+  --border-strong: #94a3b8;
 
-  /* ========== 语义色（明亮） ========== */
-  --success: #18a058;
+  /* ========== 严肃状态语义色（明亮） ========== */
+  --success: #16a34a;
   --warning: #d97706;
-  --danger: #e5484d;
+  --danger: #dc2626;
   --info: var(--text-secondary);
 
   --success-bg: color-mix(in srgb, var(--success) 9%, white);
   --warning-bg: color-mix(in srgb, var(--warning) 9%, white);
   --danger-bg: color-mix(in srgb, var(--danger) 9%, white);
 
-  /* ========== 排名奖牌（独立语义，不复用成功/警告/危险） ========== */
-  --medal-gold: #d4a72c;
-  --medal-silver: #aeb6c0;
-  --medal-bronze: #b3773f;
+  /* ========== 排名奖牌色 ========== */
+  --medal-gold: #d97706;
+  --medal-silver: #64748b;
+  --medal-bronze: #b45309;
 
-  /* ========== 图表色（浅色主题主动取值，非反色） ========== */
+  /* ========== 图表色 ========== */
   --chart-primary: var(--brand-600);
   --chart-cyan: var(--accent-cyan);
   --chart-violet: var(--accent-violet);
@@ -81,7 +75,7 @@
   --chart-axis: var(--text-muted);
   --chart-text: var(--text-secondary);
 
-  /* ========== 兼容别名（供未迁移页面使用，新代码勿再引用） ========== */
+  /* 兼容过渡别名 */
   --gray-50: var(--surface-2);
   --gray-100: var(--border-subtle);
   --gray-200: var(--border-default);
@@ -89,15 +83,15 @@
   --gray-400: var(--text-muted);
   --gray-500: var(--text-secondary);
   --gray-600: var(--text-primary);
-  --gray-700: color-mix(in srgb, var(--text-primary) 82%, black);
+  --gray-700: #334155;
   --gray-800: var(--text-primary);
   --gray-900: var(--text-strong);
 
-  --ink-950: #172231;
-  --ink-900: #1d2b3a;
-  --ink-800: #29394a;
-  --accent: #b7791f;
-  --accent-bg: color-mix(in srgb, var(--accent) 12%, white);
+  --ink-950: #0f172a;
+  --ink-900: #1e293b;
+  --ink-800: #334155;
+  --accent: #d97706;
+  --accent-bg: color-mix(in srgb, var(--accent) 10%, white);
 
   --surface: var(--surface-1);
   --surface-muted: var(--surface-2);
@@ -106,66 +100,69 @@
 }
 
 /* ==================================================================
- * 深色主题
+ * 终端暗黑模式 —— 第一公民 (Dark Terminal Mode)
  * ================================================================== */
 :root[data-theme='dark'] {
-  --brand-600: #7c8cff;
-  --brand-700: #97a2ff;
-  --brand-800: #b4bcff;
-  --brand-500: #5d6cef;
-  --brand-100: color-mix(in srgb, var(--brand-600) 16%, #0b1020);
-  --brand-50: color-mix(in srgb, var(--brand-600) 9%, #0b1020);
+  /* 高饱和电子青绿 (Terminal Neon Emerald) */
+  --brand-600: #00e58b;
+  --brand-700: #00c776;
+  --brand-800: #00a862;
+  --brand-500: #33f3a6;
+  --brand-100: color-mix(in srgb, var(--brand-600) 14%, #090d16);
+  --brand-50: color-mix(in srgb, var(--brand-600) 8%, #090d16);
 
-  --accent-cyan: #38d9e6;
-  --accent-cyan-soft: color-mix(in srgb, var(--accent-cyan) 12%, #0b1020);
-  --accent-violet: #a78bfa;
-  --accent-violet-soft: color-mix(in srgb, var(--accent-violet) 12%, #0b1020);
-  --accent-indigo: #8a93ff;
-  --accent-indigo-soft: color-mix(in srgb, var(--accent-indigo) 12%, #0b1020);
+  /* 电离冷青 + 量子紫 */
+  --accent-cyan: #00d5ff;
+  --accent-cyan-soft: color-mix(in srgb, var(--accent-cyan) 12%, #090d16);
+  --accent-violet: #8b5cf6;
+  --accent-violet-soft: color-mix(in srgb, var(--accent-violet) 12%, #090d16);
+  --accent-indigo: #6366f1;
+  --accent-indigo-soft: color-mix(in srgb, var(--accent-indigo) 12%, #090d16);
 
-  --text-on-brand: #0d1130;
-  /* 媒体遮罩上的文字：两主题恒白，不随主题翻转（--text-on-brand 深色会翻转为深字） */
+  /* 深色主按钮：青绿荧光底配碳黑字，对比度 8.5:1 超高清晰度 */
+  --text-on-brand: #050b14;
   --text-on-media: #ffffff;
-  --media-overlay: rgba(8, 10, 18, 0.76);
-  --media-surface: #10151f;
-  --overlay-mask: rgba(0, 0, 0, 0.6);
+  --media-overlay: rgba(5, 11, 20, 0.82);
+  --media-surface: #090d16;
+  --overlay-mask: rgba(0, 0, 0, 0.7);
 
-  --bg-canvas: #0b1020;
+  /* 纯净深碳黑表面 */
+  --bg-canvas: #090d16;
   --bg-canvas-accent:
-    radial-gradient(1200px 480px at 85% -10%, rgba(167, 139, 250, 0.09), transparent 60%),
-    radial-gradient(1000px 420px at -10% 110%, rgba(56, 217, 230, 0.07), transparent 60%);
-  --surface-1: #11182b;
-  --surface-2: #1a2136;
-  --surface-elevated: #1c2440;
-  --surface-glass: rgba(17, 24, 43, 0.72);
+    radial-gradient(1200px 480px at 90% -10%, rgba(139, 92, 246, 0.05), transparent 60%),
+    radial-gradient(1000px 420px at -10% 110%, rgba(0, 229, 139, 0.04), transparent 60%);
+  --surface-1: #0e1524;
+  --surface-2: #151e32;
+  --surface-elevated: #1a253c;
+  --surface-glass: rgba(14, 21, 36, 0.85);
 
-  --text-strong: #f2f4fb;
-  --text-primary: #e2e6f1;
-  --text-secondary: #aab2c6;
-  --text-muted: #64708c;
+  --text-strong: #f8fafc;
+  --text-primary: #e2e8f0;
+  --text-secondary: #8da0be;
+  --text-muted: #53647e;
 
-  --border-subtle: #1e2539;
-  --border-default: #2a324a;
-  --border-strong: #3d4660;
+  --border-subtle: #172238;
+  --border-default: #223250;
+  --border-strong: #364b73;
 
-  --success: #34c37a;
-  --warning: #f2a34b;
-  --danger: #f2606a;
+  --success: #00e58b;
+  --warning: #fbbf24;
+  --danger: #f43f5e;
   --info: var(--text-secondary);
 
-  --success-bg: color-mix(in srgb, var(--success) 13%, #0b1020);
-  --warning-bg: color-mix(in srgb, var(--warning) 13%, #0b1020);
-  --danger-bg: color-mix(in srgb, var(--danger) 13%, #0b1020);
+  --success-bg: color-mix(in srgb, var(--success) 12%, #090d16);
+  --warning-bg: color-mix(in srgb, var(--warning) 12%, #090d16);
+  --danger-bg: color-mix(in srgb, var(--danger) 12%, #090d16);
 
-  --medal-gold: #e6c054;
-  --medal-silver: #aab2c6;
-  --medal-bronze: #d08b5a;
+  --medal-gold: #f59e0b;
+  --medal-silver: #94a3b8;
+  --medal-bronze: #d97706;
 
   --chart-primary: var(--brand-600);
   --chart-cyan: var(--accent-cyan);
   --chart-violet: var(--accent-violet);
-  --chart-grid: #232b44;
-  --chart-axis: #64708c;
+  --chart-grid: #172238;
+  --chart-axis: #53647e;
   --chart-text: var(--text-secondary);
 
   --gray-50: var(--surface-2);
@@ -179,42 +176,48 @@
   --gray-800: var(--text-primary);
   --gray-900: var(--text-strong);
 
-  --ink-950: #f2f4fb;
-  --ink-900: #e2e6f1;
-  --ink-800: #c8cee0;
-  --accent: #f2a34b;
-  --accent-bg: color-mix(in srgb, var(--accent) 12%, #0b1020);
+  --ink-950: #f8fafc;
+  --ink-900: #e2e8f0;
+  --ink-800: #cbd5e1;
+  --accent: #fbbf24;
+  --accent-bg: color-mix(in srgb, var(--accent) 12%, #090d16);
 
   --surface: var(--surface-1);
   --surface-muted: var(--surface-2);
   --page-bg: var(--bg-canvas);
   --brand-bg: var(--brand-50);
 
-  /* 深色下阴影更深、更收敛，用边框分层级而非大面积投影 */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.24);
-  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.28);
-  --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.34);
-  --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.4);
+  /* 深色精密发丝发光与收敛微投影 */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.75);
+  --glow-brand: 0 0 12px rgba(0, 229, 139, 0.25);
+  --glow-cyan: 0 0 12px rgba(0, 213, 255, 0.25);
 }
 
-/* ========== 圆角（全站仅 4 档） ========== */
+/* ========== 几何形态与圆角（收敛为直角与 2px/4px 微倒角） ========== */
 :root {
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  --radius-xs: 2px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
 }
 
-/* ========== 阴影（明亮：冷蓝色相，单一光源自上而下） ========== */
+/* ========== 精密微阴影与光环 ========== */
 :root {
-  --shadow-xs: 0 1px 2px rgba(20, 30, 40, 0.04);
-  --shadow-sm: 0 2px 6px rgba(20, 30, 40, 0.05);
-  --shadow-md: 0 8px 20px rgba(20, 30, 40, 0.07);
-  --shadow-lg: 0 16px 36px rgba(20, 30, 40, 0.1);
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 6px 16px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12);
+  --glow-brand: 0 0 10px rgba(5, 150, 105, 0.2);
+  --glow-cyan: 0 0 10px rgba(2, 132, 199, 0.2);
 }
 
-/* ========== 间距（4px 基准） ========== */
+/* ========== 精密间距标尺（4px 基准） ========== */
 :root {
+  --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
@@ -224,39 +227,42 @@
   --space-10: 40px;
 }
 
-/* ========== 布局 ========== */
+/* ========== 宽屏大画幅布局 ========== */
 :root {
-  --content-max: 1280px;
-  --content-max-admin: 1560px;
-  --student-topbar-height: 72px;
+  --content-max: 1320px;
+  --content-max-admin: 1600px;
+  --admin-sidebar-width: 240px;
+  --admin-sidebar-collapsed: 64px;
+  --header-height: 56px;
+  --student-topbar-height: 58px;
 }
 
-/* ========== 字体 ========== */
+/* ========== 字体体系 ========== */
 :root {
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
-    'HarmonyOS Sans SC', 'MiSans', 'Source Han Sans SC', 'Microsoft YaHei',
-    '微软雅黑', sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'HarmonyOS Sans SC', 'MiSans', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Consolas', 'Courier New', monospace;
 }
 
-/* ========== 动效（拒绝 linear / ease-in-out） ========== */
+/* ========== 动效体系（迅捷物理反馈） ========== */
 :root {
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
-  --duration-fast: 0.18s;
-  --duration-base: 0.25s;
+  --duration-fast: 0.15s;
+  --duration-base: 0.22s;
 }
 
-/* ========== z-index 尺度 ========== */
+/* ========== z-index 层级 ========== */
 :root {
   --z-sticky: 100;
   --z-overlay: 1000;
+  --z-modal: 2000;
 }
 
 /* ==================================================================
- * Element Plus 变量映射 —— 全局换肤入口（明亮）
+ * Element Plus 变量映射 —— 工业终端换肤入口（明亮）
  * ================================================================== */
 :root {
-  /* ---- primary ---- */
   --el-color-primary: var(--brand-600);
   --el-color-primary-light-3: color-mix(in srgb, var(--brand-600) 70%, white);
   --el-color-primary-light-5: color-mix(in srgb, var(--brand-600) 50%, white);
@@ -265,50 +271,12 @@
   --el-color-primary-light-9: color-mix(in srgb, var(--brand-600) 10%, white);
   --el-color-primary-dark-2: var(--brand-700);
 
-  /* ---- success ---- */
   --el-color-success: var(--success);
-  --el-color-success-light-3: color-mix(in srgb, var(--success) 70%, white);
-  --el-color-success-light-5: color-mix(in srgb, var(--success) 50%, white);
-  --el-color-success-light-7: color-mix(in srgb, var(--success) 30%, white);
-  --el-color-success-light-8: color-mix(in srgb, var(--success) 20%, white);
-  --el-color-success-light-9: color-mix(in srgb, var(--success) 10%, white);
-  --el-color-success-dark-2: color-mix(in srgb, var(--success) 82%, black);
-
-  /* ---- warning ---- */
   --el-color-warning: var(--warning);
-  --el-color-warning-light-3: color-mix(in srgb, var(--warning) 70%, white);
-  --el-color-warning-light-5: color-mix(in srgb, var(--warning) 50%, white);
-  --el-color-warning-light-7: color-mix(in srgb, var(--warning) 30%, white);
-  --el-color-warning-light-8: color-mix(in srgb, var(--warning) 20%, white);
-  --el-color-warning-light-9: color-mix(in srgb, var(--warning) 10%, white);
-  --el-color-warning-dark-2: color-mix(in srgb, var(--warning) 82%, black);
-
-  /* ---- danger / error ---- */
   --el-color-danger: var(--danger);
-  --el-color-danger-light-3: color-mix(in srgb, var(--danger) 70%, white);
-  --el-color-danger-light-5: color-mix(in srgb, var(--danger) 50%, white);
-  --el-color-danger-light-7: color-mix(in srgb, var(--danger) 30%, white);
-  --el-color-danger-light-8: color-mix(in srgb, var(--danger) 20%, white);
-  --el-color-danger-light-9: color-mix(in srgb, var(--danger) 10%, white);
-  --el-color-danger-dark-2: color-mix(in srgb, var(--danger) 82%, black);
   --el-color-error: var(--danger);
-  --el-color-error-light-3: color-mix(in srgb, var(--danger) 70%, white);
-  --el-color-error-light-5: color-mix(in srgb, var(--danger) 50%, white);
-  --el-color-error-light-7: color-mix(in srgb, var(--danger) 30%, white);
-  --el-color-error-light-8: color-mix(in srgb, var(--danger) 20%, white);
-  --el-color-error-light-9: color-mix(in srgb, var(--danger) 10%, white);
-  --el-color-error-dark-2: color-mix(in srgb, var(--danger) 82%, black);
-
-  /* ---- info ---- */
   --el-color-info: var(--info);
-  --el-color-info-light-3: color-mix(in srgb, var(--info) 70%, white);
-  --el-color-info-light-5: color-mix(in srgb, var(--info) 50%, white);
-  --el-color-info-light-7: color-mix(in srgb, var(--info) 30%, white);
-  --el-color-info-light-8: color-mix(in srgb, var(--info) 20%, white);
-  --el-color-info-light-9: color-mix(in srgb, var(--info) 10%, white);
-  --el-color-info-dark-2: color-mix(in srgb, var(--info) 82%, black);
 
-  /* ---- 文字 ---- */
   --el-text-color-primary: var(--text-primary);
   --el-text-color-regular: var(--text-primary);
   --el-text-color-secondary: var(--text-secondary);
@@ -316,7 +284,6 @@
   --el-text-color-disabled: var(--text-muted);
   --el-text-color-disabled-bg: var(--surface-2);
 
-  /* ---- 边框 / 填充 / 背景 ---- */
   --el-border-color: var(--border-default);
   --el-border-color-light: var(--border-subtle);
   --el-border-color-lighter: var(--border-subtle);
@@ -330,10 +297,9 @@
   --el-bg-color: var(--surface-1);
   --el-bg-color-overlay: var(--surface-elevated);
 
-  /* ---- 圆角 / 阴影 / 字体 ---- */
   --el-border-radius-base: var(--radius-md);
   --el-border-radius-small: var(--radius-sm);
-  --el-border-radius-round: 20px;
+  --el-border-radius-round: var(--radius-lg);
   --el-box-shadow-lighter: var(--shadow-xs);
   --el-box-shadow-light: var(--shadow-sm);
   --el-box-shadow: var(--shadow-md);
@@ -342,12 +308,9 @@
 }
 
 /* ==================================================================
- * Element Plus 变量映射 —— 深色主题覆盖
- * 浅色变体与深色画布混合，保证按钮/标签在深色下依旧协调
+ * Element Plus 变量映射 —— 终端暗黑模式覆盖
  * ================================================================== */
 :root[data-theme='dark'] {
-  /* 官方 element-plus/theme-chalk/dark/css-vars.css 的 html.dark{...} 特异性 (0,1,1) 会压过 :root{--el-*} 的 (0,1,0)，
-     此处以 :root[data-theme='dark'] (0,2,0) 重新声明基础变量，确保品牌换肤在深色下不回落为 EP 默认色 */
   --el-color-primary: var(--brand-600);
   --el-color-primary-dark-2: var(--brand-700);
 
@@ -378,40 +341,9 @@
   --el-bg-color: var(--surface-1);
   --el-bg-color-overlay: var(--surface-elevated);
 
-  --el-color-primary-light-3: color-mix(in srgb, var(--brand-600) 60%, #0b1020);
-  --el-color-primary-light-5: color-mix(in srgb, var(--brand-600) 42%, #0b1020);
-  --el-color-primary-light-7: color-mix(in srgb, var(--brand-600) 26%, #0b1020);
-  --el-color-primary-light-8: color-mix(in srgb, var(--brand-600) 18%, #0b1020);
-  --el-color-primary-light-9: color-mix(in srgb, var(--brand-600) 10%, #0b1020);
-  --el-color-primary-dark-2: var(--brand-700);
-
-  --el-color-success-light-3: color-mix(in srgb, var(--success) 60%, #0b1020);
-  --el-color-success-light-5: color-mix(in srgb, var(--success) 42%, #0b1020);
-  --el-color-success-light-7: color-mix(in srgb, var(--success) 26%, #0b1020);
-  --el-color-success-light-8: color-mix(in srgb, var(--success) 18%, #0b1020);
-  --el-color-success-light-9: color-mix(in srgb, var(--success) 10%, #0b1020);
-
-  --el-color-warning-light-3: color-mix(in srgb, var(--warning) 60%, #0b1020);
-  --el-color-warning-light-5: color-mix(in srgb, var(--warning) 42%, #0b1020);
-  --el-color-warning-light-7: color-mix(in srgb, var(--warning) 26%, #0b1020);
-  --el-color-warning-light-8: color-mix(in srgb, var(--warning) 18%, #0b1020);
-  --el-color-warning-light-9: color-mix(in srgb, var(--warning) 10%, #0b1020);
-
-  --el-color-danger-light-3: color-mix(in srgb, var(--danger) 60%, #0b1020);
-  --el-color-danger-light-5: color-mix(in srgb, var(--danger) 42%, #0b1020);
-  --el-color-danger-light-7: color-mix(in srgb, var(--danger) 26%, #0b1020);
-  --el-color-danger-light-8: color-mix(in srgb, var(--danger) 18%, #0b1020);
-  --el-color-danger-light-9: color-mix(in srgb, var(--danger) 10%, #0b1020);
-
-  --el-color-error-light-3: color-mix(in srgb, var(--danger) 60%, #0b1020);
-  --el-color-error-light-5: color-mix(in srgb, var(--danger) 42%, #0b1020);
-  --el-color-error-light-7: color-mix(in srgb, var(--danger) 26%, #0b1020);
-  --el-color-error-light-8: color-mix(in srgb, var(--danger) 18%, #0b1020);
-  --el-color-error-light-9: color-mix(in srgb, var(--danger) 10%, #0b1020);
-
-  --el-color-info-light-3: color-mix(in srgb, var(--info) 60%, #0b1020);
-  --el-color-info-light-5: color-mix(in srgb, var(--info) 42%, #0b1020);
-  --el-color-info-light-7: color-mix(in srgb, var(--info) 26%, #0b1020);
-  --el-color-info-light-8: color-mix(in srgb, var(--info) 18%, #0b1020);
-  --el-color-info-light-9: color-mix(in srgb, var(--info) 10%, #0b1020);
+  --el-color-primary-light-3: color-mix(in srgb, var(--brand-600) 65%, #090d16);
+  --el-color-primary-light-5: color-mix(in srgb, var(--brand-600) 45%, #090d16);
+  --el-color-primary-light-7: color-mix(in srgb, var(--brand-600) 28%, #090d16);
+  --el-color-primary-light-8: color-mix(in srgb, var(--brand-600) 18%, #090d16);
+  --el-color-primary-light-9: color-mix(in srgb, var(--brand-600) 10%, #090d16);
 }

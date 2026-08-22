@@ -128,7 +128,7 @@ withDefaults(defineProps<{
 }
 
 .scene-float {
-  animation: scene-float 6s var(--ease-spring) infinite;
+  animation: scene-float 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .scene-float--delay {

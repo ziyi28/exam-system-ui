@@ -1,43 +1,62 @@
 <template>
-  <div class="student-home">
-    <!-- 全宽 Hero -->
-    <section class="home-hero">
-      <div class="home-hero__copy">
-        <span class="home-hero__eyebrow">今日学习</span>
-        <h1>你好，{{ displayName }}。</h1>
-        <p>从一场考试开始，持续追踪你的学习进度。</p>
-        <div class="home-hero__hint">
-          <el-icon><Calendar /></el-icon>
-          <span>合理安排学习与考试时间</span>
+  <div class="student-home-terminal">
+    <!-- 全宽终端 Hero -->
+    <section class="home-hero-terminal">
+      <div class="hero-content">
+        <div class="hero-kicker-row">
+          <span class="mono-badge">ACADEMIC_PORTAL // V1.0</span>
+          <span class="hero-time-tag mono-num">{{ todayDateText }}</span>
+        </div>
+        <h1 class="hero-title">
+          你好，<span class="highlight-name">{{ displayName }}</span>。
+        </h1>
+        <p class="hero-subtitle">
+          以严肃考评检验真实掌握，以 AI 深度解析驱动知识进阶。
+        </p>
+        <div class="hero-meta-row">
+          <div class="meta-item">
+            <span class="meta-dot"></span>
+            <span>考场模式就绪</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-dot cyan"></span>
+            <span>RAG 知识库已联机</span>
+          </div>
         </div>
       </div>
-      <BrandScene variant="home" class="home-hero__scene" />
+      <BrandScene variant="home" class="hero-scene" />
     </section>
 
-    <!-- 快速入口 -->
-    <section class="page-section quick-section" aria-label="快速开始">
-      <div class="page-section__head">
-        <div>
-          <h2 class="page-section__title">快速开始</h2>
-          <p class="section-desc">选择一项任务，继续你的学习节奏</p>
+    <!-- 5大快捷业务入口 -->
+    <section class="quick-section" aria-label="快捷考学通道">
+      <div class="section-head">
+        <div class="section-title-group">
+          <h2 class="section-title">核心考学通道</h2>
+          <span class="section-code mono-text">KEY_WORKSPACES</span>
         </div>
       </div>
       <div class="quick-grid" :class="{ 'quick-grid--four': quickEntries.length === 4 }">
-        <router-link v-for="entry in quickEntries" :key="entry.title" :to="entry.path" class="quick-card">
-          <span class="quick-icon" :class="`quick-icon--${entry.theme}`">
-            <el-icon :size="24"><component :is="entry.icon" /></el-icon>
-          </span>
-          <span class="quick-content">
+        <router-link v-for="entry in quickEntries" :key="entry.title" :to="entry.path" class="quick-terminal-card">
+          <div class="quick-card-head">
+            <span class="quick-code mono-num">{{ entry.code }}</span>
+            <div class="quick-icon" :class="`icon-theme--${entry.theme}`">
+              <el-icon :size="16"><component :is="entry.icon" /></el-icon>
+            </div>
+          </div>
+          <div class="quick-content">
             <span class="quick-title">{{ entry.title }}</span>
             <span class="quick-desc">{{ entry.desc }}</span>
-          </span>
-          <el-icon class="quick-arrow"><ArrowRight /></el-icon>
+          </div>
+          <div class="quick-bottom-bar">
+            <span class="enter-text">ENTER_SPACE</span>
+            <el-icon class="quick-arrow"><ArrowRight /></el-icon>
+          </div>
         </router-link>
       </div>
     </section>
 
-    <!-- 轮播图：有数据时全宽展示 -->
-    <el-carousel v-if="banners.length" height="280px" class="banner-carousel" :interval="5000" arrow="hover">
+    <!-- 轮播图 -->
+    <el-carousel v-if="banners.length" height="240px" class="banner-carousel" :interval="5000" arrow="hover">
       <el-carousel-item v-for="banner in banners" :key="banner.id">
         <a v-if="banner.linkUrl" :href="banner.linkUrl" target="_blank" rel="noopener">
           <img :src="banner.imageUrl" :alt="banner.title" class="banner-img" />
@@ -46,63 +65,94 @@
       </el-carousel-item>
     </el-carousel>
 
-    <!-- 公告 + 热门课程：无轮播时公告自动占满，不留空洞 -->
+    <!-- 公告与热门课程 -->
     <el-row :gutter="16" class="home-content-grid">
-      <el-col :xs="24" :md="banners.length ? 8 : 10">
-        <el-card shadow="never" class="home-info-card">
-          <template #header>
-            <div class="card-header"><el-icon><Bell /></el-icon> 系统公告</div>
-          </template>
-          <el-empty v-if="!notices.length" description="暂无公告" :image-size="60" />
-          <button
-            v-for="notice in notices"
-            :key="notice.id"
-            type="button"
-            class="notice-item"
-            @click="activeNotice = notice"
-          >
-            <el-tag v-if="notice.priority === 2" type="danger" size="small" effect="dark">紧急</el-tag>
-            <el-tag v-else-if="notice.priority === 1" type="warning" size="small">重要</el-tag>
-            <span class="notice-title ellipsis">{{ notice.title }}</span>
-            <span class="notice-time">{{ (notice.createTime ?? '').slice(0, 10) }}</span>
-          </button>
-        </el-card>
+      <!-- 系统公告 -->
+      <el-col :xs="24" :md="banners.length ? 9 : 10">
+        <div class="terminal-panel-card">
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <div class="panel-title">
+                <el-icon class="panel-header-icon"><Bell /></el-icon>
+                系统公告与通知
+              </div>
+              <div class="panel-subtitle mono-text">NOTICE_BULLETIN</div>
+            </div>
+          </div>
+          <div class="panel-body list-body">
+            <el-empty v-if="!notices.length" description="暂无通知公告" :image-size="60" />
+            <button
+              v-for="notice in notices"
+              :key="notice.id"
+              type="button"
+              class="terminal-notice-item"
+              @click="activeNotice = notice"
+            >
+              <div class="notice-meta-line">
+                <el-tag v-if="notice.priority === 2" type="danger" size="small" effect="plain">紧急</el-tag>
+                <el-tag v-else-if="notice.priority === 1" type="warning" size="small" effect="plain">重要</el-tag>
+                <span class="notice-date mono-num">{{ (notice.createTime ?? '').slice(0, 10) }}</span>
+              </div>
+              <span class="notice-title-text ellipsis">{{ notice.title }}</span>
+            </button>
+          </div>
+        </div>
       </el-col>
 
-      <el-col :xs="24" :md="banners.length ? 16 : 14">
-        <el-card shadow="never" class="home-info-card">
-          <template #header>
-            <div class="card-header">
-              <span><el-icon><VideoPlay /></el-icon> 热门课程</span>
-              <router-link to="/student/videos" class="more-link">更多 →</router-link>
+      <!-- 热门课程 / 视频 -->
+      <el-col :xs="24" :md="banners.length ? 15 : 14">
+        <div class="terminal-panel-card">
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <div class="panel-title">
+                <el-icon class="panel-header-icon"><VideoPlay /></el-icon>
+                推荐视频课程
+              </div>
+              <div class="panel-subtitle mono-text">RECOMMENDED_VIDEOS</div>
             </div>
-          </template>
-          <el-empty v-if="!videos.length" description="暂无视频" :image-size="60" />
-          <el-row :gutter="12">
-            <el-col v-for="video in videos" :key="video.id" :xs="12" :sm="8">
-              <router-link :to="`/student/videos/${video.id}`" class="video-card">
-                <span class="video-cover">
-                  <img v-if="video.coverUrl" :src="video.coverUrl" :alt="video.title" />
-                  <span v-else class="cover-placeholder"><el-icon :size="28"><VideoCamera /></el-icon></span>
-                </span>
-                <span class="video-title ellipsis">{{ video.title }}</span>
-                <span class="video-meta">{{ video.viewCount ?? 0 }} 次观看 · {{ video.likeCount ?? 0 }} 赞</span>
-              </router-link>
-            </el-col>
-          </el-row>
-        </el-card>
+            <router-link to="/student/videos" class="more-link mono-num">VIEW_ALL →</router-link>
+          </div>
+          <div class="panel-body">
+            <el-empty v-if="!videos.length" description="暂无视频课程" :image-size="60" />
+            <el-row :gutter="10">
+              <el-col v-for="video in videos" :key="video.id" :xs="12" :sm="8">
+                <router-link :to="`/student/videos/${video.id}`" class="terminal-video-card">
+                  <div class="video-cover-wrap">
+                    <img v-if="video.coverUrl" :src="video.coverUrl" :alt="video.title" class="video-img" />
+                    <div v-else class="video-placeholder">
+                      <el-icon :size="24"><VideoCamera /></el-icon>
+                    </div>
+                  </div>
+                  <div class="video-info">
+                    <span class="video-title ellipsis">{{ video.title }}</span>
+                    <div class="video-meta mono-num">
+                      <span>{{ video.viewCount ?? 0 }} VIEWS</span>
+                      <span>{{ video.likeCount ?? 0 }} LIKES</span>
+                    </div>
+                  </div>
+                </router-link>
+              </el-col>
+            </el-row>
+          </div>
+        </div>
       </el-col>
     </el-row>
 
     <!-- 公告详情对话框 -->
-    <el-dialog :model-value="!!activeNotice" :title="activeNotice?.title" width="min(520px, calc(100vw - 48px))" @close="activeNotice = null">
-      <div class="notice-content">{{ activeNotice?.content }}</div>
+    <el-dialog
+      :model-value="!!activeNotice"
+      :title="activeNotice?.title"
+      width="min(520px, calc(100vw - 48px))"
+      @close="activeNotice = null"
+    >
+      <div class="notice-dialog-content">{{ activeNotice?.content }}</div>
     </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { Bell, VideoPlay, VideoCamera, ArrowRight } from '@element-plus/icons-vue'
 import { getActiveBanners } from '@/api/banner'
 import { getActiveNotices } from '@/api/notice'
 import { getPopularVideos } from '@/api/video'
@@ -117,19 +167,25 @@ const videos = ref<Video[]>([])
 const activeNotice = ref<Notice | null>(null)
 const displayName = computed(() => userStore.userInfo?.realName || userStore.userInfo?.username || '同学')
 
-// 类别色使用品牌蓝 / 青 / 紫 / 靛 / 中性，不用成功/危险色伪装内容分类
+const todayDateText = computed(() => {
+  const d = new Date()
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const date = String(d.getDate()).padStart(2, '0')
+  return `${y}.${m}.${date}`
+})
+
 const quickEntries = computed(() => [
-  { title: '在线考试', desc: '进入已发布的考试', path: '/student/exams', icon: 'EditPen', theme: 'brand' },
-  { title: '我的成绩', desc: '查看考试记录与评语', path: '/student/records', icon: 'Medal', theme: 'cyan' },
+  { title: '在线考试', code: '01_EXAMS', desc: '进入发布考场与即时作答', path: '/student/exams', icon: 'EditPen', theme: 'brand' },
+  { title: '成绩档案', code: '02_RECORDS', desc: '查看得分复盘与 AI 解析', path: '/student/records', icon: 'Medal', theme: 'cyan' },
   ...(userStore.role === 'STUDENT'
-    ? [{ title: '学习资料库', desc: '阅读资料与课程内容', path: '/student/knowledge', icon: 'Collection', theme: 'violet' }]
+    ? [{ title: '知识资料库', code: '03_RAG_LIB', desc: '检索资料与溯源查阅', path: '/student/knowledge', icon: 'Collection', theme: 'violet' }]
     : []),
-  { title: '排行榜', desc: '看看谁是学霸', path: '/student/ranking', icon: 'TrendCharts', theme: 'indigo' },
-  { title: '视频学习', desc: '在线课程随时学', path: '/student/videos', icon: 'VideoPlay', theme: 'neutral' },
+  { title: '全站排行', code: '04_RANKING', desc: '全校/班级学情积分榜', path: '/student/ranking', icon: 'TrendCharts', theme: 'indigo' },
+  { title: '视频自学', code: '05_VIDEOS', desc: '点播核心难点精讲视频', path: '/student/videos', icon: 'VideoPlay', theme: 'neutral' },
 ])
 
 onMounted(async () => {
-  // 三块内容互不阻塞，失败静默
   getActiveBanners().then((data) => (banners.value = data)).catch(() => {})
   getActiveNotices().then((data) => (notices.value = data.slice(0, 6))).catch(() => {})
   getPopularVideos(6).then((data) => (videos.value = data)).catch(() => {})
@@ -137,386 +193,433 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.student-home {
+.student-home-terminal {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-5);
 }
 
-/* ============ 全宽 Hero ============ */
-.home-hero {
+/* ============ 顶部 Hero 终端 ============ */
+.home-hero-terminal {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  min-height: 300px;
-  padding: clamp(28px, 4vw, 48px);
+  padding: 32px 36px;
   border: 1px solid var(--border-default);
-  border-radius: var(--radius-xl);
-  overflow: hidden;
+  border-radius: var(--radius-lg);
   background:
-    radial-gradient(560px 320px at 92% -10%, color-mix(in srgb, var(--accent-violet) 11%, transparent), transparent 62%),
-    radial-gradient(480px 300px at 6% 110%, color-mix(in srgb, var(--accent-cyan) 9%, transparent), transparent 60%),
+    radial-gradient(480px 260px at 95% 0%, color-mix(in srgb, var(--accent-cyan) 8%, transparent), transparent 60%),
     var(--surface-1);
+  overflow: hidden;
 }
 
-.home-hero__copy {
-  position: relative;
+.hero-content {
+  max-width: 540px;
   z-index: 1;
-  max-width: 560px;
 }
 
-.home-hero__eyebrow {
-  display: inline-flex;
-  align-items: center;
-  padding: 5px 12px;
-  border-radius: 999px;
-  color: var(--brand-600);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  background: var(--brand-50);
-}
-
-.home-hero h1 {
-  max-width: 520px;
-  margin: 16px 0 10px;
-  color: var(--text-strong);
-  font-size: clamp(32px, 3.4vw, 44px);
-  line-height: 1.12;
-  letter-spacing: -0.05em;
-}
-
-.home-hero p {
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: 15px;
-}
-
-.home-hero__hint {
+.hero-kicker-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border-subtle);
-  color: var(--text-secondary);
-  font-size: 13px;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
-.home-hero__scene {
-  width: clamp(300px, 40vw, 460px);
+.mono-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand-600);
+  background: color-mix(in srgb, var(--brand-600) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand-600) 25%, transparent);
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+}
+
+.hero-time-tag {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.hero-title {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+  color: var(--text-strong);
+  margin: 0 0 10px;
+}
+
+.highlight-name {
+  color: var(--brand-600);
+}
+
+.hero-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 0 18px;
+}
+
+.hero-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.meta-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand-600);
+  box-shadow: 0 0 6px var(--brand-600);
+}
+
+.meta-dot.cyan {
+  background: var(--accent-cyan);
+  box-shadow: 0 0 6px var(--accent-cyan);
+}
+
+.hero-scene {
+  width: clamp(240px, 32vw, 360px);
   flex: none;
 }
 
-.section-desc {
-  margin: 4px 0 0;
-  color: var(--text-muted);
-  font-size: 13px;
-}
-
-/* ============ 快速入口 ============ */
+/* ============ 快捷通道网格 ============ */
 .quick-section {
   margin: 0;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.section-title-group {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-strong);
+  letter-spacing: -0.01em;
+}
+
+.section-code {
+  font-size: 11px;
+  color: var(--text-muted);
 }
 
 .quick-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 
 .quick-grid--four {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-.quick-card {
-  position: relative;
+.quick-terminal-card {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-  min-height: 112px;
-  padding: 22px;
-  color: inherit;
-  text-decoration: none;
+  flex-direction: column;
+  padding: 14px;
+  background: var(--surface-1);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-lg);
-  background: var(--surface-1);
-  transition:
-    transform var(--duration-base) var(--ease-out-expo),
-    box-shadow var(--duration-base) var(--ease-out-expo),
-    border-color var(--duration-base) var(--ease-out-expo);
+  text-decoration: none;
+  color: inherit;
+  transition: all var(--duration-fast) var(--ease-out-expo);
 }
 
-.quick-card:hover {
-  border-color: var(--border-strong);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-2px);
+.quick-terminal-card:hover {
+  border-color: var(--brand-600);
+  background: var(--surface-2);
+  box-shadow: var(--glow-brand);
+}
+
+.quick-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.quick-code {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
 }
 
 .quick-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-xs);
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-subtle);
 }
 
-.quick-content {
-  min-width: 0;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.quick-icon--brand {
-  background: var(--brand-50);
+.icon-theme--brand {
+  background: color-mix(in srgb, var(--brand-600) 12%, transparent);
   color: var(--brand-600);
 }
 
-.quick-icon--cyan {
-  background: var(--accent-cyan-soft);
+.icon-theme--cyan {
+  background: color-mix(in srgb, var(--accent-cyan) 12%, transparent);
   color: var(--accent-cyan);
 }
 
-.quick-icon--violet {
-  background: var(--accent-violet-soft);
+.icon-theme--violet {
+  background: color-mix(in srgb, var(--accent-violet) 12%, transparent);
   color: var(--accent-violet);
 }
 
-.quick-icon--indigo {
-  background: var(--accent-indigo-soft);
+.icon-theme--indigo {
+  background: color-mix(in srgb, var(--accent-indigo) 12%, transparent);
   color: var(--accent-indigo);
 }
 
-.quick-icon--neutral {
+.icon-theme--neutral {
   background: var(--surface-2);
   color: var(--text-secondary);
 }
 
+.quick-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
 .quick-title {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   color: var(--text-strong);
+  margin-bottom: 2px;
 }
 
 .quick-desc {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-muted);
-  margin-top: 3px;
+  line-height: 1.4;
 }
 
-.quick-arrow {
+.quick-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: 11px;
   color: var(--text-muted);
-  flex: none;
-  transition: transform var(--duration-fast) var(--ease-out-expo), color var(--duration-fast) var(--ease-out-expo);
 }
 
-.quick-card:hover .quick-arrow {
+.quick-terminal-card:hover .quick-bottom-bar {
   color: var(--brand-600);
-  transform: translateX(2px);
 }
 
 /* ============ 轮播图 ============ */
 .banner-carousel {
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--border-default);
-  box-shadow: none;
 }
 
 .banner-img {
   width: 100%;
-  height: 280px;
+  height: 100%;
   object-fit: cover;
 }
 
-/* ============ 公告 + 热门课程 ============ */
-.home-content-grid {
-  margin-top: 0;
-}
-
-.home-info-card {
-  height: 100%;
+/* ============ 下方两栏容器 ============ */
+.terminal-panel-card {
+  background: var(--surface-1);
   border: 1px solid var(--border-default);
-  box-shadow: none;
+  border-radius: var(--radius-lg);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.card-header {
+.panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
-  color: var(--text-strong);
-  font-weight: 600;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-.notice-item {
+.panel-title-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-title {
   display: flex;
   align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 12px 0;
-  font: inherit;
-  text-align: left;
-  color: inherit;
-  background: transparent;
-  border: 0;
-  border-bottom: 1px dashed var(--border-subtle);
-  cursor: pointer;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-strong);
 }
 
-.notice-item:hover .notice-title {
+.panel-header-icon {
   color: var(--brand-600);
 }
 
-.notice-title {
-  flex: 1;
-  color: var(--text-primary);
-  transition: color var(--duration-fast) var(--ease-out-expo);
-}
-
-.notice-time {
+.panel-subtitle {
+  font-size: 11px;
   color: var(--text-muted);
-  font-size: 12px;
-}
-
-.notice-content {
-  white-space: pre-wrap;
-  line-height: 1.8;
+  margin-top: 1px;
 }
 
 .more-link {
+  font-size: 11px;
+  font-weight: 700;
   color: var(--brand-600);
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.more-link:hover {
-  color: var(--brand-700);
-}
-
-.video-card {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 16px;
-  color: inherit;
   text-decoration: none;
 }
 
-.video-cover {
-  height: 112px;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  background: var(--surface-2);
-  display: block;
+.panel-body {
+  padding: 14px 16px;
+  flex: 1;
 }
 
-.video-cover img {
+.list-body {
+  padding: 8px 12px;
+}
+
+.terminal-notice-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+  text-align: left;
+  border-radius: var(--radius-xs);
+  transition: background var(--duration-fast) var(--ease-out-expo);
+}
+
+.terminal-notice-item:last-child {
+  border-bottom: 0;
+}
+
+.terminal-notice-item:hover {
+  background: var(--surface-2);
+}
+
+.notice-meta-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notice-date {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.notice-title-text {
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.terminal-notice-item:hover .notice-title-text {
+  color: var(--brand-600);
+}
+
+/* 视频卡片 */
+.terminal-video-card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  margin-bottom: 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all var(--duration-fast) var(--ease-out-expo);
+}
+
+.terminal-video-card:hover {
+  border-color: var(--brand-600);
+}
+
+.video-cover-wrap {
+  aspect-ratio: 16 / 9;
+  background: var(--bg-canvas);
+  overflow: hidden;
+}
+
+.video-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
-  transition: transform var(--duration-base) var(--ease-out-expo);
 }
 
-.video-card:hover .video-cover img {
-  transform: scale(1.05);
-}
-
-.cover-placeholder {
+.video-placeholder {
+  width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   color: var(--text-muted);
+}
+
+.video-info {
+  padding: 8px 10px;
 }
 
 .video-title {
-  font-size: 14px;
-  margin-top: 8px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
   color: var(--text-strong);
+  display: block;
 }
 
 .video-meta {
-  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 11px;
   color: var(--text-muted);
-  margin-top: 2px;
 }
 
-@media (max-width: 1024px) {
-  /* 平板：六列网格，前三项各占两列、后两项各占三列 */
-  .quick-grid {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-  }
-
-  .quick-grid .quick-card:nth-child(-n + 3) {
-    grid-column: span 2;
-  }
-
-  .quick-grid .quick-card:nth-child(n + 4) {
-    grid-column: span 3;
-  }
-
-  /* 仅四项（管理员/教师预览）在平板下 2×2 */
-  .quick-grid--four .quick-card {
-    grid-column: span 3;
-  }
-
-  .home-hero__scene {
-    width: 300px;
-  }
+.notice-dialog-content {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-primary);
+  white-space: pre-wrap;
 }
 
-@media (max-width: 768px) {
-  .home-hero {
-    align-items: flex-start;
-    flex-direction: column;
-    min-height: 0;
-    padding: 28px 24px;
-  }
-
-  .home-hero__scene {
-    display: none;
-  }
-
-  .home-hero h1 {
-    font-size: 36px;
-  }
-
-  .banner-carousel :deep(.el-carousel__container),
-  .banner-img {
-    height: 210px !important;
-  }
-
-  .quick-grid,
-  .quick-grid--four {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .quick-grid .quick-card,
-  .quick-grid--four .quick-card {
-    grid-column: auto;
-  }
-
-  .quick-card {
-    min-height: 88px;
-    padding: 16px;
-  }
-
-  .quick-icon {
-    width: 42px;
-    height: 42px;
-  }
-
-  .quick-desc,
-  .quick-arrow {
-    display: none;
-  }
+.mono-num,
+.mono-text {
+  font-family: var(--font-mono);
 }
 </style>

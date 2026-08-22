@@ -1,77 +1,85 @@
 <template>
-  <div class="dashboard">
+  <div class="dashboard-terminal">
+    <!-- 顶部终端标题栏 -->
     <div class="page-header dashboard-header">
       <div>
-        <h1 class="page-header__title">运营概览</h1>
-        <p class="page-header__desc">快速了解题库、考试和学习数据的当前状态。</p>
+        <h1 class="page-header__title">
+          <span class="mono-badge">OPERATIONS_CENTER</span>
+          数智考务运营大盘
+        </h1>
+        <p class="page-header__desc">全域试题库、考试排程、考务数据与学情排行榜的实时分析中控台。</p>
       </div>
-      <div class="dashboard-header__date">
-        <el-icon><Calendar /></el-icon>
-        <span>数据实时更新</span>
+      <div class="header-status-box">
+        <span class="pulse-indicator"></span>
+        <span class="mono-text">DATA_PIPELINE: LIVE_SYNC</span>
       </div>
     </div>
 
-    <!-- 统计卡片：类别色表达资源类型，不借用成功/危险语义色 -->
-    <el-row :gutter="16" class="stats-grid">
+    <!-- 6大核心指标矩阵 -->
+    <el-row :gutter="12" class="stats-grid">
       <el-col v-for="card in statCards" :key="card.label" :xs="12" :sm="8" :md="8" :lg="4">
-        <el-card shadow="never" class="stat-card">
-          <div class="stat-icon" :class="`stat-icon--${card.theme}`">
-            <el-icon :size="24"><component :is="card.icon" /></el-icon>
+        <div class="terminal-stat-card">
+          <div class="stat-card-top">
+            <span class="stat-mono-code">{{ card.code }}</span>
+            <div class="stat-icon-wrapper" :class="`icon-theme--${card.theme}`">
+              <el-icon :size="16"><component :is="card.icon" /></el-icon>
+            </div>
           </div>
-          <div class="stat-info">
-            <div class="stat-value">{{ card.value }}</div>
-            <div class="stat-label">{{ card.label }}</div>
-          </div>
-        </el-card>
+          <div class="stat-value mono-num">{{ card.value }}</div>
+          <div class="stat-label">{{ card.label }}</div>
+        </div>
       </el-col>
     </el-row>
 
+    <!-- 图表与排行榜双栏 -->
     <el-row :gutter="16" class="chart-row">
-      <!-- 资源统计条形图 -->
+      <!-- 资源分布条形图 -->
       <el-col :xs="24" :md="14">
-        <el-card shadow="never" class="dashboard-panel">
-          <template #header>
-            <div class="panel-header">
-              <div>
-                <div class="panel-title">系统资源概览</div>
-                <div class="panel-desc">题库与考试资源分布</div>
-              </div>
-              <el-icon class="panel-icon"><DataAnalysis /></el-icon>
+        <div class="terminal-panel-card">
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <div class="panel-title">系统核心资源分布</div>
+              <div class="panel-subtitle mono-text">RESOURCE_VECTOR_DISTRIBUTION</div>
             </div>
-          </template>
-          <div ref="barChartRef" class="chart" />
-        </el-card>
+            <el-icon class="panel-icon"><DataAnalysis /></el-icon>
+          </div>
+          <div class="panel-body">
+            <div ref="barChartRef" class="chart-container" />
+          </div>
+        </div>
       </el-col>
-      <!-- 成绩排行 -->
+
+      <!-- 成绩榜 TOP 10 -->
       <el-col :xs="24" :md="10">
-        <el-card shadow="never" class="dashboard-panel">
-          <template #header>
-            <div class="panel-header">
-              <div>
-                <div class="panel-title">成绩排行</div>
-                <div class="panel-desc">当前表现最佳的 10 位考生</div>
-              </div>
-              <el-tag type="primary" effect="plain">前 10 名</el-tag>
+        <div class="terminal-panel-card">
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <div class="panel-title">全站学情表现榜</div>
+              <div class="panel-subtitle mono-text">TOP_10_ACADEMIC_PERFORMANCE</div>
             </div>
-          </template>
-          <el-table :data="ranking" size="small" :show-header="true" height="320">
-            <el-table-column label="名次" width="64">
-              <template #default="{ $index }">
-                <span v-if="$index < 3" class="rank-medal" :class="`rank-medal--${$index + 1}`" :aria-label="`第 ${$index + 1} 名`">
-                  {{ $index + 1 }}
-                </span>
-                <span v-else class="rank-num">{{ $index + 1 }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column prop="studentName" label="考生" min-width="80" show-overflow-tooltip />
-            <el-table-column prop="paperName" label="试卷" min-width="120" show-overflow-tooltip />
-            <el-table-column label="得分" width="90">
-              <template #default="{ row }">
-                <b>{{ row.score }}</b> / {{ row.paperTotalScore ?? '-' }}
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
+            <span class="rank-tag mono-num">[TOP_10]</span>
+          </div>
+          <div class="panel-body table-body">
+            <el-table :data="ranking" size="small" :show-header="true" height="340" class="terminal-ranking-table">
+              <el-table-column label="RANK" width="68">
+                <template #default="{ $index }">
+                  <span v-if="$index === 0" class="rank-pill gold mono-num">01</span>
+                  <span v-else-if="$index === 1" class="rank-pill silver mono-num">02</span>
+                  <span v-else-if="$index === 2" class="rank-pill bronze mono-num">03</span>
+                  <span v-else class="rank-num mono-num">{{ String($index + 1).padStart(2, '0') }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="studentName" label="学员 / 账号" min-width="90" show-overflow-tooltip />
+              <el-table-column prop="paperName" label="考核试卷" min-width="120" show-overflow-tooltip />
+              <el-table-column label="得分" width="90" align="right">
+                <template #default="{ row }">
+                  <span class="score-strong mono-num">{{ row.score }}</span>
+                  <span class="score-total mono-num">/{{ row.paperTotalScore ?? '-' }}</span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -94,20 +102,18 @@ let chartObserver: ResizeObserver | null = null
 
 const { theme } = useTheme()
 
-// 类别色：品牌蓝 / 青 / 紫 / 靛 / 中性，不把普通资源映射为成功/危险状态色
 const statCards = computed(() => [
-  { label: '题目总数', value: stats.value?.questionCount ?? '-', icon: 'Document', theme: 'brand' },
-  { label: '试卷总数', value: stats.value?.paperCount ?? '-', icon: 'Notebook', theme: 'cyan' },
-  { label: '分类总数', value: stats.value?.categoryCount ?? '-', icon: 'FolderOpened', theme: 'violet' },
-  { label: '用户总数', value: stats.value?.userCount ?? '-', icon: 'User', theme: 'indigo' },
-  { label: '考试场次', value: stats.value?.examCount ?? '-', icon: 'List', theme: 'neutral' },
-  { label: '今日考试', value: stats.value?.todayExamCount ?? '-', icon: 'Calendar', theme: 'brand-soft' },
+  { label: '题目总数', code: 'QUESTIONS', value: stats.value?.questionCount ?? '-', icon: 'Document', theme: 'brand' },
+  { label: '试卷总数', code: 'PAPERS', value: stats.value?.paperCount ?? '-', icon: 'Notebook', theme: 'cyan' },
+  { label: '分类总数', code: 'CATEGORIES', value: stats.value?.categoryCount ?? '-', icon: 'FolderOpened', theme: 'violet' },
+  { label: '用户总数', code: 'USERS', value: stats.value?.userCount ?? '-', icon: 'User', theme: 'indigo' },
+  { label: '考试场次', code: 'EXAMS', value: stats.value?.examCount ?? '-', icon: 'List', theme: 'neutral' },
+  { label: '今日考试', code: 'TODAY_ACTIVE', value: stats.value?.todayExamCount ?? '-', icon: 'Calendar', theme: 'brand-soft' },
 ])
 
 function buildBarOption() {
   const s = stats.value
   if (!s) return null
-  // 单系列水平条形图：类别在 Y 轴，数值在 X 轴，低对比网格，无冗余 legend
   const c = chartColors()
   return {
     aria: {
@@ -119,30 +125,37 @@ function buildBarOption() {
       axisPointer: { type: 'shadow' },
       backgroundColor: c.surface,
       borderColor: c.splitLine,
-      textStyle: { color: c.text },
+      textStyle: { color: c.text, fontFamily: 'JetBrains Mono, Fira Code, SF Mono, Consolas, monospace', fontSize: 12 },
     },
-    grid: { left: 8, right: 28, top: 8, bottom: 8, containLabel: true },
+    grid: { left: 8, right: 36, top: 12, bottom: 8, containLabel: true },
     xAxis: {
       type: 'value',
       minInterval: 1,
-      axisLabel: { color: c.axisLabel },
-      splitLine: { lineStyle: { color: c.splitLine } },
+      axisLabel: { color: c.axisLabel, fontFamily: 'JetBrains Mono, Fira Code, SF Mono, Consolas, monospace', fontSize: 11 },
+      splitLine: { lineStyle: { color: c.splitLine, type: 'dashed' } },
     },
     yAxis: {
       type: 'category',
       inverse: true,
-      data: ['题目', '试卷', '分类', '用户', '考试场次', '今日考试'],
-      axisLabel: { color: c.axisLabel },
+      data: ['题目 (QST)', '试卷 (PPR)', '分类 (CAT)', '用户 (USR)', '考试 (EXM)', '今日 (TOD)'],
+      axisLabel: { color: c.axisLabel, fontFamily: 'JetBrains Mono, Fira Code, SF Mono, Consolas, monospace', fontSize: 11 },
       axisLine: { show: false },
       axisTick: { show: false },
     },
     series: [
       {
         type: 'bar',
-        barWidth: 18,
-        itemStyle: { borderRadius: [0, 9, 9, 0], color: c.primary },
+        barWidth: 16,
+        itemStyle: { borderRadius: [0, 2, 2, 0], color: c.primary },
         emphasis: { itemStyle: { color: c.primaryDark } },
-        label: { show: true, position: 'right', color: c.text, fontWeight: 600 },
+        label: {
+          show: true,
+          position: 'right',
+          color: c.text,
+          fontWeight: 700,
+          fontFamily: 'JetBrains Mono, Fira Code, SF Mono, Consolas, monospace',
+          fontSize: 11,
+        },
         data: [s.questionCount, s.paperCount, s.categoryCount, s.userCount, s.examCount, s.todayExamCount],
       },
     ],
@@ -155,14 +168,11 @@ function renderBarChart() {
   barChart.setOption(buildBarOption()!)
 }
 
-// 主题切换只重绘图表，不重新请求数据
 watch(theme, () => {
   const option = buildBarOption()
   if (barChart && option) barChart.setOption(option)
 })
 
-// 侧栏折叠/展开有 250ms width 过渡，期间 ResizeObserver 每帧触发 resize，
-// 用 rAF 合并到同一帧只执行一次，避免 ECharts 全量重布局风暴
 let resizeFrame = 0
 function handleChartResize() {
   cancelAnimationFrame(resizeFrame)
@@ -186,196 +196,251 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.stat-card :deep(.el-card__body) {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 20px;
+.dashboard-terminal {
+  min-height: 100%;
 }
 
 .dashboard-header {
-  margin-bottom: var(--space-5);
-}
-
-.stats-grid {
-  margin-bottom: 0;
-}
-
-.stat-card {
-  border: 1px solid var(--border-default);
-  box-shadow: none;
-}
-
-.stat-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-.stat-icon--brand {
-  background: var(--brand-50);
+.mono-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
   color: var(--brand-600);
+  background: color-mix(in srgb, var(--brand-600) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand-600) 25%, transparent);
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  margin-right: 8px;
 }
 
-.stat-icon--cyan {
-  background: var(--accent-cyan-soft);
-  color: var(--accent-cyan);
-}
-
-.stat-icon--violet {
-  background: var(--accent-violet-soft);
-  color: var(--accent-violet);
-}
-
-.stat-icon--indigo {
-  background: var(--accent-indigo-soft);
-  color: var(--accent-indigo);
-}
-
-.stat-icon--neutral {
-  background: var(--surface-2);
-  color: var(--text-secondary);
-}
-
-.stat-icon--brand-soft {
-  background: var(--brand-100);
-  color: var(--brand-700);
-}
-
-.stat-value {
-  font-size: 26px;
-  font-weight: 700;
-  line-height: 1.2;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-}
-
-.stat-label {
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-.chart-row {
-  margin-top: var(--space-5);
-}
-
-.chart {
-  height: 340px;
-}
-
-/* 前三名使用奖牌色，其余中性排名数字 */
-.rank-medal {
-  width: 26px;
-  height: 26px;
-  display: inline-grid;
-  place-items: center;
-  border-radius: 50%;
-  font-size: 12px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-/* 浅色下奖牌原色数字在 16% tint 圆底上仅约 2:1，改中性圆底 + 加深数字达标；
-   深色下保留 16% tint + 原色（6.7–10.9:1 已达标） */
-:root:not([data-theme='dark']) .rank-medal--1 {
-  background: var(--surface-2);
-  color: color-mix(in srgb, var(--medal-gold) 55%, black);
-}
-
-:root:not([data-theme='dark']) .rank-medal--2 {
-  background: var(--surface-2);
-  color: color-mix(in srgb, var(--medal-silver) 55%, black);
-}
-
-:root:not([data-theme='dark']) .rank-medal--3 {
-  background: var(--surface-2);
-  color: color-mix(in srgb, var(--medal-bronze) 55%, black);
-}
-
-/* 深色：维持奖牌色 tint 圆底 + 原色 */
-:root[data-theme='dark'] .rank-medal--1 {
-  background: color-mix(in srgb, var(--medal-gold) 16%, transparent);
-  color: var(--medal-gold);
-}
-
-:root[data-theme='dark'] .rank-medal--2 {
-  background: color-mix(in srgb, var(--medal-silver) 16%, transparent);
-  color: var(--medal-silver);
-}
-
-:root[data-theme='dark'] .rank-medal--3 {
-  background: color-mix(in srgb, var(--medal-bronze) 16%, transparent);
-  color: var(--medal-bronze);
-}
-
-.rank-num {
-  color: var(--text-muted);
-  padding-left: 8px;
-}
-
-.dashboard-header__date {
+.header-status-box {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--text-secondary);
-  font-size: 13px;
-  padding: 8px 12px;
+  padding: 6px 12px;
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
   background: var(--surface-1);
 }
 
-.dashboard-panel {
-  height: 100%;
+.pulse-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand-600);
+  box-shadow: 0 0 6px var(--brand-600);
+}
+
+.mono-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* ============ 指标数据网格 ============ */
+.stats-grid {
+  margin-bottom: var(--space-4);
+}
+
+.terminal-stat-card {
+  background: var(--surface-1);
   border: 1px solid var(--border-default);
-  box-shadow: none;
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: border-color var(--duration-fast) var(--ease-out-expo);
+}
+
+.terminal-stat-card:hover {
+  border-color: var(--border-strong);
+}
+
+.stat-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.stat-mono-code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.stat-icon-wrapper {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-xs);
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-subtle);
+}
+
+.icon-theme--brand {
+  background: color-mix(in srgb, var(--brand-600) 12%, transparent);
+  color: var(--brand-600);
+}
+
+.icon-theme--cyan {
+  background: color-mix(in srgb, var(--accent-cyan) 12%, transparent);
+  color: var(--accent-cyan);
+}
+
+.icon-theme--violet {
+  background: color-mix(in srgb, var(--accent-violet) 12%, transparent);
+  color: var(--accent-violet);
+}
+
+.icon-theme--indigo {
+  background: color-mix(in srgb, var(--accent-indigo) 12%, transparent);
+  color: var(--accent-indigo);
+}
+
+.icon-theme--neutral {
+  background: var(--surface-2);
+  color: var(--text-secondary);
+}
+
+.icon-theme--brand-soft {
+  background: color-mix(in srgb, var(--brand-600) 18%, transparent);
+  color: var(--brand-600);
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-strong);
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* ============ 图表与列表容器 ============ */
+.chart-row {
+  margin-top: 0;
+}
+
+.terminal-panel-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .panel-title {
-  color: var(--text-strong);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
+  color: var(--text-strong);
+  letter-spacing: -0.01em;
 }
 
-.panel-desc {
-  margin-top: 3px;
+.panel-subtitle {
+  font-size: 11px;
   color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 400;
+  margin-top: 1px;
 }
 
 .panel-icon {
   color: var(--brand-600);
-  font-size: 20px;
+  font-size: 18px;
 }
 
-@media (max-width: 768px) {
-  .stat-card :deep(.el-card__body) {
-    padding: 16px;
-  }
+.rank-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand-600);
+}
 
-  .stat-icon {
-    width: 42px;
-    height: 42px;
-  }
+.panel-body {
+  padding: 14px 18px;
+  flex: 1;
+}
 
-  .stat-value {
-    font-size: 22px;
-  }
+.table-body {
+  padding: 0;
+}
 
-  .chart {
-    height: 280px;
-  }
+.chart-container {
+  height: 340px;
+  width: 100%;
+}
+
+.terminal-ranking-table {
+  border: 0 !important;
+}
+
+.rank-pill {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-xs);
+  font-size: 11px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+}
+
+.rank-pill.gold {
+  background: color-mix(in srgb, var(--medal-gold) 15%, transparent);
+  color: var(--medal-gold);
+  border: 1px solid color-mix(in srgb, var(--medal-gold) 35%, transparent);
+}
+
+.rank-pill.silver {
+  background: color-mix(in srgb, var(--medal-silver) 15%, transparent);
+  color: var(--medal-silver);
+  border: 1px solid color-mix(in srgb, var(--medal-silver) 35%, transparent);
+}
+
+.rank-pill.bronze {
+  background: color-mix(in srgb, var(--medal-bronze) 15%, transparent);
+  color: var(--medal-bronze);
+  border: 1px solid color-mix(in srgb, var(--medal-bronze) 35%, transparent);
+}
+
+.rank-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  padding-left: 4px;
+}
+
+.score-strong {
+  font-weight: 700;
+  color: var(--brand-600);
+  font-size: 13px;
+}
+
+.score-total {
+  color: var(--text-muted);
+  font-size: 11px;
 }
 </style>

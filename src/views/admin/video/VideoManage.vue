@@ -25,7 +25,7 @@
       <el-table-column prop="id" label="ID" width="70" />
       <el-table-column label="封面" width="120">
         <template #default="{ row }">
-          <el-image v-if="row.coverUrl" :src="row.coverUrl" fit="cover" style="width: 96px; height: 54px; border-radius: 4px" />
+          <el-image v-if="row.coverUrl" :src="row.coverUrl" fit="cover" class="video-cover-img" />
           <span v-else class="no-cover">无封面</span>
         </template>
       </el-table-column>
@@ -225,9 +225,16 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.video-cover-img {
+  width: 96px;
+  height: 54px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-subtle);
+}
+
 .no-cover {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .upload-progress {
@@ -236,7 +243,7 @@ onMounted(async () => {
 
 .upload-tip {
   margin: 8px 0 0;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-muted);
 }
 </style>

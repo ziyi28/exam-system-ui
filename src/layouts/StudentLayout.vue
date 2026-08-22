@@ -1,10 +1,10 @@
 <template>
   <div class="student-layout" :class="{ 'is-exam-mode': isTakingExam }">
-    <!-- 顶部导航 -->
+    <!-- 顶部终端导航栏 -->
     <header class="topbar">
       <div class="topbar-inner">
-        <router-link to="/student/home" class="brand">
-          <BrandMark subtitle="教 · 学 · 考 · 评" />
+        <router-link to="/student/home" class="brand" aria-label="返回学生主页">
+          <BrandMark subtitle="STUDENT_PORTAL" />
         </router-link>
         <nav class="nav">
           <router-link
@@ -19,20 +19,20 @@
         </nav>
         <div class="right">
           <ThemeToggle />
-          <el-button v-if="userStore.isAdminSide" size="small" plain type="primary" @click="router.push('/admin/dashboard')">
-            返回管理端
+          <el-button v-if="userStore.isAdminSide" size="small" plain type="primary" class="admin-entry-btn" @click="router.push('/admin/dashboard')">
+            管理终端
           </el-button>
           <el-dropdown @command="handleCommand">
             <span class="user-dropdown">
-              <el-avatar :size="30" class="avatar">{{ avatarText }}</el-avatar>
+              <el-avatar :size="26" class="avatar">{{ avatarText }}</el-avatar>
               <span class="username">{{ userStore.userInfo?.realName || userStore.userInfo?.username }}</span>
-              <el-icon><ArrowDown /></el-icon>
+              <el-icon :size="12"><ArrowDown /></el-icon>
             </span>
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item command="profile">个人中心</el-dropdown-item>
                 <el-dropdown-item command="records">我的成绩</el-dropdown-item>
-                <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
+                <el-dropdown-item divided command="logout">退出终端</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -40,12 +40,14 @@
       </div>
     </header>
 
-    <!-- 内容区 -->
+    <!-- 核心内容区 -->
     <main class="content">
       <router-view />
     </main>
 
-    <footer class="footer">智能考试系统 · 教学、考试与学习反馈</footer>
+    <footer class="footer">
+      <span class="footer-copy">CYBERNETIC ASSESSMENT & LEARNING PLATFORM · 智能考试系统</span>
+    </footer>
   </div>
 </template>
 
@@ -53,6 +55,7 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
+import { ArrowDown } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import ThemeToggle from '@/components/ui/ThemeToggle.vue'
 import BrandMark from '@/components/brand/BrandMark.vue'
@@ -62,12 +65,12 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const navItems = [
-  { path: '/student/home', title: '首页' },
+  { path: '/student/home', title: '概览门户' },
   { path: '/student/exams', title: '在线考试' },
-  { path: '/student/records', title: '我的成绩' },
-  { path: '/student/knowledge', title: '学习资料库' },
-  { path: '/student/ranking', title: '排行榜' },
-  { path: '/student/videos', title: '视频学习' },
+  { path: '/student/records', title: '成绩档案' },
+  { path: '/student/knowledge', title: '知识资料库' },
+  { path: '/student/ranking', title: '全站排行' },
+  { path: '/student/videos', title: '视频自学' },
 ]
 
 /** 作答页不暴露资料库入口；直接 URL 绕过仍由学生 API 的后端 403 拦截。 */
@@ -77,7 +80,7 @@ const visibleNavItems = computed(() => navItems.filter((item) => {
   return userStore.role === 'STUDENT' && !isTakingExam.value
 }))
 
-const avatarText = computed(() => (userStore.userInfo?.realName || userStore.userInfo?.username || '?').charAt(0))
+const avatarText = computed(() => (userStore.userInfo?.realName || userStore.userInfo?.username || '?').charAt(0).toUpperCase())
 
 async function handleCommand(command: string) {
   if (command === 'profile') {
@@ -98,26 +101,25 @@ async function handleCommand(command: string) {
   display: flex;
   flex-direction: column;
   background: var(--bg-canvas);
-  --student-topbar-height: 68px;
 }
 
 .topbar {
-  background: color-mix(in srgb, var(--surface-1) 88%, transparent);
-  backdrop-filter: saturate(140%) blur(10px);
-  border-bottom: 1px solid var(--border-subtle);
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--border-default);
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
+  height: var(--student-topbar-height);
 }
 
 .topbar-inner {
   max-width: var(--content-max);
   margin: 0 auto;
-  min-height: var(--student-topbar-height);
+  height: 100%;
   display: flex;
   align-items: center;
-  gap: 24px;
-  padding: 0 24px;
+  gap: 20px;
+  padding: 0 20px;
 }
 
 .brand {
@@ -127,23 +129,24 @@ async function handleCommand(command: string) {
   cursor: pointer;
   white-space: nowrap;
   text-decoration: none;
+  flex-shrink: 0;
 }
 
 .nav {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   flex: 1;
 }
 
 .nav-item {
   position: relative;
-  padding: 9px 14px;
+  padding: 6px 12px;
   color: var(--text-secondary);
-  font-size: 15px;
-  border-radius: 999px;
-  transition:
-    background-color var(--duration-fast) var(--ease-out-expo),
-    color var(--duration-fast) var(--ease-out-expo);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-out-expo);
+  letter-spacing: -0.01em;
 }
 
 .nav-item:hover {
@@ -152,31 +155,49 @@ async function handleCommand(command: string) {
 }
 
 .nav-item.active {
-  color: var(--brand-700);
-  font-weight: 600;
-  background-color: var(--brand-50);
+  color: var(--brand-600);
+  font-weight: 700;
+  background-color: color-mix(in srgb, var(--brand-600) 12%, var(--surface-1));
+  border: 1px solid color-mix(in srgb, var(--brand-600) 25%, transparent);
 }
 
 .right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+}
+
+.admin-entry-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
 }
 
 .user-dropdown {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 5px 10px 5px 5px;
+  padding: 4px 8px 4px 4px;
   cursor: pointer;
   color: var(--text-primary);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
+  background: var(--surface-2);
+  font-size: 13px;
+  font-weight: 500;
+  transition: border-color var(--duration-fast) var(--ease-out-expo);
+}
+
+.user-dropdown:hover {
+  border-color: var(--brand-600);
 }
 
 .avatar {
   background: var(--brand-600);
   color: var(--text-on-brand);
-  font-weight: 500;
+  font-weight: 700;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  border-radius: var(--radius-xs);
 }
 
 .content {
@@ -184,106 +205,30 @@ async function handleCommand(command: string) {
   max-width: var(--content-max);
   width: 100%;
   margin: 0 auto;
-  padding: 28px 24px 48px;
+  padding: 20px 20px 40px;
 }
 
 .footer {
   text-align: center;
   color: var(--text-muted);
-  font-size: 13px;
-  padding: 24px 16px 28px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  padding: 16px 20px 20px;
   border-top: 1px solid var(--border-subtle);
   background: var(--surface-1);
 }
 
-.student-layout.is-exam-mode {
-  --student-topbar-height: 64px;
+.footer-copy {
+  letter-spacing: 0.05em;
 }
 
-.is-exam-mode .topbar-inner {
-  min-height: var(--student-topbar-height);
-}
-
-.is-exam-mode .nav,
-.is-exam-mode .footer {
+.student-layout.is-exam-mode .nav,
+.student-layout.is-exam-mode .footer {
   display: none;
 }
 
-.is-exam-mode .content {
-  max-width: 1160px;
-  padding-top: 20px;
-}
-
-@media (max-width: 900px) {
-  .topbar-inner {
-    gap: 16px;
-    padding: 0 16px;
-  }
-
-  .nav-item {
-    padding: 8px 10px;
-    font-size: 14px;
-  }
-
-  .content {
-    padding: 24px 16px 32px;
-  }
-}
-
-@media (max-width: 680px) {
-  .student-layout {
-    --student-topbar-height: 164px;
-  }
-
-  .topbar-inner {
-    min-height: var(--student-topbar-height);
-    align-content: center;
-    flex-wrap: wrap;
-    gap: 0;
-    padding: 10px 14px 8px;
-  }
-
-  .brand :deep(.brand-mark__subtitle) {
-    display: none;
-  }
-
-  .right {
-    margin-left: auto;
-    gap: 8px;
-  }
-
-  .right :deep(.el-button) {
-    padding: 6px 8px;
-  }
-
-  .username {
-    display: none;
-  }
-
-  .nav {
-    order: 3;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    flex-basis: 100%;
-    gap: 4px;
-    padding: 10px 0 0;
-    border-top: 1px solid var(--border-subtle);
-  }
-
-  .nav-item {
-    padding: 7px 4px;
-    font-size: 12px;
-    text-align: center;
-  }
-
-  .content {
-    padding: 20px 14px 28px;
-  }
-
-  .is-exam-mode .topbar-inner {
-    min-height: 64px;
-    flex-wrap: nowrap;
-    padding: 8px 14px;
-  }
+.student-layout.is-exam-mode .content {
+  max-width: 1200px;
+  padding: 16px 20px;
 }
 </style>

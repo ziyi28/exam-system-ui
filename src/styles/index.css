@@ -1,9 +1,11 @@
 @import './tokens.css';
 @import './element-plus.css';
 
-/* 全局基础样式 */
+/* 全局基础重置与终端基准 */
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -17,111 +19,158 @@ body,
 
 html {
   scroll-behavior: smooth;
+  color-scheme: dark light;
 }
 
 body {
   font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 13px;
+  line-height: 1.55;
   color: var(--text-primary);
   background: var(--bg-canvas);
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
+/* 标题规范：硬朗紧凑，字距微缩 */
 h1,
 h2,
 h3,
-h4 {
+h4,
+h5,
+h6 {
   color: var(--text-strong);
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  letter-spacing: -0.025em;
   text-wrap: balance;
+  margin-top: 0;
 }
 
 a {
   text-decoration: none;
   color: inherit;
+  transition: color var(--duration-fast) var(--ease-out-expo);
 }
 
+a:hover {
+  color: var(--brand-600);
+}
+
+/* 终端高光选中文本 */
+::selection {
+  background: color-mix(in srgb, var(--brand-600) 25%, transparent);
+  color: var(--text-strong);
+}
+
+/* 聚焦指示：精准发光环，无模糊毛边 */
 :focus-visible {
-  outline: 2px solid var(--brand-600);
-  outline-offset: 2px;
+  outline: 1px solid var(--brand-600);
+  outline-offset: 1px;
+  box-shadow: var(--glow-brand);
 }
 
-/* 应用画布：浅色为主色相背景 + 极淡的蓝紫/青径向光晕 */
+/* 精密发丝滚动条定制 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-canvas);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: var(--radius-xs);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+/* 应用画布：高冷微网格与点阵氛围 */
 #app {
   background: var(--bg-canvas-accent);
 }
 
-/* ========== 页面级工具类 ========== */
+/* ========== 页面级通用精密结构 ========== */
 
-/* 页面头：工具的标题与主操作 */
+/* 页面头：紧凑利落的终端标题栏 */
 .page-header {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  min-height: 92px;
-  margin-bottom: var(--space-5);
-  padding: 18px 0 20px;
+  min-height: 56px;
+  margin-bottom: var(--space-4);
+  padding: var(--space-3) 0 var(--space-3);
   border-bottom: 1px solid var(--border-subtle);
 }
 
 .page-header__title {
   margin: 0;
-  font-size: clamp(24px, 2vw, 30px);
+  font-size: 18px;
   font-weight: 700;
   line-height: 1.25;
   color: var(--text-strong);
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .page-header__desc {
-  margin: 8px 0 0;
-  max-width: 620px;
-  font-size: 14px;
+  margin: 4px 0 0;
+  max-width: 680px;
+  font-size: 13px;
   color: var(--text-secondary);
 }
 
 .page-header__actions {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2);
   flex-shrink: 0;
 }
 
-/* 通用页面卡片间距 */
+/* 通用精密数据卡片 */
 .page-card {
   margin-bottom: var(--space-4);
 }
 
 .page-section {
-  margin-top: var(--space-8);
+  margin-top: var(--space-6);
 }
 
 .page-section__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
-  margin-bottom: var(--space-4);
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
 }
 
 .page-section__title {
   margin: 0;
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--text-strong);
+  letter-spacing: -0.01em;
 }
 
-/* 筛选表单行 */
+/* 筛选表单栏：紧凑 1px 边框内衬 */
 .filter-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: var(--space-2);
   align-items: center;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
 }
 
 /* 分页容器 */
@@ -129,73 +178,60 @@ a {
   display: flex;
   justify-content: flex-end;
   margin-top: var(--space-4);
-}
-
-/* 后台列表页：筛选、数据和分页保持稳定的阅读节奏 */
-.data-card > .el-card__body {
-  padding: var(--space-6);
-}
-
-.data-card .filter-bar {
-  margin-bottom: var(--space-5);
-  padding: var(--space-4);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  background: var(--surface-2);
-}
-
-.data-card .el-table {
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
-
-.data-card .pagination-bar {
   padding-top: var(--space-2);
 }
 
-/* 详情与编辑页：突出顶部信息，降低长内容的视觉噪声 */
-.detail-card > .el-card__body,
-.workspace-card > .el-card__body {
-  padding: var(--space-6);
-}
-
-.workspace-card,
+/* 后台数据卡片与工作台 */
 .data-card,
+.workspace-card,
 .detail-card {
   border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
   box-shadow: none;
 }
 
+.data-card > .el-card__body,
+.detail-card > .el-card__body,
+.workspace-card > .el-card__body {
+  padding: var(--space-4) var(--space-5);
+}
+
 .detail-question-card {
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
 }
 
 .detail-question-card > .el-card__body {
-  padding: var(--space-5) var(--space-6);
+  padding: var(--space-4);
 }
 
-/* 区块标题（详情页分节用） */
+/* 区块标题 */
 .section-title {
   margin: 0 0 var(--space-3);
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-strong);
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  letter-spacing: -0.01em;
 }
 
 .section-title::before {
   content: '';
   width: 3px;
-  height: 14px;
-  border-radius: 2px;
+  height: 12px;
+  border-radius: 1px;
   background: var(--brand-600);
 }
 
-/* 次要文字 */
-.text-secondary {
-  color: var(--text-secondary);
+/* 等宽数据标识符 */
+.mono-num,
+.code-tag {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 /* 文本溢出省略 */
@@ -205,7 +241,7 @@ a {
   white-space: nowrap;
 }
 
-/* ========== 全局减少动态效果 ========== */
+/* 动画减弱偏好 */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -218,35 +254,5 @@ a {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .page-header {
-    align-items: flex-start;
-    flex-direction: column;
-    min-height: 0;
-    margin-bottom: var(--space-5);
-    padding: 14px 0 18px;
-  }
-
-  .page-header__title {
-    font-size: 21px;
-  }
-
-  .page-header__actions {
-    width: 100%;
-    flex-wrap: wrap;
-  }
-
-  .data-card > .el-card__body,
-  .detail-card > .el-card__body,
-  .workspace-card > .el-card__body,
-  .detail-question-card > .el-card__body {
-    padding: var(--space-4);
-  }
-
-  .data-card .filter-bar {
-    padding: var(--space-3);
   }
 }

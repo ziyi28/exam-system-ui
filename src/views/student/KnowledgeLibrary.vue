@@ -449,7 +449,7 @@ onMounted(() => {
 .knowledge-base-meta {
   gap: var(--space-2);
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 11px;
   flex-wrap: wrap;
 }
 
@@ -467,7 +467,7 @@ onMounted(() => {
 
 .card-title-copy small {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 400;
 }
 

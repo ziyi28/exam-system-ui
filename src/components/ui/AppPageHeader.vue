@@ -53,28 +53,28 @@ withDefaults(defineProps<{
 
 .app-page-header__title {
   margin: 0;
-  font-size: clamp(24px, 2vw, 30px);
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 800;
   line-height: 1.25;
   color: var(--text-strong);
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
 }
 
 .app-page-header__desc {
-  margin: 8px 0 0;
+  margin: 4px 0 0;
   max-width: 680px;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-secondary);
 }
 
 .app-page-header__meta {
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 .app-page-header__actions {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2);
   flex-shrink: 0;
 }
 
@@ -83,12 +83,12 @@ withDefaults(defineProps<{
     align-items: flex-start;
     flex-direction: column;
     min-height: 0;
-    margin-bottom: var(--space-5);
-    padding: 14px 0 18px;
+    margin-bottom: var(--space-4);
+    padding: 12px 0 14px;
   }
 
   .app-page-header__title {
-    font-size: 21px;
+    font-size: 18px;
   }
 
   .app-page-header__actions {

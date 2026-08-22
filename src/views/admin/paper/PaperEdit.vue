@@ -19,14 +19,29 @@
           <el-input v-model="form.description" placeholder="试卷描述（可选）" style="width: 300px" />
         </el-form-item>
       </el-form>
-      <el-alert :closable="false" type="info" show-icon :title="`已选 ${selected.length} 道题，总分 ${totalScore} 分`" />
+      <div class="paper-stats-banner">
+        <div class="stats-total">
+          <span class="mono-badge">TOTAL: {{ selected.length }} 题</span>
+          <span class="mono-badge-brand">SCORE: {{ totalScore }} 分</span>
+        </div>
+        <div class="stats-types">
+          <span v-for="st in typeStats" :key="st.type" class="type-stat-pill">
+            {{ st.name }}: <b>{{ st.count }}</b> 题 ({{ st.score }}分)
+          </span>
+        </div>
+      </div>
     </el-card>
 
     <el-row :gutter="16" align="top">
       <!-- 题库选题 -->
-      <el-col :xs="24" :lg="14">
+      <el-col :xs="24" :lg="13">
         <el-card shadow="never" class="workspace-card">
-          <template #header>题库选题</template>
+          <template #header>
+            <div class="card-header-flex">
+              <span>题库选题</span>
+              <span class="header-hint">点击添加加入右侧试卷</span>
+            </div>
+          </template>
           <div class="filter-bar" aria-label="筛选条件">
             <el-select v-model="query.categoryId" placeholder="全部分类" clearable style="width: 140px">
               <el-option v-for="c in categories" :key="c.id" :label="c.name" :value="c.id!" />
@@ -67,21 +82,35 @@
       </el-col>
 
       <!-- 已选题目 -->
-      <el-col :xs="24" :lg="10" class="selected-col">
+      <el-col :xs="24" :lg="11" class="selected-col">
         <el-card shadow="never" class="workspace-card selected-questions-card">
-          <template #header>已选题目（可设置分值）</template>
+          <template #header>
+            <div class="card-header-flex">
+              <span>已选题目大纲（{{ selected.length }}）</span>
+              <el-button v-if="selected.length" link type="danger" size="small" @click="selected = []">清空已选</el-button>
+            </div>
+          </template>
           <el-empty v-if="!selected.length" description="从左侧题库添加题目" />
           <el-table v-else :data="selected" size="small" max-height="540">
-            <el-table-column type="index" label="#" width="45" />
-            <el-table-column prop="title" label="题目" min-width="160" show-overflow-tooltip />
-            <el-table-column label="分值" width="130">
+            <el-table-column type="index" label="#" width="40" />
+            <el-table-column prop="title" label="题目" min-width="140" show-overflow-tooltip />
+            <el-table-column label="题型" width="75">
               <template #default="{ row }">
-                <el-input-number v-model="row.paperScore" :min="1" :max="100" size="small" controls-position="right" style="width: 100px" />
+                <el-tag :type="typeTag(row.type)" size="small">{{ typeText(row.type, row.multi) }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column label="" width="60">
+            <el-table-column label="分值" width="115">
+              <template #default="{ row }">
+                <el-input-number v-model="row.paperScore" :min="1" :max="100" size="small" controls-position="right" style="width: 85px" />
+              </template>
+            </el-table-column>
+            <el-table-column label="排序/操作" width="120" fixed="right">
               <template #default="{ $index }">
-                <el-button link type="danger" size="small" @click="selected.splice($index, 1)">移除</el-button>
+                <div class="order-action-cell">
+                  <el-button link :disabled="$index === 0" size="small" @click="moveUp($index)">↑</el-button>
+                  <el-button link :disabled="$index === selected.length - 1" size="small" @click="moveDown($index)">↓</el-button>
+                  <el-button link type="danger" size="small" @click="selected.splice($index, 1)">移除</el-button>
+                </div>
               </template>
             </el-table-column>
           </el-table>
@@ -149,8 +178,39 @@ const selected = ref<SelectedQuestion[]>([])
 const selectedIds = computed(() => new Set(selected.value.map((q) => q.id)))
 const totalScore = computed(() => selected.value.reduce((sum, q) => sum + (q.paperScore || 0), 0))
 
+const typeStats = computed(() => {
+  const map: Record<string, { name: string; count: number; score: number }> = {
+    CHOICE: { name: '选择题', count: 0, score: 0 },
+    JUDGE: { name: '判断题', count: 0, score: 0 },
+    TEXT: { name: '简答题', count: 0, score: 0 },
+  }
+  for (const q of selected.value) {
+    const t = q.type || 'CHOICE'
+    if (!map[t]) {
+      map[t] = { name: t, count: 0, score: 0 }
+    }
+    map[t].count++
+    map[t].score += q.paperScore || 0
+  }
+  return Object.entries(map)
+    .filter(([, val]) => val.count > 0)
+    .map(([type, val]) => ({ type, ...val }))
+})
+
 function addQuestion(row: Question) {
   selected.value.push({ ...row, paperScore: row.score ?? 5 })
+}
+
+function moveUp(index: number) {
+  if (index <= 0) return
+  const item = selected.value.splice(index, 1)[0]
+  selected.value.splice(index - 1, 0, item)
+}
+
+function moveDown(index: number) {
+  if (index >= selected.value.length - 1) return
+  const item = selected.value.splice(index, 1)[0]
+  selected.value.splice(index + 1, 0, item)
 }
 
 async function handleSave() {
@@ -199,6 +259,83 @@ onMounted(async () => {
 <style scoped>
 .paper-base-card {
   margin-bottom: var(--space-4);
+}
+
+.paper-stats-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-xs);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.stats-total {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mono-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: var(--surface-1);
+  border: 1px solid var(--border-default);
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+}
+
+.mono-badge-brand {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand-600);
+  background: color-mix(in srgb, var(--brand-600) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand-600) 25%, transparent);
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+}
+
+.stats-types {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.type-stat-pill {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.type-stat-pill b {
+  color: var(--text-strong);
+}
+
+.card-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.header-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.order-action-cell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 /* 已选列：桌面双栏下局部吸顶，窄屏恢复普通文档流 */
