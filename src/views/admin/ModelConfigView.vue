@@ -7,7 +7,7 @@
           统一 AI 模型配置中心
         </h2>
         <p class="page-subtitle">
-          集中管理大模型供应商连接、四大业务场景模型绑定、运行时动态探活测试与安全无感 Embedding 向量重建迁移
+          集中管理大模型供应商连接、六大业务场景模型绑定、运行时动态探活测试与安全无感 Embedding 向量重建迁移
         </p>
       </div>
       <div class="header-actions">
@@ -36,11 +36,11 @@
                 <div class="active-status">
                   <el-badge
                     :is-dot="true"
-                    :type="group.activeConfig ? 'success' : 'danger'"
+                    :type="group.active_config ? 'success' : 'danger'"
                     class="status-badge"
                   >
                     <span class="status-text">
-                      {{ group.activeConfig ? '运行中' : '未配置 (走环境变量回退)' }}
+                      {{ group.active_config ? '运行中' : '未配置 (走环境变量回退)' }}
                     </span>
                   </el-badge>
                 </div>
@@ -50,22 +50,22 @@
             <!-- 生效中配置展示 -->
             <div class="active-config-section">
               <div class="section-label">当前生效配置：</div>
-              <div v-if="group.activeConfig" class="active-config-box">
+              <div v-if="group.active_config" class="active-config-box">
                 <div class="config-row">
                   <span class="label">供应商：</span>
-                  <span class="value highlight">{{ group.activeConfig.providerName || group.activeConfig.providerId }}</span>
+                  <span class="value highlight">{{ group.active_config.provider_name || group.active_config.provider_id }}</span>
                 </div>
                 <div class="config-row">
                   <span class="label">模型名：</span>
-                  <span class="value font-mono">{{ group.activeConfig.modelName }}</span>
+                  <span class="value font-mono">{{ group.active_config.model_name }}</span>
                 </div>
                 <div class="config-row" v-if="group.capability !== 'RAG_EMBEDDING'">
                   <span class="label">温度/超时：</span>
-                  <span class="value">{{ group.activeConfig.temperature ?? '默认' }} / {{ group.activeConfig.timeoutSeconds ?? '默认' }}s</span>
+                  <span class="value">{{ group.active_config.temperature ?? '默认' }} / {{ group.active_config.timeout_seconds ?? '默认' }}s</span>
                 </div>
                 <div class="config-row" v-else>
                   <span class="label">索引版本/维度：</span>
-                  <span class="value">{{ group.activeConfig.indexVersion }} / {{ group.activeConfig.embeddingDimension }}维</span>
+                  <span class="value">{{ group.active_config.index_version }} / {{ group.active_config.embedding_dimension }}维</span>
                 </div>
               </div>
               <div v-else class="empty-active-box">
@@ -79,23 +79,23 @@
               <el-form :model="draftForms[group.capability]" label-position="top" size="small">
                 <el-form-item label="选择供应商" required>
                   <el-select
-                    v-model="draftForms[group.capability].providerId"
+                    v-model="draftForms[group.capability].provider_id"
                     placeholder="请选择供应商"
                     class="w-full"
                   >
                     <el-option
                       v-for="p in providers"
                       :key="p.id"
-                      :label="p.name + ' (' + p.providerType + ')'"
+                      :label="p.name + ' (' + p.provider_type + ')'"
                       :value="p.id"
-                      :disabled="!p.isActive"
+                      :disabled="!p.enabled"
                     />
                   </el-select>
                 </el-form-item>
 
                 <el-form-item label="模型名称" required>
                   <el-input
-                    v-model="draftForms[group.capability].modelName"
+                    v-model="draftForms[group.capability].model_name"
                     placeholder="例如: gpt-4o, deepseek-chat, text-embedding-3-small"
                   />
                 </el-form-item>
@@ -114,11 +114,19 @@
                     </el-form-item>
                     <el-form-item label="超时时间 (秒)">
                       <el-input-number
-                        v-model="draftForms[group.capability].timeoutSeconds"
+                        v-model="draftForms[group.capability].timeout_seconds"
                         :min="5"
                         :max="600"
                         :step="5"
                         class="w-full"
+                      />
+                    </el-form-item>
+                    <el-form-item label="最大输出 Token">
+                      <el-input-number
+                        v-model="draftForms[group.capability].max_tokens"
+                        :min="64"
+                        :max="8192"
+                        class="w-full max-tokens-input"
                       />
                     </el-form-item>
                   </div>
@@ -129,19 +137,25 @@
                   <div class="grid-2">
                     <el-form-item label="索引版本 (如 v2, bge-v1)" required>
                       <el-input
-                        v-model="draftForms[group.capability].indexVersion"
+                        v-model="draftForms[group.capability].index_version"
                         placeholder="新索引版本号"
                       />
                     </el-form-item>
                     <el-form-item label="向量维度 (如 1536, 1024)" required>
                       <el-input-number
-                        v-model="draftForms[group.capability].embeddingDimension"
+                        v-model="draftForms[group.capability].embedding_dimension"
                         :min="1"
                         :max="8192"
                         class="w-full"
                       />
                     </el-form-item>
                   </div>
+                  <el-form-item label="Milvus Collection" required>
+                    <el-input
+                      v-model="draftForms[group.capability].collection_name"
+                      placeholder="例如: exam_knowledge_chunks_v1"
+                    />
+                  </el-form-item>
                 </template>
 
                 <!-- 探活测试与激活操作 -->
@@ -159,9 +173,9 @@
                   <el-button
                     type="warning"
                     size="small"
-                    @click="testConfig(group.draftConfig?.id)"
-                    :disabled="!group.draftConfig"
-                    :loading="testingConfigId === group.draftConfig?.id"
+                    @click="testConfig(group.draft_config?.id)"
+                    :disabled="!group.draft_config"
+                    :loading="testingConfigId === group.draft_config?.id"
                   >
                     测试连通性
                   </el-button>
@@ -170,8 +184,8 @@
                     v-if="group.capability !== 'RAG_EMBEDDING'"
                     type="success"
                     size="small"
-                    @click="activateConfig(group.draftConfig?.id)"
-                    :disabled="!group.draftConfig || group.draftConfig.testStatus !== 'PASSED'"
+                    @click="activateConfig(group.draft_config?.id)"
+                    :disabled="!group.draft_config || group.draft_config.test_status !== 'PASSED'"
                   >
                     激活上线
                   </el-button>
@@ -179,31 +193,31 @@
                     v-else
                     type="danger"
                     size="small"
-                    @click="goToReindex(group.draftConfig?.id)"
-                    :disabled="!group.draftConfig || group.draftConfig.testStatus !== 'PASSED'"
+                    @click="goToReindex(group.draft_config?.id)"
+                    :disabled="!group.draft_config || group.draft_config.test_status !== 'PASSED'"
                   >
                     前往数据重建
                   </el-button>
                 </div>
 
                 <!-- 测试结果提示 -->
-                <div v-if="group.draftConfig?.testStatus" class="test-result-box">
+                <div v-if="group.draft_config?.test_status" class="test-result-box">
                   <el-alert
-                    v-if="group.draftConfig.testStatus === 'PASSED'"
+                    v-if="group.draft_config.test_status === 'PASSED'"
                     type="success"
                     show-icon
                     :closable="false"
                     title="探活测试通过，可安全上线生效"
                   />
                   <el-alert
-                    v-else-if="group.draftConfig.testStatus === 'FAILED'"
+                    v-else-if="group.draft_config.test_status === 'FAILED'"
                     type="error"
                     show-icon
                     :closable="false"
-                    :title="'测试失败: ' + (group.draftConfig.testErrorMessage || '连接超时或鉴权失败')"
+                    :title="'测试失败: ' + (group.draft_config.test_error_message || '连接超时或鉴权失败')"
                   />
                   <el-alert
-                    v-else-if="group.draftConfig.testStatus === 'UNTESTED'"
+                    v-else-if="group.draft_config.test_status === 'NOT_TESTED'"
                     type="info"
                     show-icon
                     :closable="false"
@@ -220,11 +234,11 @@
                   <el-timeline-item
                     v-for="item in group.history"
                     :key="item.id"
-                    :timestamp="item.createdAt"
+                    :timestamp="item.created_at"
                     :type="item.state === 'ACTIVE' ? 'success' : 'info'"
                   >
                     <div class="history-item">
-                      <span class="history-model">{{ item.modelName }}</span>
+                      <span class="history-model">{{ item.model_name }}</span>
                       <el-tag size="small" :type="item.state === 'ACTIVE' ? 'success' : 'info'">
                         {{ item.state }}
                       </el-tag>
@@ -248,24 +262,25 @@
 
         <el-table :data="providers" stripe v-loading="loading" class="provider-table">
           <el-table-column prop="name" label="供应商名称" min-width="150" />
-          <el-table-column prop="providerType" label="类型" width="160">
+          <el-table-column prop="provider_type" label="类型" width="160">
             <template #default="{ row }">
-              <el-tag effect="plain">{{ row.providerType }}</el-tag>
+              <el-tag effect="plain">{{ row.provider_type }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="baseUrl" label="API Base URL" min-width="260" show-overflow-tooltip />
-          <el-table-column prop="associatedConfigCount" label="关联配置数" width="110" align="center" />
-          <el-table-column prop="isActive" label="状态" width="100" align="center">
+          <el-table-column prop="base_url" label="API Base URL" min-width="260" show-overflow-tooltip />
+          <el-table-column prop="enabled" label="状态" width="100" align="center">
             <template #default="{ row }">
-              <el-tag :type="row.isActive ? 'success' : 'danger'" size="small">
-                {{ row.isActive ? '启用' : '禁用' }}
+              <el-tag :type="row.enabled ? 'success' : 'danger'" size="small">
+                {{ row.enabled ? '启用' : '禁用' }}
               </el-tag>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="180" fixed="right" align="center">
             <template #default="{ row }">
               <el-button link type="primary" size="small" @click="openEditProviderDialog(row)">编辑</el-button>
-              <el-button link type="danger" size="small" @click="handleDeleteProvider(row)">删除</el-button>
+              <el-button link :type="row.enabled ? 'danger' : 'success'" size="small" @click="toggleProvider(row)">
+                {{ row.enabled ? '禁用' : '启用' }}
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -317,13 +332,13 @@
               <template #default="{ row }">
                 <el-button link type="primary" size="small" @click="viewRunItems(row.id)">明细</el-button>
                 <el-button
-                  v-if="row.status === 'READY_TO_ACTIVATE'"
+                  v-if="row.status === 'READY_TO_ACTIVATE' || row.status === 'SWITCHING'"
                   link
                   type="success"
                   size="small"
-                  @click="handleActivateRun(row.id)"
+                  @click="handleActivateRun(row.id, row.status)"
                 >
-                  切换上线
+                  {{ row.status === 'SWITCHING' ? '恢复切换' : '切换上线' }}
                 </el-button>
                 <el-button
                   v-if="row.status === 'FAILED'"
@@ -357,19 +372,16 @@
             <el-button :icon="Refresh" size="small" @click="loadAudits">刷新</el-button>
           </div>
           <el-table :data="auditLogs" stripe v-loading="loadingAudit" class="audit-table">
-            <el-table-column prop="createdAt" label="操作时间" width="170" />
-            <el-table-column prop="operatorId" label="操作人ID" width="100" align="center" />
+            <el-table-column prop="created_at" label="操作时间" width="170" />
+            <el-table-column prop="actor" label="操作人" width="140" align="center" />
             <el-table-column prop="action" label="操作类型" width="180" />
-            <el-table-column prop="targetType" label="目标类型" width="140" />
-            <el-table-column prop="targetId" label="目标 ID" width="160" show-overflow-tooltip />
-            <el-table-column prop="status" label="状态" width="100" align="center">
+            <el-table-column prop="target_type" label="目标类型" width="140" />
+            <el-table-column prop="target_id" label="目标 ID" width="160" show-overflow-tooltip />
+            <el-table-column prop="changed_fields" label="变更字段" min-width="220" show-overflow-tooltip>
               <template #default="{ row }">
-                <el-tag :type="row.status === 'SUCCESS' ? 'success' : 'danger'" size="small">
-                  {{ row.status }}
-                </el-tag>
+                {{ row.changed_fields?.join(', ') || '-' }}
               </template>
             </el-table-column>
-            <el-table-column prop="errorMessage" label="备注/错误" min-width="200" show-overflow-tooltip />
           </el-table>
         </div>
       </el-tab-pane>
@@ -387,17 +399,15 @@
         </el-form-item>
 
         <el-form-item label="供应商类型" required v-if="!editingProviderId">
-          <el-select v-model="providerForm.providerType" class="w-full">
+          <el-select v-model="providerForm.provider_type" class="w-full">
             <el-option label="OpenAI Compatible" value="OPENAI_COMPATIBLE" />
-            <el-option label="Azure OpenAI" value="AZURE_OPENAI" />
-            <el-option label="Ollama 本地" value="OLLAMA" />
-            <el-option label="DeepSeek" value="DEEPSEEK" />
+            <el-option label="MinerU" value="MINERU" />
           </el-select>
         </el-form-item>
 
         <el-form-item label="Base URL" required>
           <el-input
-            v-model="providerForm.baseUrl"
+            v-model="providerForm.base_url"
             placeholder="例如: https://dashscope.aliyuncs.com/compatible-mode/v1"
           />
           <span class="form-tip">服务端已开启 SSRF 防护，仅允许标准公网域名与白名单主机</span>
@@ -405,16 +415,13 @@
 
         <el-form-item label="API Key" :required="!editingProviderId">
           <el-input
-            v-model="providerForm.apiKey"
+            v-model="providerForm.api_key"
             type="password"
             show-password
             :placeholder="editingProviderId ? '留空表示保持原有密钥不变' : '输入供应商 API Key (AES-GCM 加密存储)'"
           />
         </el-form-item>
 
-        <el-form-item label="是否启用">
-          <el-switch v-model="providerForm.isActive" />
-        </el-form-item>
       </el-form>
 
       <template #footer>
@@ -459,7 +466,8 @@ import {
   listModelProviders,
   createModelProvider,
   updateModelProvider,
-  deleteModelProvider,
+  disableModelProvider,
+  enableModelProvider,
   listCapabilityConfigs,
   saveCapabilityDraft,
   testCapabilityConfig,
@@ -489,10 +497,12 @@ const testingConfigId = ref<string | null>(null)
 
 // 草稿表单映射
 const draftForms = reactive<Record<string, ModelCapabilityDraftRequest>>({
-  QUESTION_GENERATION: { providerId: '', modelName: '', temperature: 0.7, timeoutSeconds: 60 },
-  SUBJECTIVE_GRADING: { providerId: '', modelName: '', temperature: 0.1, timeoutSeconds: 30 },
-  EXAM_SUMMARY: { providerId: '', modelName: '', temperature: 0.7, timeoutSeconds: 30 },
-  RAG_EMBEDDING: { providerId: '', modelName: '', indexVersion: 'v1', embeddingDimension: 1536 },
+  QUESTION_GENERATION: { provider_id: '', model_name: '', temperature: 0.7, timeout_seconds: 60, max_tokens: 2048 },
+  SUBJECTIVE_GRADING: { provider_id: '', model_name: '', temperature: 0.1, timeout_seconds: 30, max_tokens: 2048 },
+  EXAM_SUMMARY: { provider_id: '', model_name: '', temperature: 0.7, timeout_seconds: 30, max_tokens: 2048 },
+  RAG_CHAT: { provider_id: '', model_name: '', temperature: 0.2, timeout_seconds: 30, max_tokens: 2048 },
+  RAG_EMBEDDING: { provider_id: '', model_name: '', index_version: 'v1', embedding_dimension: 1536, collection_name: 'exam_knowledge_chunks_v1' },
+  DOCUMENT_PARSING: { provider_id: '', model_name: '', temperature: 0, timeout_seconds: 60, max_tokens: 4096 },
 })
 
 // 供应商弹窗表单
@@ -501,10 +511,9 @@ const editingProviderId = ref<string | null>(null)
 const submittingProvider = ref(false)
 const providerForm = reactive({
   name: '',
-  providerType: 'OPENAI_COMPATIBLE' as any,
-  baseUrl: '',
-  apiKey: '',
-  isActive: true,
+  provider_type: 'OPENAI_COMPATIBLE' as ModelProvider['provider_type'],
+  base_url: '',
+  api_key: '',
 })
 
 const itemsDrawerVisible = ref(false)
@@ -514,7 +523,9 @@ function getCapabilityName(cap: string) {
     QUESTION_GENERATION: 'AI 题目智能生成',
     SUBJECTIVE_GRADING: '简答题智能批阅',
     EXAM_SUMMARY: '考试智能综合评语',
+    RAG_CHAT: '知识库智能问答',
     RAG_EMBEDDING: '知识库向量检索 (Embedding)',
+    DOCUMENT_PARSING: '文档智能解析',
   }
   return map[cap] || cap
 }
@@ -524,7 +535,9 @@ function getCapabilityTagType(cap: string) {
     QUESTION_GENERATION: 'primary',
     SUBJECTIVE_GRADING: 'warning',
     EXAM_SUMMARY: 'success',
+    RAG_CHAT: 'info',
     RAG_EMBEDDING: 'danger',
+    DOCUMENT_PARSING: 'warning',
   }
   return map[cap] || 'info'
 }
@@ -551,7 +564,7 @@ function getReindexProgressStatus(status: string) {
 async function loadProviders() {
   try {
     const res = await listModelProviders()
-    providers.value = res.data || []
+    providers.value = res
   } catch (error: any) {
     ElMessage.error(error.message || '加载供应商列表失败')
   }
@@ -560,17 +573,19 @@ async function loadProviders() {
 async function loadCapabilities() {
   try {
     const res = await listCapabilityConfigs()
-    capabilityGroups.value = res.data || []
+    capabilityGroups.value = res
     for (const group of capabilityGroups.value) {
-      const target = group.draftConfig || group.activeConfig
+      const target = group.draft_config || group.active_config
       if (target) {
         draftForms[group.capability] = {
-          providerId: target.providerId,
-          modelName: target.modelName,
+          provider_id: target.provider_id,
+          model_name: target.model_name,
           temperature: target.temperature,
-          timeoutSeconds: target.timeoutSeconds,
-          indexVersion: target.indexVersion,
-          embeddingDimension: target.embeddingDimension,
+          timeout_seconds: target.timeout_seconds,
+          max_tokens: target.max_tokens,
+          collection_name: target.collection_name,
+          index_version: target.index_version,
+          embedding_dimension: target.embedding_dimension,
         }
       }
     }
@@ -583,7 +598,7 @@ async function loadReindexRuns() {
   loadingReindex.value = true
   try {
     const res = await listReindexRuns()
-    reindexRuns.value = res.data || []
+    reindexRuns.value = res
   } catch (error: any) {
     ElMessage.error(error.message || '加载重建任务失败')
   } finally {
@@ -595,7 +610,7 @@ async function loadAudits() {
   loadingAudit.value = true
   try {
     const res = await listModelConfigAudits({ limit: 50 })
-    auditLogs.value = res.data || []
+    auditLogs.value = res
   } catch (error: any) {
     ElMessage.error(error.message || '加载审计日志失败')
   } finally {
@@ -611,7 +626,7 @@ async function refreshAll() {
 
 async function saveDraft(capability: string) {
   const form = draftForms[capability]
-  if (!form.providerId || !form.modelName) {
+  if (!form.provider_id || !form.model_name) {
     ElMessage.warning('请选择供应商并填写模型名称')
     return
   }
@@ -635,10 +650,10 @@ async function testConfig(configId?: string) {
   testingConfigId.value = configId
   try {
     const res = await testCapabilityConfig(configId)
-    if (res.data?.testStatus === 'PASSED') {
-      ElMessage.success(`探活测试成功，耗时 ${res.data.latencyMs ?? 0}ms`)
+    if (res.test_status === 'PASSED') {
+      ElMessage.success('探活测试成功')
     } else {
-      ElMessage.error(res.data?.errorMessage || '探活测试未通过')
+      ElMessage.error('探活测试未通过')
     }
     await loadCapabilities()
   } catch (error: any) {
@@ -673,25 +688,23 @@ function goToReindex(_configId?: string) {
 function openCreateProviderDialog() {
   editingProviderId.value = null
   providerForm.name = ''
-  providerForm.providerType = 'OPENAI_COMPATIBLE'
-  providerForm.baseUrl = ''
-  providerForm.apiKey = ''
-  providerForm.isActive = true
+  providerForm.provider_type = 'OPENAI_COMPATIBLE'
+  providerForm.base_url = ''
+  providerForm.api_key = ''
   providerDialogVisible.value = true
 }
 
 function openEditProviderDialog(row: ModelProvider) {
   editingProviderId.value = row.id
   providerForm.name = row.name
-  providerForm.providerType = row.providerType
-  providerForm.baseUrl = row.baseUrl
-  providerForm.apiKey = ''
-  providerForm.isActive = row.isActive
+  providerForm.provider_type = row.provider_type
+  providerForm.base_url = row.base_url
+  providerForm.api_key = ''
   providerDialogVisible.value = true
 }
 
 async function submitProviderForm() {
-  if (!providerForm.name || !providerForm.baseUrl) {
+  if (!providerForm.name || !providerForm.base_url) {
     ElMessage.warning('请填写供应商名称和 Base URL')
     return
   }
@@ -700,23 +713,22 @@ async function submitProviderForm() {
     if (editingProviderId.value) {
       await updateModelProvider(editingProviderId.value, {
         name: providerForm.name,
-        baseUrl: providerForm.baseUrl,
-        apiKey: providerForm.apiKey || undefined,
-        isActive: providerForm.isActive,
+        base_url: providerForm.base_url,
+        provider_type: providerForm.provider_type,
+        ...(providerForm.api_key ? { api_key: providerForm.api_key } : {}),
       })
       ElMessage.success('供应商更新成功')
     } else {
-      if (!providerForm.apiKey) {
+      if (!providerForm.api_key) {
         ElMessage.warning('新建供应商必须提供 API Key')
         submittingProvider.value = false
         return
       }
       await createModelProvider({
         name: providerForm.name,
-        providerType: providerForm.providerType,
-        baseUrl: providerForm.baseUrl,
-        apiKey: providerForm.apiKey,
-        isActive: providerForm.isActive,
+        provider_type: providerForm.provider_type,
+        base_url: providerForm.base_url,
+        api_key: providerForm.api_key,
       })
       ElMessage.success('供应商创建成功')
     }
@@ -729,38 +741,38 @@ async function submitProviderForm() {
   }
 }
 
-async function handleDeleteProvider(row: ModelProvider) {
-  if (row.associatedConfigCount && row.associatedConfigCount > 0) {
-    ElMessage.warning(`该供应商仍被 ${row.associatedConfigCount} 个场景配置引用，无法直接删除`)
-    return
-  }
+async function toggleProvider(row: ModelProvider) {
   try {
-    await ElMessageBox.confirm(`确定要删除供应商【${row.name}】吗？`, '删除确认', {
+    await ElMessageBox.confirm(`确定要${row.enabled ? '禁用' : '启用'}供应商【${row.name}】吗？`, '确认操作', {
       type: 'warning',
     })
-    await deleteModelProvider(row.id)
-    ElMessage.success('供应商已删除')
+    if (row.enabled) {
+      await disableModelProvider(row.id)
+    } else {
+      await enableModelProvider(row.id)
+    }
+    ElMessage.success(`供应商已${row.enabled ? '禁用' : '启用'}`)
     await loadProviders()
   } catch (error: any) {
     if (error !== 'cancel') {
-      ElMessage.error(error.message || '删除供应商失败')
+      ElMessage.error(error.message || '更新供应商状态失败')
     }
   }
 }
 
 async function handleStartReindex() {
   const embGroup = capabilityGroups.value.find((g) => g.capability === 'RAG_EMBEDDING')
-  if (!embGroup?.draftConfig || embGroup.draftConfig.testStatus !== 'PASSED') {
+  if (!embGroup?.draft_config || embGroup.draft_config.test_status !== 'PASSED') {
     ElMessage.warning('知识库 Embedding 草稿配置不存在或尚未通过探活测试')
     return
   }
   try {
     await ElMessageBox.confirm(
-      `即将使用目标配置【${embGroup.draftConfig.modelName}】(索引版本 ${embGroup.draftConfig.indexVersion}) 发起全量知识库向量重建，是否继续？`,
+      `即将使用目标配置【${embGroup.draft_config.model_name}】(索引版本 ${embGroup.draft_config.index_version}) 发起全量知识库向量重建，是否继续？`,
       '发起重建确认',
       { type: 'warning' },
     )
-    await startEmbeddingReindex(embGroup.draftConfig.id)
+    await startEmbeddingReindex(embGroup.draft_config.id)
     ElMessage.success('已启动后台并行向量重建')
     await loadReindexRuns()
   } catch (error: any) {
@@ -773,20 +785,27 @@ async function handleStartReindex() {
 async function viewRunItems(runId: number) {
   try {
     const res = await listReindexRunItems(runId)
-    reindexItems.value = res.data || []
+    reindexItems.value = res
     itemsDrawerVisible.value = true
   } catch (error: any) {
     ElMessage.error(error.message || '获取明细失败')
   }
 }
 
-async function handleActivateRun(runId: number) {
+async function handleActivateRun(runId: number, status: AiEmbeddingReindexRun['status']) {
   try {
-    await ElMessageBox.confirm('所有文档新索引已构建就绪，确定原子切换为当前生效版本吗？', '确认切换上线', {
+    const recovering = status === 'SWITCHING'
+    await ElMessageBox.confirm(
+      recovering
+        ? '该任务上次切换未完整收口，将重新执行幂等切换并完成状态同步。确定继续吗？'
+        : '所有文档新索引已构建就绪，确定原子切换为当前生效版本吗？',
+      recovering ? '确认恢复切换' : '确认切换上线',
+      {
       type: 'warning',
-    })
+      },
+    )
     await activateReindexRun(runId)
-    ElMessage.success('索引版本与模型配置已成功切换上线！')
+    ElMessage.success(recovering ? '切换状态已恢复并完成同步' : '索引版本与模型配置已成功切换上线！')
     await refreshAll()
   } catch (error: any) {
     if (error !== 'cancel') {
