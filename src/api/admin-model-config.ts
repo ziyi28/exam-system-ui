@@ -1,4 +1,4 @@
-import { get, post, put, del } from './request'
+import { get, post, put } from './request'
 import type {
   ModelProvider,
   ModelProviderCreateRequest,
@@ -6,7 +6,6 @@ import type {
   ModelCapabilityGroup,
   ModelCapabilityDraftRequest,
   ModelCapabilityConfig,
-  ModelConfigTestResponse,
   ModelConfigAudit,
   AiEmbeddingReindexRun,
   AiEmbeddingReindexItem,
@@ -24,8 +23,16 @@ export function updateModelProvider(id: string, data: ModelProviderUpdateRequest
   return put<ModelProvider>(`/api/admin/model-config/providers/${id}`, data)
 }
 
-export function deleteModelProvider(id: string) {
-  return del<void>(`/api/admin/model-config/providers/${id}`)
+export function updateModelProviderApiKey(id: string, apiKey: string) {
+  return put<void>(`/api/admin/model-config/providers/${id}/api-key`, { api_key: apiKey })
+}
+
+export function disableModelProvider(id: string) {
+  return post<void>(`/api/admin/model-config/providers/${id}/disable`)
+}
+
+export function enableModelProvider(id: string) {
+  return post<void>(`/api/admin/model-config/providers/${id}/enable`)
 }
 
 export function listCapabilityConfigs() {
@@ -33,15 +40,15 @@ export function listCapabilityConfigs() {
 }
 
 export function saveCapabilityDraft(capability: string, data: ModelCapabilityDraftRequest) {
-  return put<ModelCapabilityConfig>(`/api/admin/model-config/capabilities/${capability}/draft`, data)
+  return post<ModelCapabilityConfig>(`/api/admin/model-config/capabilities/${capability}/drafts`, data)
 }
 
 export function testCapabilityConfig(configId: string) {
-  return post<ModelConfigTestResponse>(`/api/admin/model-config/configs/${configId}/test`)
+  return post<ModelCapabilityConfig>(`/api/admin/model-config/capability-configs/${configId}/test`)
 }
 
 export function activateCapabilityConfig(configId: string) {
-  return post<ModelCapabilityConfig>(`/api/admin/model-config/configs/${configId}/activate`)
+  return post<ModelCapabilityConfig>(`/api/admin/model-config/capability-configs/${configId}/activate`)
 }
 
 export function listModelConfigAudits(params?: { limit?: number; offset?: number }) {
