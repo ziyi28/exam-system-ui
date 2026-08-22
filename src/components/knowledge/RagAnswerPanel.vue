@@ -124,7 +124,9 @@ function citationPageText(citation: RagCitation) {
 
 .rag-answer-panel__header h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-strong);
 }
 
 .rag-answer-panel__text,
@@ -136,17 +138,19 @@ function citationPageText(citation: RagCitation) {
 .rag-answer-panel__text {
   margin-top: var(--space-3);
   padding: var(--space-4);
-  border-left: 3px solid var(--brand-600);
+  border: 1px solid color-mix(in srgb, var(--brand-600) 25%, transparent);
   border-radius: var(--radius-md);
-  background: var(--brand-50);
+  background: color-mix(in srgb, var(--brand-600) 6%, var(--surface-1));
   color: var(--text-primary);
-  line-height: 1.8;
+  line-height: 1.7;
+  font-size: 13px;
 }
 
 .rag-answer-panel__meta {
   margin-top: var(--space-2);
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 11px;
+  font-family: var(--font-mono);
   flex-wrap: wrap;
   display: flex;
   align-items: center;

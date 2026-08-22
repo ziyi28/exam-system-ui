@@ -1,85 +1,134 @@
 <template>
   <div class="login-page">
     <div class="login-panel">
+      <!-- 左侧品牌与终端声明 -->
       <section class="brand-side">
-        <BrandMark class="brand-side__mark" subtitle="教 · 学 · 考 · 评" />
+        <div class="brand-header">
+          <BrandMark class="brand-side__mark" subtitle="AUTH_TERMINAL_V1" />
+          <span class="system-status-indicator">
+            <span class="pulse-dot"></span>
+            SYSTEM_ONLINE
+          </span>
+        </div>
 
         <div class="brand-hero">
           <div class="brand-copy">
-            <span class="brand-kicker">面向教学全过程</span>
-            <h1>考试不是终点，<br /><em>反馈才是。</em></h1>
-            <p>组织考试、完成作答、查看结果。把复杂流程收进一套清楚、可靠的教学工具。</p>
+            <h1 class="brand-title">
+              精密考务分析与<br />
+              <span class="highlight-text">数智评估终端</span>
+            </h1>
+            <p class="brand-desc">
+              集成大语言模型自动化出题、多维度主客观题智能批阅与 RAG 知识库检索溯源，构筑严谨高效的数字化考教闭环。
+            </p>
           </div>
 
           <div class="brand-bottom">
-            <BrandScene variant="login" class="brand-scene" />
-            <ul class="feature-list">
-              <li><span>01</span><div><b>组织考试</b><small>配置试卷、考试范围与参与人员</small></div></li>
-              <li><span>02</span><div><b>在线作答</b><small>专注完成答题并实时保存进度</small></div></li>
-              <li><span>03</span><div><b>查看反馈</b><small>回顾得分、解析与知识薄弱点</small></div></li>
-            </ul>
+            <div class="terminal-stats-grid">
+              <div class="stat-cell">
+                <span class="stat-label">AI_PIPELINE</span>
+                <b class="stat-value">RAG + LLM</b>
+                <small class="stat-meta">多模态试卷生成</small>
+              </div>
+              <div class="stat-cell">
+                <span class="stat-label">DEFENSE_GATE</span>
+                <b class="stat-value">403_ISOLATED</b>
+                <small class="stat-meta">防作弊考场阻断</small>
+              </div>
+              <div class="stat-cell">
+                <span class="stat-label">ASSESSMENT</span>
+                <b class="stat-value">INSTANT_GRADING</b>
+                <small class="stat-meta">学情全维透视</small>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="brand-footnote">让考试过程更清楚，让反馈真正回到学习。</div>
+        <div class="brand-footnote">
+          <span class="mono-code">TERMINAL_HASH: 0x8F9A // SECURE_SOCKET_READY</span>
+        </div>
       </section>
 
+      <!-- 右侧登录与注册接入终端 -->
       <aside class="form-side">
         <div class="login-theme-toggle">
           <ThemeToggle />
         </div>
+
         <div class="form-intro">
-          <span>账号入口</span>
-          <h2>登录系统</h2>
-          <p>使用分配给你的账号进入相应工作台</p>
+          <div class="terminal-badge">GATEWAY_ACCESS</div>
+          <h2 class="form-title">接入终端</h2>
+          <p class="form-subtitle">验证身份凭据以进入对应考务或学员工作台</p>
         </div>
+
         <el-tabs v-model="activeTab" class="login-tabs">
-          <!-- 登录 -->
-          <el-tab-pane label="登录" name="login">
-            <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" size="large" @keyup.enter="handleLogin">
+          <!-- 登录选项卡 -->
+          <el-tab-pane label="凭据登录" name="login">
+            <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" size="default" @keyup.enter="handleLogin">
               <el-form-item prop="username">
-                <el-input v-model="loginForm.username" placeholder="用户名" :prefix-icon="User" />
+                <el-input
+                  v-model="loginForm.username"
+                  placeholder="用户名 / Username"
+                  :prefix-icon="User"
+                  autocomplete="username"
+                />
               </el-form-item>
               <el-form-item prop="password">
-                <el-input v-model="loginForm.password" type="password" placeholder="密码" show-password :prefix-icon="Lock" />
+                <el-input
+                  v-model="loginForm.password"
+                  type="password"
+                  placeholder="密码 / Password"
+                  show-password
+                  :prefix-icon="Lock"
+                  autocomplete="current-password"
+                />
               </el-form-item>
-              <el-form-item>
+              <el-form-item class="submit-form-item">
                 <el-button type="primary" class="submit-btn" :loading="loading" @click="handleLogin">
-                  登 录
+                  AUTHENTICATE // 登录
                 </el-button>
               </el-form-item>
             </el-form>
-            <div class="tips">
-              <span>体验账号</span>
-              <p>admin / teacher_zhang / student_li</p>
-              <small>密码均为 123456</small>
+
+            <div class="demo-account-card">
+              <div class="demo-card-head">
+                <span class="demo-tag">DEMO_PRESETS</span>
+                <span class="demo-pwd">DEFAULT_PWD: 123456</span>
+              </div>
+              <div class="demo-chips">
+                <button type="button" class="chip-btn" @click="quickFill('admin')">admin (管理员)</button>
+                <button type="button" class="chip-btn" @click="quickFill('teacher_zhang')">teacher_zhang (教师)</button>
+                <button type="button" class="chip-btn" @click="quickFill('student_li')">student_li (学生)</button>
+              </div>
             </div>
           </el-tab-pane>
 
-          <!-- 注册 -->
-          <el-tab-pane label="注册" name="register">
-            <el-form ref="registerFormRef" :model="registerForm" :rules="registerRules" size="large" @keyup.enter="handleRegister">
+          <!-- 注册选项卡 -->
+          <el-tab-pane label="注册学员" name="register">
+            <el-form ref="registerFormRef" :model="registerForm" :rules="registerRules" size="default" @keyup.enter="handleRegister">
               <el-form-item prop="username">
-                <el-input v-model="registerForm.username" placeholder="用户名（3-50个字符）" :prefix-icon="User" />
+                <el-input v-model="registerForm.username" placeholder="用户名 (3-50 字符)" :prefix-icon="User" />
               </el-form-item>
               <el-form-item prop="realName">
-                <el-input v-model="registerForm.realName" placeholder="真实姓名" :prefix-icon="Postcard" />
+                <el-input v-model="registerForm.realName" placeholder="学员真实姓名" :prefix-icon="Postcard" />
               </el-form-item>
               <el-form-item prop="password">
-                <el-input v-model="registerForm.password" type="password" placeholder="密码（6-32个字符）" show-password :prefix-icon="Lock" />
+                <el-input v-model="registerForm.password" type="password" placeholder="设置密码 (6-32 字符)" show-password :prefix-icon="Lock" />
               </el-form-item>
               <el-form-item prop="confirmPassword">
-                <el-input v-model="registerForm.confirmPassword" type="password" placeholder="确认密码" show-password :prefix-icon="Lock" />
+                <el-input v-model="registerForm.confirmPassword" type="password" placeholder="确认登录密码" show-password :prefix-icon="Lock" />
               </el-form-item>
-              <el-form-item>
+              <el-form-item class="submit-form-item">
                 <el-button type="primary" class="submit-btn" :loading="loading" @click="handleRegister">
-                  注册（学生账号）
+                  REGISTER_ACCOUNT // 注册
                 </el-button>
               </el-form-item>
             </el-form>
           </el-tab-pane>
         </el-tabs>
-        <div class="form-footer">账号问题请联系系统管理员</div>
+
+        <div class="form-footer">
+          <span>如遇账户锁死或权限异常，请联系考务系统管理员</span>
+        </div>
       </aside>
     </div>
   </div>
@@ -94,7 +143,6 @@ import { useUserStore } from '@/stores/user'
 import * as userApi from '@/api/user'
 import ThemeToggle from '@/components/ui/ThemeToggle.vue'
 import BrandMark from '@/components/brand/BrandMark.vue'
-import BrandScene from '@/components/brand/BrandScene.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -111,13 +159,17 @@ const loginRules: FormRules = {
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
 }
 
+function quickFill(uname: string) {
+  loginForm.username = uname
+  loginForm.password = '123456'
+}
+
 async function handleLogin() {
   await loginFormRef.value?.validate()
   loading.value = true
   try {
     await userStore.login(loginForm.username, loginForm.password)
-    ElMessage.success('登录成功')
-    // 支持 401 跳转回原页面
+    ElMessage.success('身份验证通过，进入系统')
     const redirect = route.query.redirect as string | undefined
     router.push(redirect && redirect !== '/login' ? redirect : userStore.homePath)
   } finally {
@@ -159,7 +211,7 @@ async function handleRegister() {
       password: registerForm.password,
       realName: registerForm.realName,
     })
-    ElMessage.success('注册成功，请登录')
+    ElMessage.success('注册成功，请使用新凭据登录')
     loginForm.username = registerForm.username
     loginForm.password = ''
     activeTab.value = 'login'
@@ -175,40 +227,61 @@ async function handleRegister() {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow-y: auto;
-  background: var(--bg-canvas-accent);
-  padding: 32px;
+  background: var(--bg-canvas);
+  padding: 24px;
 }
 
 .login-panel {
   display: grid;
-  grid-template-columns: minmax(0, 58fr) minmax(440px, 42fr);
+  grid-template-columns: minmax(0, 56fr) minmax(420px, 44fr);
   align-items: stretch;
-  width: min(1200px, 100%);
-  min-height: min(720px, calc(100vh - 64px));
+  width: min(1120px, 100%);
+  min-height: 620px;
   border: 1px solid var(--border-default);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   background: var(--surface-1);
   box-shadow: var(--shadow-md);
   overflow: hidden;
 }
 
-/* ============ 品牌左侧（58%） ============ */
+/* ============ 品牌左侧（56%） ============ */
 .brand-side {
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: clamp(32px, 4vw, 52px);
-  overflow: hidden;
-  border-right: 1px solid var(--border-subtle);
+  padding: 40px 48px;
+  border-right: 1px solid var(--border-default);
   background:
-    radial-gradient(560px 340px at 6% -4%, color-mix(in srgb, var(--accent-violet) 9%, transparent), transparent 62%),
-    radial-gradient(520px 320px at 100% 106%, color-mix(in srgb, var(--accent-cyan) 8%, transparent), transparent 60%),
+    radial-gradient(480px 300px at 0% 0%, color-mix(in srgb, var(--brand-600) 8%, transparent), transparent 60%),
     var(--surface-1);
 }
 
-.brand-side__mark {
-  flex: none;
+.brand-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.system-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand-600);
+  background: color-mix(in srgb, var(--brand-600) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand-600) 25%, transparent);
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand-600);
+  box-shadow: 0 0 8px var(--brand-600);
 }
 
 .brand-hero {
@@ -216,164 +289,125 @@ async function handleRegister() {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 0;
+  padding: 24px 0;
 }
 
-.brand-copy {
-  max-width: 540px;
-}
-
-.brand-kicker,
-.form-intro > span {
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-}
-
-.brand-kicker {
-  color: var(--brand-600);
-}
-
-.brand-copy h1 {
-  margin: 16px 0 16px;
+.brand-title {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.03em;
   color: var(--text-strong);
-  font-size: clamp(38px, 3.4vw, 50px);
-  font-weight: 700;
-  line-height: 1.12;
-  letter-spacing: -0.05em;
+  margin-bottom: 12px;
 }
 
-.brand-copy h1 em {
+.highlight-text {
   color: var(--brand-600);
-  font-style: normal;
 }
 
-.brand-copy p {
-  max-width: 480px;
-  margin: 0;
+.brand-desc {
+  font-size: 13px;
   color: var(--text-secondary);
-  font-size: 15px;
-  line-height: 1.8;
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 0 28px;
 }
 
-.brand-bottom {
-  display: flex;
-  align-items: flex-end;
-  gap: clamp(20px, 3vw, 40px);
-  margin-top: clamp(20px, 3vw, 36px);
+.terminal-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 20px;
 }
 
-.brand-scene {
-  width: clamp(210px, 24vw, 300px);
-  flex: none;
-}
-
-.feature-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 2px;
-  flex: 1;
-  min-width: 0;
+.stat-cell {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
 }
 
-.feature-list li {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  min-width: 0;
-  padding: 11px 0;
-  border-top: 1px solid var(--border-subtle);
-}
-
-.feature-list li:first-child {
-  border-top: 0;
-  padding-top: 0;
-}
-
-.feature-list li > span {
-  width: 28px;
-  display: block;
-  flex: none;
-  color: var(--text-muted);
+.stat-label {
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
-}
-
-.feature-list li > div {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-}
-
-.feature-list b {
-  color: var(--text-primary);
-  font-size: 13px;
-}
-
-.feature-list small {
   color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.stat-value {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-strong);
+  margin: 3px 0 2px;
+}
+
+.stat-meta {
   font-size: 11px;
+  color: var(--text-secondary);
 }
 
 .brand-footnote {
-  flex: none;
-  margin-top: 20px;
-  color: var(--text-muted);
-  font-size: 11px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
 }
 
-/* ============ 表单右侧（42%） ============ */
+.mono-code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ============ 表单右侧（44%） ============ */
 .form-side {
   position: relative;
-  width: 100%;
-  max-width: none;
   background: var(--surface-1);
-  padding: clamp(54px, 6vw, 84px);
+  padding: 40px 48px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  box-shadow: none;
 }
 
 .login-theme-toggle {
   position: absolute;
-  top: 24px;
-  right: 24px;
-}
-
-.form-side::before {
-  display: none;
+  top: 20px;
+  right: 20px;
 }
 
 .form-intro {
-  position: relative;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
 }
 
-.form-intro > span {
+.terminal-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   color: var(--brand-600);
+  margin-bottom: 6px;
 }
 
-.form-intro h2 {
-  margin: 8px 0 6px;
-  font-size: 28px;
-  letter-spacing: -0.03em;
+.form-title {
+  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
 }
 
-.form-intro p {
+.form-subtitle {
   margin: 0;
+  font-size: 11px;
   color: var(--text-muted);
-  font-size: 14px;
 }
 
 .login-tabs :deep(.el-tabs__header) {
-  margin-bottom: 28px;
+  margin-bottom: 20px;
 }
 
 .login-tabs :deep(.el-tabs__nav-wrap::after) {
@@ -382,148 +416,86 @@ async function handleRegister() {
 }
 
 .login-tabs :deep(.el-tabs__item) {
-  height: 44px;
-  padding: 0 24px;
-  font-size: 15px;
+  height: 36px;
+  padding: 0 16px;
+  font-size: 13px;
   font-weight: 600;
 }
 
 .login-tabs :deep(.el-form-item) {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
-.login-tabs :deep(.el-input__wrapper) {
-  min-height: 50px;
-  padding: 0 16px;
-  border-radius: var(--radius-md);
-  background: var(--surface-1);
-  box-shadow: 0 0 0 1px var(--border-default) inset;
-}
-
-.login-tabs :deep(.el-input__wrapper.is-focus) {
-  background: var(--surface-1);
-  box-shadow: 0 0 0 1px var(--brand-600) inset;
+.submit-form-item {
+  margin-top: 20px;
+  margin-bottom: 12px !important;
 }
 
 .submit-btn {
   width: 100%;
-  min-height: 50px;
-  border-radius: var(--radius-md);
-  font-size: 15px;
-  letter-spacing: 0.06em;
+  height: 38px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
-.tips {
-  margin-top: 12px;
-  padding: 14px 16px;
+.demo-account-card {
+  margin-top: 14px;
+  padding: 12px;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   background: var(--surface-2);
-  text-align: left;
 }
 
-.tips span {
-  color: var(--brand-600);
+.demo-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.demo-tag {
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
+  color: var(--brand-600);
 }
 
-.tips p {
-  margin: 3px 0 0;
-  color: var(--text-primary);
-  font-size: 12px;
-}
-
-.tips small {
+.demo-pwd {
+  font-family: var(--font-mono);
+  font-size: 11px;
   color: var(--text-muted);
+}
+
+.demo-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip-btn {
+  background: var(--surface-1);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xs);
+  color: var(--text-primary);
+  font-size: 11px;
+  padding: 3px 8px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  transition: all var(--duration-fast) var(--ease-out-expo);
+}
+
+.chip-btn:hover {
+  border-color: var(--brand-600);
+  color: var(--brand-600);
+  background: color-mix(in srgb, var(--brand-600) 8%, var(--surface-1));
 }
 
 .form-footer {
-  margin-top: 28px;
+  margin-top: 20px;
+  text-align: center;
   color: var(--text-muted);
   font-size: 11px;
-}
-
-@media (max-width: 1100px) {
-  .login-page {
-    padding: 24px;
-  }
-
-  .login-panel {
-    grid-template-columns: minmax(0, 1fr) minmax(400px, 1fr);
-  }
-
-  .brand-copy h1 {
-    font-size: 42px;
-  }
-
-  .brand-scene {
-    width: 200px;
-  }
-
-  .feature-list li:nth-child(3) {
-    display: none;
-  }
-}
-
-@media (max-width: 860px) {
-  .login-page {
-    align-items: flex-start;
-    overflow-y: auto;
-    padding: 14px;
-  }
-
-  .login-panel {
-    display: flex;
-    min-height: 0;
-    flex-direction: column;
-    border-radius: var(--radius-lg);
-  }
-
-  .brand-side {
-    padding: 24px;
-    border-right: 0;
-    border-bottom: 1px solid var(--border-subtle);
-  }
-
-  .brand-hero {
-    justify-content: flex-start;
-    margin-top: 34px;
-  }
-
-  .brand-bottom {
-    margin-top: 26px;
-  }
-
-  .brand-scene {
-    display: none;
-  }
-
-  .feature-list li:nth-child(3) {
-    display: flex;
-  }
-
-  .brand-copy h1 {
-    font-size: clamp(34px, 9vw, 44px);
-  }
-
-  .brand-copy p {
-    font-size: 14px;
-    line-height: 1.75;
-  }
-
-  .feature-list,
-  .brand-footnote {
-    display: none;
-  }
-
-  .form-side {
-    max-width: none;
-    padding: 40px 24px 36px;
-  }
-
-  .form-intro h2 {
-    font-size: 26px;
-  }
 }
 </style>

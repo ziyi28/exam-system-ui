@@ -23,13 +23,22 @@
           <el-option label="中等" value="MEDIUM" />
           <el-option label="困难" value="HARD" />
         </el-select>
-        <el-input v-model="query.keyword" placeholder="题目关键词" clearable style="width: 200px" @keyup.enter="handleSearch" />
+        <el-input v-model="query.keyword" placeholder="题目关键词" clearable style="width: 180px" @keyup.enter="handleSearch" />
         <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
         <el-button :icon="Refresh" @click="handleReset">重置</el-button>
+        <el-button
+          v-if="multipleSelection.length"
+          type="danger"
+          plain
+          @click="handleBatchDelete"
+        >
+          批量删除 ({{ multipleSelection.length }})
+        </el-button>
       </div>
 
       <!-- 表格 -->
-      <el-table v-loading="loading" :data="records" stripe>
+      <el-table v-loading="loading" :data="records" stripe @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="45" />
         <el-table-column prop="id" label="ID" width="70" />
         <el-table-column prop="title" label="题目" min-width="280" show-overflow-tooltip />
         <el-table-column label="题型" width="100">
@@ -163,6 +172,7 @@ const loading = ref(false)
 const records = ref<Question[]>([])
 const total = ref(0)
 const categories = ref<Category[]>([])
+const multipleSelection = ref<Question[]>([])
 const query = reactive({
   page: 1,
   size: 10,
@@ -171,6 +181,31 @@ const query = reactive({
   difficulty: undefined as string | undefined,
   keyword: '',
 })
+
+function handleSelectionChange(val: Question[]) {
+  multipleSelection.value = val
+}
+
+async function handleBatchDelete() {
+  if (!multipleSelection.value.length) return
+  const count = multipleSelection.value.length
+  await ElMessageBox.confirm(`确定批量删除选中的 ${count} 道题目吗？删除后不可恢复。`, '批量删除确认', {
+    type: 'warning',
+    confirmButtonText: '确定删除',
+    cancelButtonText: '取消',
+  })
+  loading.value = true
+  try {
+    for (const q of multipleSelection.value) {
+      if (q.id) await deleteQuestion(q.id)
+    }
+    ElMessage.success(`成功删除 ${count} 道题目`)
+    multipleSelection.value = []
+    loadData()
+  } finally {
+    loading.value = false
+  }
+}
 
 async function loadData() {
   loading.value = true

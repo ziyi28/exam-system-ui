@@ -816,7 +816,7 @@ onBeforeUnmount(() => {
 
 .card-title-copy small {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 400;
 }
 
@@ -845,23 +845,13 @@ onBeforeUnmount(() => {
 
 .knowledge-base-item.selected {
   border-color: var(--brand-600);
-  background: var(--brand-50);
-}
-
-.knowledge-base-item.selected::before {
-  content: '';
-  position: absolute;
-  top: 14px;
-  bottom: 14px;
-  left: -1px;
-  width: 3px;
-  border-radius: 2px;
-  background: linear-gradient(180deg, var(--brand-600), var(--accent-violet));
+  background: color-mix(in srgb, var(--brand-600) 10%, var(--surface-1));
+  box-shadow: 0 0 0 1px var(--brand-600) inset;
 }
 
 .knowledge-base-item:focus-visible {
-  outline: 2px solid var(--brand-600);
-  outline-offset: 2px;
+  outline: 1px solid var(--brand-600);
+  outline-offset: 1px;
 }
 
 .knowledge-base-title-row {
@@ -893,7 +883,7 @@ onBeforeUnmount(() => {
 
 .knowledge-base-meta {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 11px;
   flex-wrap: wrap;
 }
 
@@ -922,7 +912,7 @@ onBeforeUnmount(() => {
 .document-error {
   max-width: 200px;
   color: var(--danger);
-  font-size: 12px;
+  font-size: 11px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -963,7 +953,7 @@ onBeforeUnmount(() => {
 .upload-progress-block p {
   margin: 6px 0 0;
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 11px;
   text-align: center;
 }
 

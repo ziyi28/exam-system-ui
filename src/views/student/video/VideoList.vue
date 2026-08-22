@@ -174,7 +174,7 @@ onMounted(async () => {
 
 .upload-tip {
   margin: 8px 0 0;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-muted);
 }
 
@@ -189,14 +189,15 @@ onMounted(async () => {
 .video-cover {
   position: relative;
   height: 130px;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
   overflow: hidden;
   background: var(--surface-2);
-  transition: box-shadow var(--duration-base) var(--ease-out-expo);
+  transition: all var(--duration-base) var(--ease-out-expo);
 }
 
 .video-card:hover .video-cover {
-  box-shadow: var(--shadow-md);
+  border-color: var(--brand-600);
 }
 
 .video-cover img {
@@ -204,11 +205,6 @@ onMounted(async () => {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform var(--duration-base) var(--ease-out-expo);
-}
-
-.video-card:hover .video-cover img {
-  transform: scale(1.05);
 }
 
 .cover-placeholder {
@@ -225,15 +221,16 @@ onMounted(async () => {
   bottom: 6px;
   background: var(--media-overlay);
   color: var(--text-on-media);
-  font-size: 12px;
-  border-radius: 4px;
+  font-size: 11px;
+  border-radius: var(--radius-xs);
   padding: 1px 6px;
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
 
 .video-title {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
   margin-top: 8px;
   color: var(--text-strong);
   overflow: hidden;
@@ -246,7 +243,8 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 11px;
+  font-family: var(--font-mono);
   margin-top: 4px;
 }
 </style>

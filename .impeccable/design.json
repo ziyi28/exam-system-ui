@@ -1,0 +1,211 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-22T01:14:00.000Z",
+  "title": "Design System: 智能考试系统 (Precision Academic Terminal)",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "终端高光青绿 (Terminal Neon Emerald)",
+        "canonical": "#00e58b",
+        "tonalRamp": [
+          "#00331b",
+          "#006637",
+          "#00a85c",
+          "#00e58b",
+          "#33f3a6",
+          "#66f6be",
+          "#99f9d7",
+          "#ccfcef"
+        ]
+      },
+      "accent-cyan": {
+        "role": "secondary",
+        "displayName": "电离冷青 (Ion Cyan)",
+        "canonical": "#00d5ff",
+        "tonalRamp": [
+          "#002b33",
+          "#005566",
+          "#009bbb",
+          "#00d5ff",
+          "#33deff",
+          "#66e7ff",
+          "#99f0ff",
+          "#ccf7ff"
+        ]
+      },
+      "accent-violet": {
+        "role": "tertiary",
+        "displayName": "量子紫 (Quantum Violet)",
+        "canonical": "#8b5cf6",
+        "tonalRamp": [
+          "#1c1236",
+          "#38256c",
+          "#5e3ea9",
+          "#8b5cf6",
+          "#a57ef8",
+          "#bfa1fa",
+          "#d9c4fc",
+          "#f2e7fe"
+        ]
+      },
+      "neutral-bg": {
+        "role": "neutral",
+        "displayName": "深碳黑画布 (Canvas BG)",
+        "canonical": "#090d16",
+        "tonalRamp": [
+          "#04060b",
+          "#090d16",
+          "#0e1524",
+          "#151e32",
+          "#223250",
+          "#53647e",
+          "#8da0be",
+          "#f8fafc"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "终端表面 (Surface 1)",
+        "canonical": "#0e1524",
+        "tonalRamp": [
+          "#070b12",
+          "#0e1524",
+          "#172238",
+          "#223250",
+          "#364b73",
+          "#8da0be",
+          "#e2e8f0",
+          "#ffffff"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display 终端主标",
+        "purpose": "登录终端主标与大盘看板"
+      },
+      "headline": {
+        "displayName": "Headline 分区大标",
+        "purpose": "大卡片主指标与试卷分题"
+      },
+      "title": {
+        "displayName": "Title 容器标题",
+        "purpose": "卡片 Header 与弹窗标题"
+      },
+      "body": {
+        "displayName": "Body 正文内容",
+        "purpose": "题目题干、选项正文与表单"
+      },
+      "label": {
+        "displayName": "Label / Monospace 数据标签",
+        "purpose": "等宽题号、倒计时、分数与状态微徽章"
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow-xs",
+        "value": "0 1px 2px rgba(0, 0, 0, 0.4)",
+        "purpose": "次级部件轻微垫起"
+      },
+      {
+        "name": "shadow-md",
+        "value": "0 8px 24px rgba(0, 0, 0, 0.6)",
+        "purpose": "下拉菜单与悬浮浮层"
+      },
+      {
+        "name": "shadow-lg",
+        "value": "0 16px 40px rgba(0, 0, 0, 0.75)",
+        "purpose": "模态对话框"
+      },
+      {
+        "name": "glow-brand",
+        "value": "0 0 12px rgba(0, 229, 139, 0.25)",
+        "purpose": "主操作悬停与精密对焦发光环"
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "迅捷物理按压与展开动效"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "desktop-student",
+        "value": "1320px"
+      },
+      {
+        "name": "desktop-admin",
+        "value": "1600px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "终端主操作按钮 (Terminal Primary Button)",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "用于核心操作，微倒角与青绿高光按压。",
+      "html": "<button class=\"ds-btn-primary\">SUBMIT_EXAM</button>",
+      "css": ".ds-btn-primary { background: #00e58b; color: #050b14; border: 1px solid #00e58b; border-radius: 4px; padding: 7px 16px; font-size: 13px; font-weight: 700; font-family: monospace; cursor: pointer; transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1); outline: none; } .ds-btn-primary:hover { background: #33f3a6; box-shadow: 0 0 12px rgba(0, 229, 139, 0.3); } .ds-btn-primary:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "精密数据卡片 (Precision Data Card)",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "发丝边框与微倒角工业容器。",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-head\">TERMINAL_VECTOR_CHUNK</div><div class=\"ds-card-body\">已成功索引 24 个文档切片，支持精准到页码与相关度的可解释溯源。</div></div>",
+      "css": ".ds-card { background: #0e1524; border: 1px solid #223250; border-radius: 6px; overflow: hidden; } .ds-card-head { padding: 12px 16px; font-size: 13px; font-weight: 700; font-family: monospace; color: #f8fafc; border-bottom: 1px solid #172238; } .ds-card-body { padding: 16px; font-size: 13px; color: #e2e8f0; line-height: 1.55; }"
+    },
+    {
+      "name": "终端输入框 (Terminal Input)",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "紧凑 34px 高度与发光对焦环。",
+      "html": "<input type=\"text\" class=\"ds-input\" placeholder=\"QUERY_QUESTION_DATABASE...\" />",
+      "css": ".ds-input { height: 34px; padding: 0 12px; background: #0e1524; border: 1px solid #223250; border-radius: 4px; font-size: 13px; color: #e2e8f0; outline: none; transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1); box-sizing: border-box; width: 100%; max-width: 320px; } .ds-input:focus { border-color: #00e58b; box-shadow: 0 0 0 1px #00e58b inset, 0 0 12px rgba(0, 229, 139, 0.2); }"
+    },
+    {
+      "name": "等宽状态徽章 (Monospace Status Tag)",
+      "kind": "chip",
+      "refersTo": "tag-success",
+      "description": "等宽字体与微倒角 2px。",
+      "html": "<span class=\"ds-tag ds-tag-success\">[ACTIVE]</span>",
+      "css": ".ds-tag { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 2px; font-size: 11px; font-weight: 700; font-family: monospace; } .ds-tag-success { background: rgba(0, 229, 139, 0.12); color: #00e58b; border: 1px solid rgba(0, 229, 139, 0.3); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "精密学术终端与数智考务实验室 (The Precision Academic Terminal & Assessment Laboratory)",
+    "overview": "本设计体系彻底颠覆了通用中后台的圆润糖果色、低信息密度与大面积弥散阴影，构建了一套服务于严肃在线考试、AI 智能出题与 RAG 知识库检索的工业级数智考务终端。全站以暗黑模式（深空碳素）作为第一公民，辅以高反差科研冷白实验室模式。界面通过发丝级精密边框、微倒角、全量等宽数据排版以及终端高光脉冲信号，为教师提供如工业中控台般的作业效能，为学生提供专注无扰的机考实战环境。",
+    "keyCharacteristics": [
+      "硬朗微倒角与发丝边框：全站圆角严格收敛于 2px 与 4px，彻底清除大圆角玩具感；边框采用 1px 精密发丝线",
+      "等宽数据第一优先：所有时间、题号、分数、代码、指标数值一律强制使用等宽单色代码字体与 tabular-nums",
+      "高饱和终端信号色：以高光青绿 (#00e58b) 作为核心操作与脉冲信号，电离冷青 (#00d5ff) 作为知识召回标识",
+      "零模糊微发光：常态下 Flat-by-Default 无阴影，激活态提供精准的微内发光与发丝发光环"
+    ],
+    "rules": [
+      {
+        "name": "The Hairline Precision Rule",
+        "body": "容器之间仅依靠 1px 发丝边框与表面色阶建立边界，严禁使用 >1px 的单侧粗边框装饰。",
+        "section": "colors"
+      },
+      {
+        "name": "The Monospace-First Numeral Rule",
+        "body": "凡涉及成绩分数、考试倒计时、题号索引、切屏计数，必须强制开启等宽字体与 font-variant-numeric: tabular-nums。",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Do 强制在所有包含时间、分值、题号、指标的展示中使用等宽字体与 tabular-nums。",
+      "Do 遵循 2px/4px/6px 微倒角体系，保持硬朗工业质感。",
+      "Do 按钮交互必须配置 :active { transform: translateY(1px) } 机械按压反馈。"
+    ],
+    "donts": [
+      "Don't 禁止使用 >6px 的大圆角与柔和圆角（如 8px/12px/16px）。",
+      "Don't 禁止使用单侧粗边框（border-left: 3px/4px）作为状态装饰。",
+      "Don't 禁止在静态卡片上添加大扩散常态弥散阴影。"
+    ]
+  }
+}

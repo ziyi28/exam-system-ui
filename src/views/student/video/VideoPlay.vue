@@ -211,7 +211,8 @@ onBeforeUnmount(() => {
 }
 
 .rec-meta {
-  font-size: 12px;
+  font-size: 11px;
+  font-family: var(--font-mono);
   color: var(--text-muted);
   margin-top: 4px;
 }

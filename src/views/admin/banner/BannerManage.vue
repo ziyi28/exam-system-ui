@@ -11,7 +11,7 @@
       <el-table-column prop="id" label="ID" width="70" />
       <el-table-column label="预览" width="150">
         <template #default="{ row }">
-          <el-image :src="row.imageUrl" fit="cover" style="width: 120px; height: 60px; border-radius: 6px" :preview-src-list="[row.imageUrl]" preview-teleported />
+          <el-image :src="row.imageUrl" fit="cover" class="banner-preview-img" :preview-src-list="[row.imageUrl]" preview-teleported />
         </template>
       </el-table-column>
       <el-table-column prop="title" label="标题" min-width="150" show-overflow-tooltip />
@@ -159,6 +159,13 @@ onMounted(loadData)
 </script>
 
 <style scoped>
+.banner-preview-img {
+  width: 120px;
+  height: 60px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-subtle);
+}
+
 .upload-preview {
   width: 240px;
   height: 120px;

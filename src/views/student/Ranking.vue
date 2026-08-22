@@ -139,36 +139,38 @@ onMounted(async () => {
 
 .podium-rank {
   margin-top: 8px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
+  font-family: var(--font-mono);
   letter-spacing: 0.08em;
   color: var(--text-muted);
 }
 
 .podium-name {
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 700;
   margin-top: 4px;
   color: var(--text-strong);
 }
 
 .podium-score {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 800;
   color: var(--brand-600);
   margin: 4px 0;
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
 }
 
 .podium-score .total {
-  font-size: 14px;
+  font-size: 11px;
   color: var(--text-muted);
   font-weight: 400;
 }
 
 .podium-paper {
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: 11px;
 }
 </style>

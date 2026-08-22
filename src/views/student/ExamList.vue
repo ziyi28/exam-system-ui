@@ -111,11 +111,12 @@ onMounted(loadData)
 }
 
 .exam-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-md);
-  background: var(--brand-bg);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-xs);
+  background: color-mix(in srgb, var(--brand-600) 12%, transparent);
   color: var(--brand-600);
+  border: 1px solid color-mix(in srgb, var(--brand-600) 25%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -123,9 +124,10 @@ onMounted(loadData)
 }
 
 .exam-name {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   color: var(--text-strong);
+  letter-spacing: -0.01em;
 }
 
 .exam-head__main {
@@ -137,8 +139,9 @@ onMounted(loadData)
   display: inline-block;
   margin-top: 4px;
   color: var(--success);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-mono);
 }
 
 .exam-desc {
@@ -156,9 +159,11 @@ onMounted(loadData)
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   color: var(--text-secondary);
-  font-size: 13px;
-  margin: 20px 0 16px;
-  padding: 12px 0;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  margin: 16px 0 14px;
+  padding: 10px 0;
   border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
 }
@@ -171,7 +176,10 @@ onMounted(loadData)
 
 .start-btn {
   width: 100%;
-  min-height: 40px;
+  min-height: 34px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
 }
 
 @media (max-width: 768px) {
@@ -181,7 +189,7 @@ onMounted(loadData)
 
   .exam-meta {
     gap: 6px;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .exam-meta span {

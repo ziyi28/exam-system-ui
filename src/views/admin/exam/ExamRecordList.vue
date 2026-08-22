@@ -184,34 +184,39 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* 前三名奖牌色，与 Dashboard 一致 */
 .rank-medal {
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   display: inline-grid;
   place-items: center;
-  border-radius: 50%;
-  font-size: 12px;
-  font-weight: 700;
+  border-radius: var(--radius-xs);
+  font-size: 11px;
+  font-weight: 800;
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
 
 .rank-medal--1 {
   background: color-mix(in srgb, var(--medal-gold) 16%, transparent);
   color: var(--medal-gold);
+  border: 1px solid color-mix(in srgb, var(--medal-gold) 35%, transparent);
 }
 
 .rank-medal--2 {
   background: color-mix(in srgb, var(--medal-silver) 16%, transparent);
   color: var(--medal-silver);
+  border: 1px solid color-mix(in srgb, var(--medal-silver) 35%, transparent);
 }
 
 .rank-medal--3 {
   background: color-mix(in srgb, var(--medal-bronze) 16%, transparent);
   color: var(--medal-bronze);
+  border: 1px solid color-mix(in srgb, var(--medal-bronze) 35%, transparent);
 }
 
 .rank-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
   color: var(--text-muted);
   padding-left: 6px;
 }

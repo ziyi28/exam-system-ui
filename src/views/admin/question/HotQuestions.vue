@@ -118,47 +118,54 @@ onMounted(async () => {
 
 .hot-rank {
   flex: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-xs);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
+  font-weight: 800;
+  font-family: var(--font-mono);
   background: var(--surface-1);
   color: var(--text-muted);
+  font-size: 11px;
+  border: 1px solid var(--border-subtle);
 }
 
-/* 浅色下奖牌原色数字在 16% tint 圆底上仅约 2:1，改中性圆底 + 加深数字达标；
-   深色下保留 16% tint + 原色（6.7–10.9:1 已达标） */
 :root:not([data-theme='dark']) .hot-rank--gold {
   background: var(--surface-2);
   color: color-mix(in srgb, var(--medal-gold) 55%, black);
+  border-color: var(--medal-gold);
 }
 
 :root:not([data-theme='dark']) .hot-rank--silver {
   background: var(--surface-2);
   color: color-mix(in srgb, var(--medal-silver) 55%, black);
+  border-color: var(--medal-silver);
 }
 
 :root:not([data-theme='dark']) .hot-rank--bronze {
   background: var(--surface-2);
   color: color-mix(in srgb, var(--medal-bronze) 55%, black);
+  border-color: var(--medal-bronze);
 }
 
 :root[data-theme='dark'] .hot-rank--gold {
   background: color-mix(in srgb, var(--medal-gold) 16%, transparent);
   color: var(--medal-gold);
+  border-color: color-mix(in srgb, var(--medal-gold) 35%, transparent);
 }
 
 :root[data-theme='dark'] .hot-rank--silver {
   background: color-mix(in srgb, var(--medal-silver) 16%, transparent);
   color: var(--medal-silver);
+  border-color: color-mix(in srgb, var(--medal-silver) 35%, transparent);
 }
 
 :root[data-theme='dark'] .hot-rank--bronze {
   background: color-mix(in srgb, var(--medal-bronze) 16%, transparent);
   color: var(--medal-bronze);
+  border-color: color-mix(in srgb, var(--medal-bronze) 35%, transparent);
 }
 
 .hot-body {
@@ -168,6 +175,7 @@ onMounted(async () => {
 
 .hot-title {
   font-weight: 600;
+  font-size: 13px;
   margin-bottom: 8px;
 }
 
@@ -178,7 +186,7 @@ onMounted(async () => {
 }
 
 .hot-category {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-muted);
 }
 </style>
